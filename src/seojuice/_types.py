@@ -502,13 +502,67 @@ class ChangeRecord(TypedDict):
     id: int
     change_type: str
     status: str
-    risk_level: str
     page_url: Optional[str]
     proposed_value: Optional[str]
     previous_value: Optional[str]
     reason: Optional[str]
     confidence_score: Optional[float]
+    anchor_text: Optional[str]
+    alternatives: List[Any]
+    original_issues: List[Any]
+    optimization_techniques: List[Any]
+    seo_signals_improved: List[Any]
+    potential_risks: List[Any]
+    related_changes: List[Any]
+    llm_metadata: Dict[str, Any]
     created_at: Optional[str]
+    reviewed_at: Optional[str]
+    applied_at: Optional[str]
+    pulled_at: Optional[str]
+    pulled_by_integration: Optional[str]
+    verified_at: Optional[str]
+    reverted_at: Optional[str]
+    revert_reason: Optional[str]
+
+
+class ChangeStats(TypedDict):
+    total: int
+    by_status: Dict[str, int]
+    by_type: Dict[str, int]
+
+
+class ChangeSettings(TypedDict):
+    internal_links_mode: str
+    meta_tags_mode: str
+    og_tags_mode: str
+    title_tags_mode: str
+    structured_data_mode: str
+    image_alt_mode: str
+    accessibility_mode: str
+    local_seo_mode: str
+    gbp_review_reply_mode: str
+    max_changes_per_page_per_day: int
+    max_changes_per_day: int
+    exclude_paths: str
+
+
+class BulkActionResult(TypedDict):
+    action: str
+    succeeded: List[int]
+    failed: List[Dict[str, Any]]
+    total_succeeded: int
+    total_failed: int
+
+
+class ChangeWebhookPayload(TypedDict):
+    event: str
+    change: ChangeRecord
+    website: Dict[str, str]
+    timestamp: str
+    rejected_by: NotRequired[str]
+    reason: NotRequired[str]
+    reverted_by: NotRequired[str]
+    revert_reason: NotRequired[str]
 
 
 # ---------------------------------------------------------------------------
@@ -576,3 +630,89 @@ class GBPReviewReplyResponse(TypedDict):
     success: bool
     review_id: int
     reply: str
+
+
+# ---------------------------------------------------------------------------
+# Action Items
+# ---------------------------------------------------------------------------
+
+
+class ActionItem(TypedDict):
+    id: int
+    title: str
+    description: Optional[str]
+    guidance: Optional[str]
+    category: Optional[str]
+    priority: Optional[str]
+    status: str
+    estimated_effort: Optional[str]
+    auto_fixed: bool
+    created_at: Optional[str]
+    completed_at: Optional[str]
+    affected_pages: List[Any]
+    page: Optional[Dict[str, Any]]
+
+
+class ActionItemSummary(TypedDict):
+    total: int
+    open: int
+    done: int
+    snoozed: int
+    dismissed: int
+    auto_fixed: int
+    done_this_month: int
+    completion_rate: float
+    by_category: Dict[str, int]
+    by_priority: Dict[str, int]
+
+
+class ActionItemGroup(TypedDict):
+    category: str
+    count: int
+    priority_distribution: Dict[str, int]
+
+
+# ---------------------------------------------------------------------------
+# Domain Health / SERP / Benchmarks / Content Quality / Geo
+# ---------------------------------------------------------------------------
+
+
+class DomainHealthResponse(TypedDict):
+    domain: str
+    score: float
+    breakdown: Dict[str, Any]
+    recommendations: List[Any]
+
+
+class SERPLandscapeResponse(TypedDict):
+    domain: str
+    features: Dict[str, Any]
+
+
+class BenchmarkResponse(TypedDict):
+    domain: str
+    benchmarks: Dict[str, Any]
+
+
+class ContentQualityResponse(TypedDict):
+    url: str
+    score: float
+    details: Dict[str, Any]
+
+
+class GeoReadinessResponse(TypedDict):
+    url: str
+    score: float
+    details: Dict[str, Any]
+
+
+class PageContentResponse(TypedDict):
+    url: str
+    title: Optional[str]
+    meta_description: Optional[str]
+    content: Optional[str]
+    raw_html: Optional[str]
+    structured_data: Optional[Dict[str, Any]]
+    language_code: Optional[str]
+    page_type: Optional[str]
+    images: List[Any]

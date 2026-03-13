@@ -1,26 +1,39 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from seojuice._pagination import PagedResult
 from seojuice._types import (
+    ActionItem,
+    ActionItemGroup,
+    ActionItemSummary,
     AISOResponse,
     AnalysisQueued,
     AnalysisResult,
+    BenchmarkResponse,
+    BulkActionResult,
+    ChangeRecord,
+    ChangeSettings,
+    ChangeStats,
     ClusterDetail,
     ClusterSummary,
     Competitor,
     ContentGap,
+    ContentQualityResponse,
+    DomainHealthResponse,
     GBPLocationsResponse,
     GBPReviewReplyResponse,
+    GeoReadinessResponse,
     IntelligenceSummary,
+    PageContentResponse,
     PageDetail,
     PageSpeedResponse,
     PaginationMeta,
     ReportCreated,
     ReportDetail,
     ReportSummary,
+    SERPLandscapeResponse,
     SimilarPagesResponse,
     TopologyResponse,
     WebsiteDetail,
@@ -79,6 +92,9 @@ class _BaseClient(ABC):
 
     def _post(self, path: str, json: Optional[Dict[str, Any]] = None) -> Any:
         return self._request("POST", path, json=json)
+
+    def _patch(self, path: str, json: Optional[Dict[str, Any]] = None) -> Any:
+        return self._request("PATCH", path, json=json)
 
     def _paginate(
         self,
@@ -309,7 +325,7 @@ class _BaseClient(ABC):
     ) -> ReportCreated:
         return self._post(
             f"/websites/{domain}/reports/",
-            {"report_type": report_type},
+            {"type": report_type},
         )
 
     def get_report(self, domain: str, report_id: int) -> ReportDetail:
@@ -468,6 +484,89 @@ class _BaseClient(ABC):
             },
         )
 
+    def get_change(self, domain: str, change_id: int) -> ChangeRecord:
+        return self._get(f"/websites/{domain}/changes/{change_id}/")
+
+    def get_change_stats(self, domain: str) -> ChangeStats:
+        return self._get(f"/websites/{domain}/changes/stats/")
+
+    def get_change_settings(self, domain: str) -> ChangeSettings:
+        return self._get(f"/websites/{domain}/changes/settings/")
+
+    def update_change_settings(
+        self,
+        domain: str,
+        **settings: Any,
+    ) -> ChangeSettings:
+        return self._patch(f"/websites/{domain}/changes/settings/", settings)
+
+    def approve_change(self, domain: str, change_id: int) -> ChangeRecord:
+        return self._post(f"/websites/{domain}/changes/{change_id}/approve/")
+
+    def reject_change(
+        self,
+        domain: str,
+        change_id: int,
+        *,
+        reason: Optional[str] = None,
+    ) -> ChangeRecord:
+        body = {"reason": reason} if reason else None
+        return self._post(
+            f"/websites/{domain}/changes/{change_id}/reject/", body
+        )
+
+    def revert_change(
+        self,
+        domain: str,
+        change_id: int,
+        *,
+        reason: Optional[str] = None,
+    ) -> ChangeRecord:
+        body = {"reason": reason} if reason else None
+        return self._post(
+            f"/websites/{domain}/changes/{change_id}/revert/", body
+        )
+
+    def pull_change(
+        self,
+        domain: str,
+        change_id: int,
+        *,
+        integration: str,
+    ) -> ChangeRecord:
+        return self._post(
+            f"/websites/{domain}/changes/{change_id}/pull/",
+            {"integration": integration},
+        )
+
+    def verify_change(
+        self,
+        domain: str,
+        change_id: int,
+        *,
+        integration: str,
+    ) -> ChangeRecord:
+        return self._post(
+            f"/websites/{domain}/changes/{change_id}/verify/",
+            {"integration": integration},
+        )
+
+    def bulk_change_action(
+        self,
+        domain: str,
+        *,
+        action: str,
+        ids: List[int],
+        reason: Optional[str] = None,
+        integration: Optional[str] = None,
+    ) -> BulkActionResult:
+        body: Dict[str, Any] = {"action": action, "ids": ids}
+        if reason:
+            body["reason"] = reason
+        if integration:
+            body["integration"] = integration
+        return self._post(f"/websites/{domain}/changes/bulk/", body)
+
     # ------------------------------------------------------------------
     # Content Decay
     # ------------------------------------------------------------------
@@ -531,5 +630,190 @@ class _BaseClient(ABC):
     ) -> GBPReviewReplyResponse:
         return self._post(
             f"/websites/{domain}/gbp/reviews/{review_id}/reply/",
-            {"reply": reply_text},
+            {"reply_text": reply_text},
         )
+
+    # ------------------------------------------------------------------
+    # Action Items
+    # ------------------------------------------------------------------
+
+    def list_action_items(
+        self,
+        domain: str,
+        *,
+        status: Optional[str] = None,
+        category: Optional[str] = None,
+        priority: Optional[str] = None,
+        source_type: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 20,
+    ) -> PagedResult[Any]:
+        return self._paginate(
+            f"/websites/{domain}/action-items/",
+            {
+                "status": status,
+                "category": category,
+                "priority": priority,
+                "source_type": source_type,
+                "page": page,
+                "page_size": page_size,
+            },
+        )
+
+    def get_action_item(self, domain: str, item_id: int) -> ActionItem:
+        return self._get(f"/websites/{domain}/action-items/{item_id}/")
+
+    def create_action_item(
+        self,
+        domain: str,
+        *,
+        title: str,
+        description: Optional[str] = None,
+        guidance: Optional[str] = None,
+        category: Optional[str] = None,
+        priority: Optional[str] = None,
+        estimated_effort: Optional[str] = None,
+    ) -> ActionItem:
+        body: Dict[str, Any] = {"title": title}
+        if description is not None:
+            body["description"] = description
+        if guidance is not None:
+            body["guidance"] = guidance
+        if category is not None:
+            body["category"] = category
+        if priority is not None:
+            body["priority"] = priority
+        if estimated_effort is not None:
+            body["estimated_effort"] = estimated_effort
+        return self._post(f"/websites/{domain}/action-items/", body)
+
+    def update_action_item(
+        self,
+        domain: str,
+        item_id: int,
+        *,
+        action: str,
+        snooze_days: Optional[int] = None,
+    ) -> ActionItem:
+        body: Dict[str, Any] = {"action": action}
+        if snooze_days is not None:
+            body["snooze_days"] = snooze_days
+        return self._patch(
+            f"/websites/{domain}/action-items/{item_id}/", body
+        )
+
+    def get_action_item_groups(
+        self,
+        domain: str,
+        *,
+        category: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 20,
+    ) -> PagedResult[ActionItemGroup]:
+        return self._paginate(
+            f"/websites/{domain}/action-items/groups/",
+            {"category": category, "page": page, "page_size": page_size},
+        )
+
+    def get_action_item_summary(self, domain: str) -> ActionItemSummary:
+        return self._get(f"/websites/{domain}/action-items/summary/")
+
+    # ------------------------------------------------------------------
+    # Domain Health
+    # ------------------------------------------------------------------
+
+    def get_domain_health(
+        self,
+        domain: str,
+        *,
+        recompute: Optional[bool] = None,
+        domain_type: Optional[str] = None,
+    ) -> DomainHealthResponse:
+        return self._get(
+            f"/websites/{domain}/domain-health/",
+            {"recompute": recompute, "domain_type": domain_type},
+        )
+
+    # ------------------------------------------------------------------
+    # SERP Landscape
+    # ------------------------------------------------------------------
+
+    def get_serp_landscape(
+        self,
+        domain: str,
+        *,
+        market: Optional[str] = None,
+    ) -> SERPLandscapeResponse:
+        return self._get(
+            f"/websites/{domain}/serp-landscape/", {"market": market}
+        )
+
+    # ------------------------------------------------------------------
+    # Benchmarks
+    # ------------------------------------------------------------------
+
+    def get_benchmarks(self, domain: str) -> BenchmarkResponse:
+        return self._get(f"/websites/{domain}/benchmarks/")
+
+    # ------------------------------------------------------------------
+    # Content Quality
+    # ------------------------------------------------------------------
+
+    def get_content_quality(
+        self,
+        domain: str,
+        page_id: Union[int, str],
+        *,
+        full_audit: Optional[bool] = None,
+    ) -> ContentQualityResponse:
+        return self._get(
+            f"/websites/{domain}/pages/{page_id}/content-quality/",
+            {"full_audit": full_audit},
+        )
+
+    # ------------------------------------------------------------------
+    # Geo Readiness
+    # ------------------------------------------------------------------
+
+    def get_geo_readiness(
+        self,
+        domain: str,
+        page_id: Union[int, str],
+        *,
+        full_audit: Optional[bool] = None,
+    ) -> GeoReadinessResponse:
+        return self._get(
+            f"/websites/{domain}/pages/{page_id}/geo-readiness/",
+            {"full_audit": full_audit},
+        )
+
+    # ------------------------------------------------------------------
+    # Page Content
+    # ------------------------------------------------------------------
+
+    def get_page_content(
+        self,
+        domain: str,
+        page_id: Union[int, str],
+    ) -> PageContentResponse:
+        return self._get(f"/websites/{domain}/pages/{page_id}/content/")
+
+    # ------------------------------------------------------------------
+    # URL Submission
+    # ------------------------------------------------------------------
+
+    def submit_urls(
+        self,
+        domain: str,
+        *,
+        urls: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        return self._post(f"/websites/{domain}/urls/", {"urls": urls})
+
+    def get_url_status(
+        self,
+        domain: str,
+        *,
+        url: str,
+    ) -> Dict[str, Any]:
+        return self._get(f"/websites/{domain}/urls/status/", {"url": url})

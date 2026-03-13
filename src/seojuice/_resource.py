@@ -1,24 +1,37 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from seojuice._pagination import PagedResult
 from seojuice._types import (
+    ActionItem,
+    ActionItemGroup,
+    ActionItemSummary,
     AISOResponse,
     AnalysisQueued,
     AnalysisResult,
+    BenchmarkResponse,
+    BulkActionResult,
+    ChangeRecord,
+    ChangeSettings,
+    ChangeStats,
     ClusterDetail,
     ClusterSummary,
     Competitor,
     ContentGap,
+    ContentQualityResponse,
+    DomainHealthResponse,
     GBPLocationsResponse,
     GBPReviewReplyResponse,
+    GeoReadinessResponse,
     IntelligenceSummary,
+    PageContentResponse,
     PageDetail,
     PageSpeedResponse,
     ReportCreated,
     ReportDetail,
     ReportSummary,
+    SERPLandscapeResponse,
     SimilarPagesResponse,
     TopologyResponse,
     WebsiteDetail,
@@ -136,6 +149,81 @@ class WebsiteResource:
         reply_text: str,
     ) -> GBPReviewReplyResponse:
         return self._client.reply_to_gbp_review(self._domain, review_id, reply_text)
+
+    # Changes management
+    def change(self, change_id: int) -> ChangeRecord:
+        return self._client.get_change(self._domain, change_id)
+
+    def change_stats(self) -> ChangeStats:
+        return self._client.get_change_stats(self._domain)
+
+    def change_settings(self) -> ChangeSettings:
+        return self._client.get_change_settings(self._domain)
+
+    def update_change_settings(self, **settings: Any) -> ChangeSettings:
+        return self._client.update_change_settings(self._domain, **settings)
+
+    def approve_change(self, change_id: int) -> ChangeRecord:
+        return self._client.approve_change(self._domain, change_id)
+
+    def reject_change(self, change_id: int, **kwargs: Any) -> ChangeRecord:
+        return self._client.reject_change(self._domain, change_id, **kwargs)
+
+    def revert_change(self, change_id: int, **kwargs: Any) -> ChangeRecord:
+        return self._client.revert_change(self._domain, change_id, **kwargs)
+
+    def pull_change(self, change_id: int, **kwargs: Any) -> ChangeRecord:
+        return self._client.pull_change(self._domain, change_id, **kwargs)
+
+    def verify_change(self, change_id: int, **kwargs: Any) -> ChangeRecord:
+        return self._client.verify_change(self._domain, change_id, **kwargs)
+
+    def bulk_change_action(self, **kwargs: Any) -> BulkActionResult:
+        return self._client.bulk_change_action(self._domain, **kwargs)
+
+    # Action Items
+    def action_items(self, **kwargs: Any) -> PagedResult[Any]:
+        return self._client.list_action_items(self._domain, **kwargs)
+
+    def action_item(self, item_id: int) -> ActionItem:
+        return self._client.get_action_item(self._domain, item_id)
+
+    def create_action_item(self, **kwargs: Any) -> ActionItem:
+        return self._client.create_action_item(self._domain, **kwargs)
+
+    def update_action_item(self, item_id: int, **kwargs: Any) -> ActionItem:
+        return self._client.update_action_item(self._domain, item_id, **kwargs)
+
+    def action_item_groups(self, **kwargs: Any) -> PagedResult[ActionItemGroup]:
+        return self._client.get_action_item_groups(self._domain, **kwargs)
+
+    def action_item_summary(self) -> ActionItemSummary:
+        return self._client.get_action_item_summary(self._domain)
+
+    # New endpoints
+    def domain_health(self, **kwargs: Any) -> DomainHealthResponse:
+        return self._client.get_domain_health(self._domain, **kwargs)
+
+    def serp_landscape(self, **kwargs: Any) -> SERPLandscapeResponse:
+        return self._client.get_serp_landscape(self._domain, **kwargs)
+
+    def benchmarks(self) -> BenchmarkResponse:
+        return self._client.get_benchmarks(self._domain)
+
+    def content_quality(self, page_id: int, **kwargs: Any) -> ContentQualityResponse:
+        return self._client.get_content_quality(self._domain, page_id, **kwargs)
+
+    def geo_readiness(self, page_id: int, **kwargs: Any) -> GeoReadinessResponse:
+        return self._client.get_geo_readiness(self._domain, page_id, **kwargs)
+
+    def page_content(self, page_id: int) -> PageContentResponse:
+        return self._client.get_page_content(self._domain, page_id)
+
+    def submit_urls(self, **kwargs: Any) -> Dict[str, Any]:
+        return self._client.submit_urls(self._domain, **kwargs)
+
+    def url_status(self, **kwargs: Any) -> Dict[str, Any]:
+        return self._client.get_url_status(self._domain, **kwargs)
 
 
 class AsyncWebsiteResource:
@@ -488,4 +576,226 @@ class AsyncWebsiteResource:
         return await self._client._apost(
             f"/websites/{self._domain}/gbp/reviews/{review_id}/reply/",
             {"reply": reply_text},
+        )
+
+    # Changes management
+    async def change(self, change_id: int) -> ChangeRecord:
+        return await self._client._aget(
+            f"/websites/{self._domain}/changes/{change_id}/"
+        )
+
+    async def change_stats(self) -> ChangeStats:
+        return await self._client._aget(
+            f"/websites/{self._domain}/changes/stats/"
+        )
+
+    async def change_settings(self) -> ChangeSettings:
+        return await self._client._aget(
+            f"/websites/{self._domain}/changes/settings/"
+        )
+
+    async def update_change_settings(self, **settings: Any) -> ChangeSettings:
+        return await self._client._apatch(
+            f"/websites/{self._domain}/changes/settings/", settings
+        )
+
+    async def approve_change(self, change_id: int) -> ChangeRecord:
+        return await self._client._apost(
+            f"/websites/{self._domain}/changes/{change_id}/approve/"
+        )
+
+    async def reject_change(
+        self, change_id: int, *, reason: Optional[str] = None
+    ) -> ChangeRecord:
+        body = {"reason": reason} if reason else None
+        return await self._client._apost(
+            f"/websites/{self._domain}/changes/{change_id}/reject/", body
+        )
+
+    async def revert_change(
+        self, change_id: int, *, reason: Optional[str] = None
+    ) -> ChangeRecord:
+        body = {"reason": reason} if reason else None
+        return await self._client._apost(
+            f"/websites/{self._domain}/changes/{change_id}/revert/", body
+        )
+
+    async def pull_change(
+        self, change_id: int, *, integration: str
+    ) -> ChangeRecord:
+        return await self._client._apost(
+            f"/websites/{self._domain}/changes/{change_id}/pull/",
+            {"integration": integration},
+        )
+
+    async def verify_change(
+        self, change_id: int, *, integration: str
+    ) -> ChangeRecord:
+        return await self._client._apost(
+            f"/websites/{self._domain}/changes/{change_id}/verify/",
+            {"integration": integration},
+        )
+
+    async def bulk_change_action(
+        self,
+        *,
+        action: str,
+        ids: List[int],
+        reason: Optional[str] = None,
+        integration: Optional[str] = None,
+    ) -> BulkActionResult:
+        body: Dict[str, Any] = {"action": action, "ids": ids}
+        if reason:
+            body["reason"] = reason
+        if integration:
+            body["integration"] = integration
+        return await self._client._apost(
+            f"/websites/{self._domain}/changes/bulk/", body
+        )
+
+    # Action Items
+    async def action_items(
+        self,
+        *,
+        status: Optional[str] = None,
+        category: Optional[str] = None,
+        priority: Optional[str] = None,
+        source_type: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 20,
+    ) -> PagedResult[Any]:
+        return await self._client._apaginate(
+            f"/websites/{self._domain}/action-items/",
+            {
+                "status": status,
+                "category": category,
+                "priority": priority,
+                "source_type": source_type,
+                "page": page,
+                "page_size": page_size,
+            },
+        )
+
+    async def action_item(self, item_id: int) -> ActionItem:
+        return await self._client._aget(
+            f"/websites/{self._domain}/action-items/{item_id}/"
+        )
+
+    async def create_action_item(
+        self,
+        *,
+        title: str,
+        description: Optional[str] = None,
+        guidance: Optional[str] = None,
+        category: Optional[str] = None,
+        priority: Optional[str] = None,
+        estimated_effort: Optional[str] = None,
+    ) -> ActionItem:
+        body: Dict[str, Any] = {"title": title}
+        if description is not None:
+            body["description"] = description
+        if guidance is not None:
+            body["guidance"] = guidance
+        if category is not None:
+            body["category"] = category
+        if priority is not None:
+            body["priority"] = priority
+        if estimated_effort is not None:
+            body["estimated_effort"] = estimated_effort
+        return await self._client._apost(
+            f"/websites/{self._domain}/action-items/", body
+        )
+
+    async def update_action_item(
+        self,
+        item_id: int,
+        *,
+        action: str,
+        snooze_days: Optional[int] = None,
+    ) -> ActionItem:
+        body: Dict[str, Any] = {"action": action}
+        if snooze_days is not None:
+            body["snooze_days"] = snooze_days
+        return await self._client._apatch(
+            f"/websites/{self._domain}/action-items/{item_id}/", body
+        )
+
+    async def action_item_groups(
+        self,
+        *,
+        category: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 20,
+    ) -> PagedResult[ActionItemGroup]:
+        return await self._client._apaginate(
+            f"/websites/{self._domain}/action-items/groups/",
+            {"category": category, "page": page, "page_size": page_size},
+        )
+
+    async def action_item_summary(self) -> ActionItemSummary:
+        return await self._client._aget(
+            f"/websites/{self._domain}/action-items/summary/"
+        )
+
+    # New endpoints
+    async def domain_health(
+        self,
+        *,
+        recompute: Optional[bool] = None,
+        domain_type: Optional[str] = None,
+    ) -> DomainHealthResponse:
+        return await self._client._aget(
+            f"/websites/{self._domain}/domain-health/",
+            {"recompute": recompute, "domain_type": domain_type},
+        )
+
+    async def serp_landscape(
+        self, *, market: Optional[str] = None
+    ) -> SERPLandscapeResponse:
+        return await self._client._aget(
+            f"/websites/{self._domain}/serp-landscape/", {"market": market}
+        )
+
+    async def benchmarks(self) -> BenchmarkResponse:
+        return await self._client._aget(
+            f"/websites/{self._domain}/benchmarks/"
+        )
+
+    async def content_quality(
+        self,
+        page_id: Union[int, str],
+        *,
+        full_audit: Optional[bool] = None,
+    ) -> ContentQualityResponse:
+        return await self._client._aget(
+            f"/websites/{self._domain}/pages/{page_id}/content-quality/",
+            {"full_audit": full_audit},
+        )
+
+    async def geo_readiness(
+        self,
+        page_id: Union[int, str],
+        *,
+        full_audit: Optional[bool] = None,
+    ) -> GeoReadinessResponse:
+        return await self._client._aget(
+            f"/websites/{self._domain}/pages/{page_id}/geo-readiness/",
+            {"full_audit": full_audit},
+        )
+
+    async def page_content(self, page_id: Union[int, str]) -> PageContentResponse:
+        return await self._client._aget(
+            f"/websites/{self._domain}/pages/{page_id}/content/"
+        )
+
+    async def submit_urls(
+        self, *, urls: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        return await self._client._apost(
+            f"/websites/{self._domain}/urls/", {"urls": urls}
+        )
+
+    async def url_status(self, *, url: str) -> Dict[str, Any]:
+        return await self._client._aget(
+            f"/websites/{self._domain}/urls/status/", {"url": url}
         )

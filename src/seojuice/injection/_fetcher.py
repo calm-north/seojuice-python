@@ -151,6 +151,31 @@ def apply_suggestions(html: str, data: Dict[str, Any]) -> str:
             flags=re.IGNORECASE,
         )
 
+    broken_link_fixes = data.get("broken_link_fixes") or []
+    for fix in broken_link_fixes:
+        broken_url = fix.get("broken_url", "")
+        action = fix.get("action", "")
+        if not broken_url or not action:
+            continue
+        escaped = re.escape(broken_url)
+        if action == "unlink":
+            html = re.sub(
+                r'<a\s[^>]*href=["\']' + escaped + r'["\'][^>]*>(.*?)</a>',
+                r"\1",
+                html,
+                flags=re.IGNORECASE | re.DOTALL,
+            )
+        elif action == "replace":
+            replacement_url = fix.get("replacement_url", "")
+            if replacement_url:
+                safe_url = replacement_url.replace('"', "&quot;")
+                html = re.sub(
+                    r'(<a\s[^>]*href=)["\']' + escaped + r'["\']([^>]*>)',
+                    r'\g<1>"' + safe_url + r'"\g<2>',
+                    html,
+                    flags=re.IGNORECASE,
+                )
+
     if not tags:
         return html
 

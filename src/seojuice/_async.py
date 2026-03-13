@@ -119,6 +119,9 @@ class AsyncSEOJuice(_BaseClient):
     async def _apost(self, path: str, json: Optional[Dict[str, Any]] = None) -> Any:
         return await self._arequest("POST", path, json=json)
 
+    async def _apatch(self, path: str, json: Optional[Dict[str, Any]] = None) -> Any:
+        return await self._arequest("PATCH", path, json=json)
+
     async def _apaginate(
         self,
         path: str,
