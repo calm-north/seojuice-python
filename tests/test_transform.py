@@ -6,6 +6,7 @@ from typing import Any, Dict
 from seojuice.injection._transform import (
     Manifest,
     escape_html,
+    inject_internal_links,
     normalize_image_url,
     replace_h1,
     replace_images,
@@ -89,3 +90,26 @@ def test_keeps_good_alt():
     data = {**_data(), "images": [{"url": "https://cdn.x/a.png", "alt_text": "A nice chart"}]}
     html = '<img src="https://cdn.x/a.png" alt="already meaningful">'
     assert replace_images(html, data, Manifest()) == html
+
+
+# ---------------------------------------------------------------------------
+# inject_internal_links (Task 4)
+# ---------------------------------------------------------------------------
+
+
+def test_links_first_occurrence_only():
+    data = {**_data(), "suggestions": [{"keyword": "SWP plan", "url": "/swp", "id": 7}]}
+    out = inject_internal_links("<p>Learn SWP plan. Another SWP plan here.</p>", data, Manifest())
+    assert out == '<p>Learn <a href="/swp" data-seojuice-cs="7">SWP plan</a>. Another SWP plan here.</p>'
+
+
+def test_never_links_inside_anchor_or_heading():
+    data = {**_data(), "suggestions": [{"keyword": "SWP", "url": "/swp", "id": 1}]}
+    assert inject_internal_links('<a href="/x">SWP</a>', data, Manifest()) == '<a href="/x">SWP</a>'
+    assert inject_internal_links("<h1>SWP</h1>", data, Manifest()) == "<h1>SWP</h1>"
+
+
+def test_asian_boundary_links_between_han():
+    data = {**_data(), "isAsian": True, "suggestions": [{"keyword": "投资", "url": "/x", "id": 2}]}
+    out = inject_internal_links("<p>我要投资基金</p>", data, Manifest())
+    assert '<a href="/x" data-seojuice-cs="2">投资</a>' in out

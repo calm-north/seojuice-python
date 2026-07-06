@@ -196,3 +196,85 @@ def replace_images(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
         return match.replace("<img", f'<img alt="{alt_text}" data-seojuice="alt"', 1)
 
     return _IMG_RE.sub(_repl, html)
+
+
+_ASIAN = r"一-鿿぀-ゟ゠-ヿ"
+
+
+def _keyword_pattern(keyword: str, is_asian: bool) -> "re.Pattern[str]":
+    kw = re.escape(keyword)
+    if is_asian:
+        return re.compile(rf"(^|[{_ASIAN}])({kw})(?=[{_ASIAN}.!?)\]/]|$)")
+    pre = r"(^|[\s([{<>\"'«‹„/:\-])"
+    post = r"(?=$|[\s)\]}>\"'»›/.,:;!?\-])"
+    return re.compile(pre + rf"({kw})" + post, re.IGNORECASE)
+
+
+def inject_internal_links(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
+    suggestions = data.get("suggestions")
+    if not isinstance(suggestions, list) or not suggestions:
+        return html
+
+    is_asian = bool(data.get("isAsian"))
+    custom_link_class = data.get("custom_link_class") or ""
+
+    replaced_keywords: set[str] = set()
+    links: List[Dict[str, Any]] = []
+    for link in suggestions:
+        keyword = link.get("keyword")
+        url = link.get("url")
+        if not keyword or not url:
+            continue
+        kl = keyword.lower()
+        if kl in replaced_keywords:
+            continue
+        links.append(
+            {
+                "keyword": keyword,
+                "kl": kl,
+                "url": url,
+                "id": link.get("id"),
+                "pattern": _keyword_pattern(keyword, is_asian),
+            }
+        )
+
+    if not links:
+        return html
+
+    segments = tokenize_html(html)
+    skip_depth = 0
+    result: List[str] = []
+
+    for seg_type, value in segments:
+        if seg_type == "tag":
+            if SKIP_TAG_RE.match(value):
+                skip_depth += 1
+            elif CLOSE_TAG_RE.match(value) and skip_depth > 0:
+                skip_depth -= 1
+            result.append(value)
+            continue
+
+        text = value
+        if skip_depth == 0:
+            for link in links:
+                if link["kl"] in replaced_keywords:
+                    continue
+
+                def _repl(m: "re.Match[str]", link: Dict[str, Any] = link) -> str:
+                    prefix = m.group(1) or ""
+                    class_attr = f' class="seojuice-link {custom_link_class}"' if custom_link_class else ""
+                    cs_attr = f' data-seojuice-cs="{link["id"]}"' if link["id"] is not None else ""
+                    anchor = (
+                        f'<a href="{escape_html(link["url"])}"{class_attr}{cs_attr}>'
+                        f'{escape_html(link["keyword"])}</a>'
+                    )
+                    return prefix + anchor
+
+                text, n = link["pattern"].subn(_repl, text, count=1)
+                if n:
+                    replaced_keywords.add(link["kl"])
+                    if link["id"] is not None:
+                        manifest.cs.append(link["id"])
+        result.append(text)
+
+    return "".join(result)
