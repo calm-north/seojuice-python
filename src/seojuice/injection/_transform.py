@@ -319,3 +319,52 @@ def apply_content_diffs(html: str, diffs: List[Dict[str, Any]], manifest: Manife
             pass  # one bad diff never aborts the page
 
     return html
+
+
+def apply_broken_link_fixes(html: str, fixes: List[Dict[str, Any]]) -> str:
+    if not isinstance(fixes, list) or not fixes:
+        return html
+
+    for fix in fixes:
+        try:
+            tag = (fix.get("tag") or "").lower()
+            attr = (fix.get("attr") or "").lower()
+            old_url = fix.get("broken_url") or fix.get("old_url") or ""
+            new_url = fix.get("new_url") or fix.get("replacement_url") or ""
+            action = "unlink" if fix.get("action") == "unlink" else "replace"
+
+            if not tag or not attr or not old_url:
+                continue
+            if action == "replace" and not new_url:
+                continue
+            if tag not in ("a", "img"):
+                continue
+            if attr not in ("href", "src"):
+                continue
+
+            escaped_old_url = re.escape(old_url)
+
+            if action == "replace":
+                pattern = re.compile(
+                    rf"(<{tag}\b[^>]*\s{attr}=)([\"'])({escaped_old_url})\2([^>]*>)", re.IGNORECASE
+                )
+
+                def _repl(m: "re.Match[str]", new_url: str = new_url) -> str:
+                    before, quote, _old, after = m.group(1), m.group(2), m.group(3), m.group(4)
+                    return f"{before}{quote}{escape_html(new_url)}{quote}{after}"
+
+                html = pattern.sub(_repl, html)
+            else:
+                if tag == "img":
+                    pattern = re.compile(
+                        rf"<img\b[^>]*\s{attr}=[\"']{escaped_old_url}[\"'][^>]*>", re.IGNORECASE
+                    )
+                else:
+                    pattern = re.compile(
+                        rf"<a\b[^>]*\s{attr}=[\"']{escaped_old_url}[\"'][^>]*>[\s\S]*?</a>", re.IGNORECASE
+                    )
+                html = pattern.sub("", html)
+        except Exception:
+            pass  # one bad fix never aborts the page
+
+    return html

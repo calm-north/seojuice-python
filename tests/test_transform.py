@@ -5,6 +5,7 @@ from typing import Any, Dict
 
 from seojuice.injection._transform import (
     Manifest,
+    apply_broken_link_fixes,
     apply_content_diffs,
     escape_html,
     inject_internal_links,
@@ -139,4 +140,59 @@ def test_skips_drifted():
     html = "<p>present</p>"
     assert (
         apply_content_diffs(html, [{"id": 1, "original_text": "missing", "replacement_html": "X"}], Manifest()) == html
+    )
+
+
+# ---------------------------------------------------------------------------
+# apply_broken_link_fixes (Task 6)
+# ---------------------------------------------------------------------------
+
+
+def test_replace_edge_new_url():
+    assert (
+        apply_broken_link_fixes(
+            '<a href="/dead">x</a>',
+            [{"action": "replace", "tag": "a", "attr": "href", "broken_url": "/dead", "new_url": "/live"}],
+        )
+        == '<a href="/live">x</a>'
+    )
+
+
+def test_replace_legacy_replacement_url():
+    assert (
+        apply_broken_link_fixes(
+            '<a href="/dead">x</a>',
+            [
+                {
+                    "action": "replace",
+                    "tag": "a",
+                    "attr": "href",
+                    "broken_url": "/dead",
+                    "new_url": "",
+                    "replacement_url": "/live",
+                }
+            ],
+        )
+        == '<a href="/live">x</a>'
+    )
+
+
+def test_unlink_removes_anchor():
+    assert (
+        apply_broken_link_fixes(
+            'before<a href="/dead">x</a>after',
+            [{"action": "unlink", "tag": "a", "attr": "href", "broken_url": "/dead"}],
+        )
+        == "beforeafter"
+    )
+
+
+def test_does_not_touch_data_href():
+    html = '<a data-href="/dead">x</a>'
+    assert (
+        apply_broken_link_fixes(
+            html,
+            [{"action": "replace", "tag": "a", "attr": "href", "broken_url": "/dead", "new_url": "/live"}],
+        )
+        == html
     )
