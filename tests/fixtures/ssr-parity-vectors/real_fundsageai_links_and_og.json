@@ -1,0 +1,55 @@
+{
+  "name": "real_fundsageai_links_and_og",
+  "input_html": "<html><head></head><body><h1>SWP Calculator</h1><p>Learn how a Systematic Withdrawal Plan works and estimate your monthly income from mutual funds. Our SWP calculator lets you model different annual withdrawal rate assumptions before you commit.</p></body></html>",
+  "payload": {
+    "suggestions": [
+      {
+        "url": "https://www.fundsageai.com/blog/systematic-withdrawal-plan-swp-retirement-india",
+        "keyword": "monthly income from mutual funds",
+        "id": 253679
+      },
+      {
+        "url": "https://www.fundsageai.com/blog/systematic-withdrawal-plan-swp-retirement-india",
+        "keyword": "Systematic Withdrawal Plan",
+        "id": 253664
+      },
+      {
+        "url": "https://www.fundsageai.com/blog/systematic-withdrawal-plan-swp-retirement-india",
+        "keyword": "annual withdrawal rate",
+        "id": 253680
+      },
+      {
+        "url": "https://www.fundsageai.com/calculators",
+        "keyword": "SWP calculator",
+        "id": 253678
+      }
+    ],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "SWP Calculator for Mutual Funds: Sustainable Withdrawals",
+    "h1": "",
+    "og_title": "SWP Calculator for Mutual Funds India | FundSageAI",
+    "og_description": "Plan a sustainable monthly income from mutual funds with the SWP calculator. See how long your corpus lasts, inflation-adjusted withdrawals, and end balance. Get your results today",
+    "og_image": "https://seojuiced.b-cdn.net/seojuice/media/9557efd8-b7f6-4c92-a738-19c82b374318.png",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://www.fundsageai.com/calculators/swp-calculator",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {
+      "enabled": true,
+      "language": "en"
+    }
+  },
+  "expected_html": "<html><head><title data-seojuice=\"title\">SWP Calculator for Mutual Funds: Sustainable Withdrawals</title>\n<meta property=\"og:title\" content=\"SWP Calculator for Mutual Funds India | FundSageAI\" data-seojuice=\"og-title\">\n<meta property=\"og:description\" content=\"Plan a sustainable monthly income from mutual funds with the SWP calculator. See how long your corpus lasts, inflation-adjusted withdrawals, and end balance. Get your results today\" data-seojuice=\"og-description\">\n<meta property=\"og:image\" content=\"https://seojuiced.b-cdn.net/seojuice/media/9557efd8-b7f6-4c92-a738-19c82b374318.png\">\n</head><body><h1>SWP Calculator</h1><p>Learn how a <a href=\"https://www.fundsageai.com/blog/systematic-withdrawal-plan-swp-retirement-india\" data-seojuice-cs=\"253664\">Systematic Withdrawal Plan</a> works and estimate your <a href=\"https://www.fundsageai.com/blog/systematic-withdrawal-plan-swp-retirement-india\" data-seojuice-cs=\"253679\">monthly income from mutual funds</a>. Our <a href=\"https://www.fundsageai.com/calculators\" data-seojuice-cs=\"253678\">SWP calculator</a> lets you model different <a href=\"https://www.fundsageai.com/blog/systematic-withdrawal-plan-swp-retirement-india\" data-seojuice-cs=\"253680\">annual withdrawal rate</a> assumptions before you commit.</p><!-- seojuice: cs=[253679,253664,253680,253678] meta=[title,og-title,og-description] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "REAL payload — captured live from https://smart.seojuice.io/suggestions?url=https://www.fundsageai.com/calculators/swp-calculator (see platform-plugins/sdk-node/tests/fixtures/payloads/real_fundsageai.json). Only input_html is hand-authored (we only have the JSON suggestions endpoint, not the origin page HTML) to exercise the real suggestions/title/og_title/og_description/og_image fields; images/diffs/broken_link_fixes/structured_data were empty in the real payload at capture time, so this vector does not exercise those transforms."
+}

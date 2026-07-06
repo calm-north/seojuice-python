@@ -1,0 +1,43 @@
+{
+  "name": "manifest_comment_combined_mutations",
+  "input_html": "<html><head></head><body><p>Our SWP calculator explained here.</p><img src=\"https://cdn.x/chart.png\" alt=\"x\"></body></html>",
+  "payload": {
+    "suggestions": [
+      {
+        "keyword": "SWP calculator",
+        "url": "/swp",
+        "id": 20
+      }
+    ],
+    "images": [
+      {
+        "url": "https://cdn.x/chart.png",
+        "alt_text": "A detailed chart of results"
+      }
+    ],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "Combined Title",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head><title data-seojuice=\"title\">Combined Title</title>\n</head><body><p>Our <a href=\"/swp\" data-seojuice-cs=\"20\">SWP calculator</a> explained here.</p><img data-seojuice=\"alt\" src=\"https://cdn.x/chart.png\" alt=\"A detailed chart of results\"><!-- seojuice: cs=[20] meta=[title] img=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — a link + a title + an image alt fill all happen in one page; the manifest comment lists cs=[20] meta=[title] img=1 before </body>."
+}

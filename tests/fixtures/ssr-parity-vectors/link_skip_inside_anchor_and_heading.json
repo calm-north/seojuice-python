@@ -1,0 +1,38 @@
+{
+  "name": "link_skip_inside_anchor_and_heading",
+  "input_html": "<html><head></head><body><h1>SWP calculator guide</h1><p>See <a href=\"/other\">SWP calculator</a> link and read about SWP calculator basics.</p></body></html>",
+  "payload": {
+    "suggestions": [
+      {
+        "keyword": "SWP calculator",
+        "url": "/swp",
+        "id": 11
+      }
+    ],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><h1>SWP calculator guide</h1><p>See <a href=\"/other\">SWP calculator</a> link and read about <a href=\"/swp\" data-seojuice-cs=\"11\">SWP calculator</a> basics.</p><!-- seojuice: cs=[11] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — the keyword occurs inside <h1> and inside an existing <a> first; both are skipped (SKIP_TAG_RE) and the plain-text third occurrence is the one that gets linked."
+}

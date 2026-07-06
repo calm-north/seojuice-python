@@ -1,0 +1,43 @@
+{
+  "name": "diff_idempotent_already_applied",
+  "input_html": "<html><head></head><body><p data-seojuice-cs=\"9\">new copy</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [
+      {
+        "id": 9,
+        "selector": "",
+        "semantic": "",
+        "operation": "REWRITE",
+        "original_text": "<p>old copy</p>",
+        "replacement_html": "<p data-seojuice-cs=\"9\">new copy</p>",
+        "order": 0,
+        "batch_id": "b4"
+      }
+    ],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p data-seojuice-cs=\"9\">new copy</p><script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — the page already contains the marked replacement_html and no longer contains original_text; the \"already applied\" guard skips re-applying, so re-running the diff on already-transformed HTML is a true no-op."
+}

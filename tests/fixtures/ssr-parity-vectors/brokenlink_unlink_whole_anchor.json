@@ -1,0 +1,42 @@
+{
+  "name": "brokenlink_unlink_whole_anchor",
+  "input_html": "<html><head></head><body><p>before <a href=\"/dead-page3\">bad link text</a> after</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [
+      {
+        "broken_url": "/dead-page3",
+        "action": "unlink",
+        "replacement_url": "",
+        "anchor_text": "bad link text",
+        "attr": "href",
+        "tag": "a",
+        "new_url": ""
+      }
+    ],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>before  after</p><script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — unlink removes the entire <a>...</a> element (including its inner text), leaving no trace, matching the WordPress plugin's unlink semantics."
+}

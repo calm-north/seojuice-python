@@ -1,0 +1,42 @@
+{
+  "name": "brokenlink_legacy_replacement_url_worker_noop",
+  "input_html": "<html><head></head><body><p>See our <a href=\"/dead-page2\">guide</a> for more.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [
+      {
+        "broken_url": "/dead-page2",
+        "action": "replace",
+        "replacement_url": "/live-page2",
+        "anchor_text": "guide",
+        "attr": "href",
+        "tag": "a",
+        "new_url": ""
+      }
+    ],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>See our <a href=\"/dead-page2\">guide</a> for more.</p><script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "Documents a real Worker gap (not a normal case): applyBrokenLinkFixes in seojuice-ssr.js only reads fix.new_url ('const newUrl = fix.new_url || \"\";') and never falls back to fix.replacement_url. When new_url is empty (the legacy field-change shape) the fix is silently skipped ('action === replace && !newUrl -> continue') and the broken link is left untouched. expected_html therefore equals input_html unchanged. Per the umbrella plan (spec delta, GENERAL plan Global Constraints (a)), each SDK is expected to read `new_url || replacement_url` — that fallback is a deliberate SDK-side delta from the raw Worker and is verified by each SDK's own unit tests (see node sub-plan Task 6), NOT by this shared vector. This vector exists to pin the Worker's current (gap) behavior so nobody accidentally 'fixes' an SDK back to Worker-for-Worker parity here."
+}

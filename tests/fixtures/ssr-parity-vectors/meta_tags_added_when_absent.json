@@ -1,0 +1,32 @@
+{
+  "name": "meta_tags_added_when_absent",
+  "input_html": "<html><head></head><body><p>Body content long enough to comfortably survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "New Title",
+    "h1": "",
+    "og_title": "OG Title",
+    "og_description": "OG Desc",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "New description",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head><title data-seojuice=\"title\">New Title</title>\n<meta name=\"description\" content=\"New description\" data-seojuice=\"meta-description\">\n<meta property=\"og:title\" content=\"OG Title\" data-seojuice=\"og-title\">\n<meta property=\"og:description\" content=\"OG Desc\" data-seojuice=\"og-description\">\n</head><body><p>Body content long enough to comfortably survive the fail-open length-ratio check here.</p><!-- seojuice: meta=[title,meta-description,og-title,og-description] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — title/meta description/OG title/OG description are all injected into <head> with data-seojuice markers when absent."
+}

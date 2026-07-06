@@ -1,0 +1,38 @@
+{
+  "name": "link_first_occurrence_only",
+  "input_html": "<html><head></head><body><p>Our SWP calculator is great. Try the SWP calculator again.</p></body></html>",
+  "payload": {
+    "suggestions": [
+      {
+        "keyword": "SWP calculator",
+        "url": "/swp",
+        "id": 10
+      }
+    ],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>Our <a href=\"/swp\" data-seojuice-cs=\"10\">SWP calculator</a> is great. Try the SWP calculator again.</p><!-- seojuice: cs=[10] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — only the first occurrence of a keyword is wrapped in <a>; later occurrences of the same text are left alone."
+}

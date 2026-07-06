@@ -1,0 +1,43 @@
+{
+  "name": "diff_skip_ambiguous",
+  "input_html": "<html><head></head><body><p>dup text block</p><p>dup text block</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [
+      {
+        "id": 1,
+        "selector": "",
+        "semantic": "",
+        "operation": "REWRITE",
+        "original_text": "dup text block",
+        "replacement_html": "X replaced",
+        "order": 0,
+        "batch_id": "b2"
+      }
+    ],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>dup text block</p><p>dup text block</p><script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — original_text occurs twice in the page; the diff is skipped entirely (ambiguity guard) rather than risk replacing the wrong occurrence."
+}

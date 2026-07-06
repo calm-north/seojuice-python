@@ -1,0 +1,37 @@
+{
+  "name": "images_fill_short_alt",
+  "input_html": "<html><head></head><body><p>text</p><img src=\"https://cdn.x/a.png?v=2\" alt=\"x\"></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [
+      {
+        "url": "https://cdn.x/a.png",
+        "alt_text": "A nice descriptive chart"
+      }
+    ],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>text</p><img data-seojuice=\"alt\" src=\"https://cdn.x/a.png?v=2\" alt=\"A nice descriptive chart\"><!-- seojuice: img=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — existing alt is 1 char (< 5), so it is replaced and the <img> gets a data-seojuice=\"alt\" marker; matched by normalized URL (query string + scheme stripped)."
+}

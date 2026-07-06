@@ -1,0 +1,37 @@
+{
+  "name": "images_keep_good_alt",
+  "input_html": "<html><head></head><body><p>text</p><img src=\"https://cdn.x/a.png\" alt=\"already meaningful alt text\"></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [
+      {
+        "url": "https://cdn.x/a.png",
+        "alt_text": "A nice descriptive chart"
+      }
+    ],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>text</p><img src=\"https://cdn.x/a.png\" alt=\"already meaningful alt text\"><script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — existing alt is >= 5 chars, so it is left completely untouched (no marker, no replacement)."
+}

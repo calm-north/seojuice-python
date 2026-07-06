@@ -1,0 +1,42 @@
+{
+  "name": "brokenlink_replace_new_url_edge",
+  "input_html": "<html><head></head><body><p>See our <a href=\"/dead-page\">guide</a> for more.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [
+      {
+        "broken_url": "/dead-page",
+        "action": "replace",
+        "replacement_url": "",
+        "anchor_text": "guide",
+        "attr": "href",
+        "tag": "a",
+        "new_url": "/live-page"
+      }
+    ],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>See our <a href=\"/live-page\">guide</a> for more.</p><script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — edge-delivery shape: new_url is populated directly; the Worker rewrites the href in place."
+}

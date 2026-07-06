@@ -1,0 +1,32 @@
+{
+  "name": "failopen_empty_payload_ssr_flag_only",
+  "input_html": "<html><head></head><body><p>Plain content, nothing actionable.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>Plain content, nothing actionable.</p><script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — an all-empty/default payload triggers no meta/image/link/diff/h1/broken-link mutation and no manifest comment (manifest has no parts), so this is a \"no-op\" in the sense that none of the content transforms fire. addSsrFlag still unconditionally appends <script>window.seojuiceSSR = true;</script> before </body> regardless of payload content — that one addition is expected, not a bug."
+}

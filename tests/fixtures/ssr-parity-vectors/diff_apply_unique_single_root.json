@@ -1,0 +1,43 @@
+{
+  "name": "diff_apply_unique_single_root",
+  "input_html": "<html><head></head><body><div><p>old widget copy here</p></div></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [
+      {
+        "id": 9,
+        "selector": "body > div > p",
+        "semantic": "",
+        "operation": "REWRITE",
+        "original_text": "<p>old widget copy here</p>",
+        "replacement_html": "<p>new premium widget copy here</p>",
+        "order": 0,
+        "batch_id": "b1"
+      }
+    ],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><div><p data-seojuice-cs=\"9\">new premium widget copy here</p></div><!-- seojuice: cs=[9] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — unique substring match; replacement_html is single-root (<p>...</p>) so it gets a data-seojuice-cs marker on the opening tag."
+}

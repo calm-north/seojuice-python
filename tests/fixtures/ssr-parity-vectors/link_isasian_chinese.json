@@ -1,0 +1,38 @@
+{
+  "name": "link_isasian_chinese",
+  "input_html": "<html><head></head><body><p>我想了解投资基金的收益情况。</p></body></html>",
+  "payload": {
+    "suggestions": [
+      {
+        "keyword": "投资基金",
+        "url": "/funds",
+        "id": 501
+      }
+    ],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "投资指南",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": true,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head><title data-seojuice=\"title\">投资指南</title>\n</head><body><p>我想了解<a href=\"/funds\" data-seojuice-cs=\"501\">投资基金</a>的收益情况。</p><!-- seojuice: cs=[501] meta=[title] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "isAsian link injection with real Chinese text. The keyword 投资基金 appears between CJK characters and must be wrapped in <a href='/funds' data-seojuice-cs='501'>. Verifies the corrected \\p{Script=Han}/\\p{Script=Hiragana}/\\p{Script=Katakana} regex works (the old bare \\p{Han} form threw a SyntaxError and fail-opened the whole pipeline). Title is also injected."
+}

@@ -1,0 +1,32 @@
+{
+  "name": "structured_data_double_decode",
+  "input_html": "<html><head></head><body><p>content</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "\"{\\\"@context\\\":\\\"https://schema.org\\\",\\\"@type\\\":\\\"Article\\\",\\\"headline\\\":\\\"Test\\\"}\"",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head><script type=\"application/ld+json\" data-seojuice=\"schema\">{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Test\"}</script>\n</head><body><p>content</p><!-- seojuice: schema=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — structured_data is stored double-JSON-encoded (json.dumps(json.dumps(obj)) upstream); the Worker double-decodes it (JSON.parse twice) into a valid application/ld+json script tag."
+}
