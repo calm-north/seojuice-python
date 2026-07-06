@@ -63,58 +63,45 @@ _HEAD_CLOSE_RE = re.compile(r"</head>", re.IGNORECASE)
 def replace_meta_tags(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
     title = data.get("title")
     if title and not re.search(r"<title[\s>]", html, re.IGNORECASE):
-        html = _HEAD_CLOSE_RE.sub(
-            f'<title data-seojuice="title">{escape_html(title)}</title>\n</head>', html, count=1
-        )
+        injection = f'<title data-seojuice="title">{escape_html(title)}</title>\n'
+        html = _HEAD_CLOSE_RE.sub(lambda m, injection=injection: injection + m.group(0), html, count=1)
         manifest.meta.append("title")
 
     meta_description = data.get("meta_description")
     if meta_description and not re.search(r'<meta\s+name=["\']description["\']', html, re.IGNORECASE):
-        html = _HEAD_CLOSE_RE.sub(
-            f'<meta name="description" content="{escape_html(meta_description)}" data-seojuice="meta-description">\n</head>',
-            html,
-            count=1,
-        )
+        injection = f'<meta name="description" content="{escape_html(meta_description)}" data-seojuice="meta-description">\n'
+        html = _HEAD_CLOSE_RE.sub(lambda m, injection=injection: injection + m.group(0), html, count=1)
         manifest.meta.append("meta-description")
 
     meta_keywords = data.get("meta_keywords")
     if meta_keywords and not re.search(r'<meta\s+name=["\']keywords["\']', html, re.IGNORECASE):
-        html = _HEAD_CLOSE_RE.sub(
-            f'<meta name="keywords" content="{escape_html(meta_keywords)}" data-seojuice="meta-keywords">\n</head>',
-            html,
-            count=1,
-        )
+        injection = f'<meta name="keywords" content="{escape_html(meta_keywords)}" data-seojuice="meta-keywords">\n'
+        html = _HEAD_CLOSE_RE.sub(lambda m, injection=injection: injection + m.group(0), html, count=1)
         manifest.meta.append("meta-keywords")
 
     og_title = data.get("og_title")
     if og_title and not re.search(r'<meta\s+property=["\']og:title["\']', html, re.IGNORECASE):
-        html = _HEAD_CLOSE_RE.sub(
-            f'<meta property="og:title" content="{escape_html(og_title)}" data-seojuice="og-title">\n</head>',
-            html,
-            count=1,
-        )
+        injection = f'<meta property="og:title" content="{escape_html(og_title)}" data-seojuice="og-title">\n'
+        html = _HEAD_CLOSE_RE.sub(lambda m, injection=injection: injection + m.group(0), html, count=1)
         manifest.meta.append("og-title")
 
     og_description = data.get("og_description")
     if og_description and not re.search(r'<meta\s+property=["\']og:description["\']', html, re.IGNORECASE):
-        html = _HEAD_CLOSE_RE.sub(
-            f'<meta property="og:description" content="{escape_html(og_description)}" data-seojuice="og-description">\n</head>',
-            html,
-            count=1,
+        injection = (
+            f'<meta property="og:description" content="{escape_html(og_description)}" data-seojuice="og-description">\n'
         )
+        html = _HEAD_CLOSE_RE.sub(lambda m, injection=injection: injection + m.group(0), html, count=1)
         manifest.meta.append("og-description")
 
     og_url = data.get("og_url")
     if og_url and not re.search(r'<meta\s+property=["\']og:url["\']', html, re.IGNORECASE):
-        html = _HEAD_CLOSE_RE.sub(
-            f'<meta property="og:url" content="{escape_html(og_url)}">\n</head>', html, count=1
-        )
+        injection = f'<meta property="og:url" content="{escape_html(og_url)}">\n'
+        html = _HEAD_CLOSE_RE.sub(lambda m, injection=injection: injection + m.group(0), html, count=1)
 
     og_image = data.get("og_image")
     if og_image and not re.search(r'<meta\s+property=["\']og:image["\']', html, re.IGNORECASE):
-        html = _HEAD_CLOSE_RE.sub(
-            f'<meta property="og:image" content="{escape_html(og_image)}">\n</head>', html, count=1
-        )
+        injection = f'<meta property="og:image" content="{escape_html(og_image)}">\n'
+        html = _HEAD_CLOSE_RE.sub(lambda m, injection=injection: injection + m.group(0), html, count=1)
 
     raw = data.get("structured_data")
     if raw and raw != "null":
@@ -126,7 +113,9 @@ def replace_meta_tags(html: str, data: Dict[str, Any], manifest: Manifest) -> st
                     '<script type="application/ld+json" data-seojuice="schema">'
                     f"{json.dumps(obj, separators=(',', ':'))}</script>"
                 )
-                html = re.sub(r"</head>", tag + "\n</head>", html, count=1, flags=re.IGNORECASE)
+                html = re.sub(
+                    r"</head>", lambda m, tag=tag: tag + "\n" + m.group(0), html, count=1, flags=re.IGNORECASE
+                )
                 manifest.schema = 1
         except (ValueError, TypeError):
             pass
@@ -189,7 +178,7 @@ def replace_images(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
         manifest.img += 1
 
         if alt_match:
-            replaced = _IMG_ALT_RE.sub(f'alt="{alt_text}"', match, count=1)
+            replaced = _IMG_ALT_RE.sub(lambda m, alt_text=alt_text: f'alt="{alt_text}"', match, count=1)
             if "data-seojuice=" not in replaced:
                 replaced = replaced.replace("<img", '<img data-seojuice="alt"', 1)
             return replaced
@@ -205,8 +194,8 @@ def _keyword_pattern(keyword: str, is_asian: bool) -> "re.Pattern[str]":
     kw = re.escape(keyword)
     if is_asian:
         return re.compile(rf"(^|[{_ASIAN}])({kw})(?=[{_ASIAN}.!?)\]/]|$)")
-    pre = r"(^|[\s([{<>\"'«‹„/:\-])"
-    post = r"(?=$|[\s)\]}>\"'»›/.,:;!?\-])"
+    pre = r"(^|[\s([{<>\"'«‹„/:|\-])"
+    post = r"(?=$|[\s)\]}>\"'»›/.,:;!?|\-])"
     return re.compile(pre + rf"({kw})" + post, re.IGNORECASE)
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Any, Dict
 
 from seojuice.injection._transform import (
@@ -80,6 +81,29 @@ def test_h1_replaced_and_marked():
     assert replace_h1("<h1 class='t'>old</h1>", _data(h1="New"), Manifest()) == '<h1 class=\'t\' data-seojuice="h1">New</h1>'
 
 
+def test_structured_data_with_cjk_and_accents_is_injected_not_reverted():
+    # json.dumps(ensure_ascii=True) turns CJK/accents into \uXXXX escapes. A naive
+    # re.sub(pattern, replacement_str, ...) interprets those backslash escapes
+    # (\u, \1, \g<...>) as regex replacement syntax and raises re.error, which the
+    # orchestrator's broad except then treats as a total-page-revert (zero injection).
+    # This must inject cleanly instead of raising.
+    inner = {"@context": "https://schema.org", "@type": "Article", "name": "投资基金指南", "description": "café — “deal”"}
+    html = "<head></head>"
+    out = replace_meta_tags(html, _data(structured_data=json.dumps(json.dumps(inner))), Manifest())
+    assert out != html
+    match = re.search(r'<script type="application/ld\+json" data-seojuice="schema">(.*?)</script>', out)
+    assert match is not None
+    assert json.loads(match.group(1)) == inner
+
+
+def test_title_with_literal_backslash_injected_verbatim():
+    # A title containing a literal "\1"-looking sequence must not be treated as a
+    # regex backreference when inserted via re.sub.
+    title = r"Foo\1Bar"
+    out = replace_meta_tags("<head></head>", _data(title=title), Manifest())
+    assert f'<title data-seojuice="title">{escape_html(title)}</title>' in out
+
+
 # ---------------------------------------------------------------------------
 # replace_images (Task 3)
 # ---------------------------------------------------------------------------
@@ -95,6 +119,16 @@ def test_keeps_good_alt():
     data = {**_data(), "images": [{"url": "https://cdn.x/a.png", "alt_text": "A nice chart"}]}
     html = '<img src="https://cdn.x/a.png" alt="already meaningful">'
     assert replace_images(html, data, Manifest()) == html
+
+
+def test_alt_text_with_backslash_and_dollar_applied_literally():
+    # Alt text containing a backslash sequence that looks like a regex escape
+    # (\U, \1, ...) must be inserted literally, not parsed by re.sub.
+    alt_text = r"C:\Users\$1 report"
+    data = {**_data(), "images": [{"url": "https://cdn.x/a.png", "alt_text": alt_text}]}
+    html = '<img src="https://cdn.x/a.png" alt="x">'
+    out = replace_images(html, data, Manifest())
+    assert f'alt="{escape_html(alt_text)}"' in out
 
 
 # ---------------------------------------------------------------------------
