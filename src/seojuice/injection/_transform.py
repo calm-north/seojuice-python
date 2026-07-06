@@ -278,3 +278,44 @@ def inject_internal_links(html: str, data: Dict[str, Any], manifest: Manifest) -
         result.append(text)
 
     return "".join(result)
+
+
+_SINGLE_ROOT_RE = re.compile(r"^<(\w+)(\s[^>]*)?>")
+
+
+def apply_content_diffs(html: str, diffs: List[Dict[str, Any]], manifest: Manifest) -> str:
+    if not isinstance(diffs, list):
+        return html
+
+    for d in diffs:
+        try:
+            original = d.get("original_text") or ""
+            replacement = d.get("replacement_html") or ""
+            if not original or not replacement:
+                continue
+            if replacement in html and original not in html:
+                continue  # already applied
+
+            idx = html.find(original)
+            if idx == -1:
+                continue  # DOM drift → skip
+            if html.find(original, idx + 1) != -1:
+                continue  # ambiguous → skip
+
+            diff_id = d.get("id")
+            if diff_id is not None:
+                root_match = _SINGLE_ROOT_RE.match(replacement)
+                if root_match:
+                    marker_str = f'data-seojuice-cs="{diff_id}"'
+                    if marker_str not in replacement:
+                        open_tag = root_match.group(0)
+                        marked_open_tag = open_tag[:-1] + f" {marker_str}>"
+                        replacement = marked_open_tag + replacement[len(open_tag) :]
+                    if f'data-seojuice-cs="{diff_id}"' not in html:
+                        manifest.cs.append(diff_id)
+
+            html = html[:idx] + replacement + html[idx + len(original) :]
+        except Exception:
+            pass  # one bad diff never aborts the page
+
+    return html

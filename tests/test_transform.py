@@ -5,6 +5,7 @@ from typing import Any, Dict
 
 from seojuice.injection._transform import (
     Manifest,
+    apply_content_diffs,
     escape_html,
     inject_internal_links,
     normalize_image_url,
@@ -113,3 +114,29 @@ def test_asian_boundary_links_between_han():
     data = {**_data(), "isAsian": True, "suggestions": [{"keyword": "投资", "url": "/x", "id": 2}]}
     out = inject_internal_links("<p>我要投资基金</p>", data, Manifest())
     assert '<a href="/x" data-seojuice-cs="2">投资</a>' in out
+
+
+# ---------------------------------------------------------------------------
+# apply_content_diffs (Task 5)
+# ---------------------------------------------------------------------------
+
+
+def test_applies_unique_diff_with_marker():
+    out = apply_content_diffs(
+        "<div><p>old copy</p></div>",
+        [{"id": 9, "original_text": "<p>old copy</p>", "replacement_html": "<p>new copy</p>"}],
+        Manifest(),
+    )
+    assert out == '<div><p data-seojuice-cs="9">new copy</p></div>'
+
+
+def test_skips_ambiguous():
+    html = "<p>dup</p><p>dup</p>"
+    assert apply_content_diffs(html, [{"id": 1, "original_text": "dup", "replacement_html": "X"}], Manifest()) == html
+
+
+def test_skips_drifted():
+    html = "<p>present</p>"
+    assert (
+        apply_content_diffs(html, [{"id": 1, "original_text": "missing", "replacement_html": "X"}], Manifest()) == html
+    )
