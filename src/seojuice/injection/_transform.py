@@ -210,6 +210,10 @@ def _keyword_pattern(keyword: str, is_asian: bool) -> "re.Pattern[str]":
     return re.compile(pre + rf"({kw})" + post, re.IGNORECASE)
 
 
+BLOCK_CONTENT_RE = re.compile(r"^<(p|li|span|div|td|blockquote|dd|figcaption)[\s>]", re.IGNORECASE)
+BLOCK_CONTENT_CLOSE_RE = re.compile(r"^</(p|li|span|div|td|blockquote|dd|figcaption)>", re.IGNORECASE)
+
+
 def inject_internal_links(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
     suggestions = data.get("suggestions")
     if not isinstance(suggestions, list) or not suggestions:
@@ -217,6 +221,7 @@ def inject_internal_links(html: str, data: Dict[str, Any], manifest: Manifest) -
 
     is_asian = bool(data.get("isAsian"))
     custom_link_class = data.get("custom_link_class") or ""
+    content_only = bool(data.get("insert_into_content_only"))
 
     replaced_keywords: set[str] = set()
     links: List[Dict[str, Any]] = []
@@ -243,6 +248,7 @@ def inject_internal_links(html: str, data: Dict[str, Any], manifest: Manifest) -
 
     segments = tokenize_html(html)
     skip_depth = 0
+    block_depth = 0
     result: List[str] = []
 
     for seg_type, value in segments:
@@ -251,11 +257,16 @@ def inject_internal_links(html: str, data: Dict[str, Any], manifest: Manifest) -
                 skip_depth += 1
             elif CLOSE_TAG_RE.match(value) and skip_depth > 0:
                 skip_depth -= 1
+            if BLOCK_CONTENT_RE.match(value):
+                block_depth += 1
+            elif BLOCK_CONTENT_CLOSE_RE.match(value) and block_depth > 0:
+                block_depth -= 1
             result.append(value)
             continue
 
         text = value
-        if skip_depth == 0:
+        can_inject = skip_depth == 0 and (not content_only or block_depth > 0)
+        if can_inject:
             for link in links:
                 if link["kl"] in replaced_keywords:
                     continue

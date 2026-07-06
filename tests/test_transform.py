@@ -238,3 +238,19 @@ def test_accepts_broken_link_fixes_only():
         )
         is True
     )
+
+
+# ---------------------------------------------------------------------------
+# content-area targeting (Task 10 / C2)
+# ---------------------------------------------------------------------------
+
+
+def test_content_only_links_in_p_not_nav():
+    data = {**_data(), "insert_into_content_only": True, "suggestions": [{"keyword": "SWP", "url": "/swp", "id": 1}]}
+    out = inject_internal_links("<nav>SWP</nav><p>SWP here</p>", data, Manifest())
+    assert out == '<nav>SWP</nav><p><a href="/swp" data-seojuice-cs="1">SWP</a> here</p>'
+
+
+def test_broad_mode_links_in_nav():
+    data = {**_data(), "insert_into_content_only": False, "suggestions": [{"keyword": "SWP", "url": "/swp", "id": 1}]}
+    assert '<a href="/swp"' in inject_internal_links("<nav>SWP</nav>", data, Manifest())
