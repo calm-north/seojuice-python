@@ -8,6 +8,7 @@ from seojuice.injection._transform import (
     escape_html,
     normalize_image_url,
     replace_h1,
+    replace_images,
     replace_meta_tags,
     tokenize_html,
 )
@@ -71,3 +72,20 @@ def test_structured_data_double_decoded():
 
 def test_h1_replaced_and_marked():
     assert replace_h1("<h1 class='t'>old</h1>", _data(h1="New"), Manifest()) == '<h1 class=\'t\' data-seojuice="h1">New</h1>'
+
+
+# ---------------------------------------------------------------------------
+# replace_images (Task 3)
+# ---------------------------------------------------------------------------
+
+
+def test_fills_empty_alt_by_normalized_url():
+    data = {**_data(), "images": [{"url": "https://cdn.x/a.png", "alt_text": "A nice chart"}]}
+    out = replace_images('<img src="https://cdn.x/a.png?v=2">', data, Manifest())
+    assert out == '<img alt="A nice chart" data-seojuice="alt" src="https://cdn.x/a.png?v=2">'
+
+
+def test_keeps_good_alt():
+    data = {**_data(), "images": [{"url": "https://cdn.x/a.png", "alt_text": "A nice chart"}]}
+    html = '<img src="https://cdn.x/a.png" alt="already meaningful">'
+    assert replace_images(html, data, Manifest()) == html

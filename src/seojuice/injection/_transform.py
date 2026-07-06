@@ -148,3 +148,51 @@ def replace_h1(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
         return marked_open + escape_html(h1) + close_tag
 
     return re.sub(r"(<h1[^>]*>)([\s\S]*?)(</h1>)", _repl, html, count=1, flags=re.IGNORECASE)
+
+
+_IMG_RE = re.compile(r"<img([^>]+)>", re.IGNORECASE)
+_IMG_SRC_RE = re.compile(r'(?:src|data-src)=["\']([^"\']+)["\']')
+_IMG_ALT_RE = re.compile(r'alt=["\']([^"\']*)["\']')
+
+
+def replace_images(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
+    images = data.get("images")
+    if not isinstance(images, list):
+        return html
+
+    image_map: Dict[str, str] = {}
+    for img in images:
+        url = img.get("url")
+        alt_text = img.get("alt_text")
+        if url and alt_text:
+            image_map[normalize_image_url(url)] = alt_text
+
+    if not image_map:
+        return html
+
+    def _repl(m: "re.Match[str]") -> str:
+        match, attributes = m.group(0), m.group(1)
+        src_match = _IMG_SRC_RE.search(attributes)
+        if not src_match:
+            return match
+
+        normalized_src = normalize_image_url(src_match.group(1))
+        if normalized_src not in image_map:
+            return match
+
+        alt_match = _IMG_ALT_RE.search(match)
+        existing_alt = alt_match.group(1) if alt_match else ""
+        if existing_alt and len(existing_alt) >= 5:
+            return match
+
+        alt_text = escape_html(image_map[normalized_src])
+        manifest.img += 1
+
+        if alt_match:
+            replaced = _IMG_ALT_RE.sub(f'alt="{alt_text}"', match, count=1)
+            if "data-seojuice=" not in replaced:
+                replaced = replaced.replace("<img", '<img data-seojuice="alt"', 1)
+            return replaced
+        return match.replace("<img", f'<img alt="{alt_text}" data-seojuice="alt"', 1)
+
+    return _IMG_RE.sub(_repl, html)
