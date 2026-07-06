@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
-from typing import List, Tuple
+from typing import Any, Dict, List, Tuple
 
 
 @dataclass
@@ -55,3 +56,95 @@ def tokenize_html(html: str) -> List[Tuple[str, str]]:
 
 SKIP_TAG_RE = re.compile(r"^<(a|script|style|title|h[1-6])[\s/>]", re.IGNORECASE)
 CLOSE_TAG_RE = re.compile(r"^</(a|script|style|title|h[1-6])>", re.IGNORECASE)
+
+_HEAD_CLOSE_RE = re.compile(r"</head>", re.IGNORECASE)
+
+
+def replace_meta_tags(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
+    title = data.get("title")
+    if title and not re.search(r"<title[\s>]", html, re.IGNORECASE):
+        html = _HEAD_CLOSE_RE.sub(
+            f'<title data-seojuice="title">{escape_html(title)}</title>\n</head>', html, count=1
+        )
+        manifest.meta.append("title")
+
+    meta_description = data.get("meta_description")
+    if meta_description and not re.search(r'<meta\s+name=["\']description["\']', html, re.IGNORECASE):
+        html = _HEAD_CLOSE_RE.sub(
+            f'<meta name="description" content="{escape_html(meta_description)}" data-seojuice="meta-description">\n</head>',
+            html,
+            count=1,
+        )
+        manifest.meta.append("meta-description")
+
+    meta_keywords = data.get("meta_keywords")
+    if meta_keywords and not re.search(r'<meta\s+name=["\']keywords["\']', html, re.IGNORECASE):
+        html = _HEAD_CLOSE_RE.sub(
+            f'<meta name="keywords" content="{escape_html(meta_keywords)}" data-seojuice="meta-keywords">\n</head>',
+            html,
+            count=1,
+        )
+        manifest.meta.append("meta-keywords")
+
+    og_title = data.get("og_title")
+    if og_title and not re.search(r'<meta\s+property=["\']og:title["\']', html, re.IGNORECASE):
+        html = _HEAD_CLOSE_RE.sub(
+            f'<meta property="og:title" content="{escape_html(og_title)}" data-seojuice="og-title">\n</head>',
+            html,
+            count=1,
+        )
+        manifest.meta.append("og-title")
+
+    og_description = data.get("og_description")
+    if og_description and not re.search(r'<meta\s+property=["\']og:description["\']', html, re.IGNORECASE):
+        html = _HEAD_CLOSE_RE.sub(
+            f'<meta property="og:description" content="{escape_html(og_description)}" data-seojuice="og-description">\n</head>',
+            html,
+            count=1,
+        )
+        manifest.meta.append("og-description")
+
+    og_url = data.get("og_url")
+    if og_url and not re.search(r'<meta\s+property=["\']og:url["\']', html, re.IGNORECASE):
+        html = _HEAD_CLOSE_RE.sub(
+            f'<meta property="og:url" content="{escape_html(og_url)}">\n</head>', html, count=1
+        )
+
+    og_image = data.get("og_image")
+    if og_image and not re.search(r'<meta\s+property=["\']og:image["\']', html, re.IGNORECASE):
+        html = _HEAD_CLOSE_RE.sub(
+            f'<meta property="og:image" content="{escape_html(og_image)}">\n</head>', html, count=1
+        )
+
+    raw = data.get("structured_data")
+    if raw and raw != "null":
+        try:
+            inner = json.loads(raw)
+            obj = json.loads(inner)
+            if not re.search(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>', html, re.IGNORECASE):
+                tag = (
+                    '<script type="application/ld+json" data-seojuice="schema">'
+                    f"{json.dumps(obj, separators=(',', ':'))}</script>"
+                )
+                html = re.sub(r"</head>", tag + "\n</head>", html, count=1, flags=re.IGNORECASE)
+                manifest.schema = 1
+        except (ValueError, TypeError):
+            pass
+
+    return html
+
+
+def replace_h1(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
+    h1 = data.get("h1")
+    if not h1:
+        return html
+
+    def _repl(m: "re.Match[str]") -> str:
+        open_tag, close_tag = m.group(1), m.group(3)
+        marked_open = open_tag
+        if "data-seojuice=" not in marked_open:
+            marked_open = re.sub(r">$", ' data-seojuice="h1">', marked_open)
+        manifest.h1 = 1
+        return marked_open + escape_html(h1) + close_tag
+
+    return re.sub(r"(<h1[^>]*>)([\s\S]*?)(</h1>)", _repl, html, count=1, flags=re.IGNORECASE)

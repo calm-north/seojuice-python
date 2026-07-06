@@ -1,6 +1,40 @@
 from __future__ import annotations
 
-from seojuice.injection._transform import escape_html, normalize_image_url, tokenize_html
+import json
+from typing import Any, Dict
+
+from seojuice.injection._transform import (
+    Manifest,
+    escape_html,
+    normalize_image_url,
+    replace_h1,
+    replace_meta_tags,
+    tokenize_html,
+)
+
+
+def _data(**kw: Any) -> Dict[str, Any]:
+    base: Dict[str, Any] = {
+        "suggestions": [],
+        "images": [],
+        "diffs": [],
+        "broken_link_fixes": [],
+        "title": "",
+        "meta_description": "",
+        "meta_keywords": "",
+        "og_title": "",
+        "og_description": "",
+        "og_url": "",
+        "og_image": "",
+        "structured_data": "",
+        "h1": "",
+        "isAsian": False,
+        "custom_link_class": "",
+        "insert_into_content_only": False,
+        "errors": [],
+    }
+    base.update(kw)
+    return base
 
 
 def test_escape_html_uses_numeric_apostrophe():
@@ -14,3 +48,26 @@ def test_normalize_image_url_strips_scheme_and_query():
 
 def test_tokenize_html_splits_text_and_tags():
     assert tokenize_html("a<b>c</b>") == [("text", "a"), ("tag", "<b>"), ("text", "c"), ("tag", "</b>")]
+
+
+# ---------------------------------------------------------------------------
+# replace_meta_tags / replace_h1 (Task 2)
+# ---------------------------------------------------------------------------
+
+
+def test_title_added_only_when_absent():
+    assert '<title data-seojuice="title">Hi</title>' in replace_meta_tags("<head></head>", _data(title="Hi"), Manifest())
+    assert "<title>X</title>" in replace_meta_tags("<head><title>X</title></head>", _data(title="Hi"), Manifest())
+
+
+def test_structured_data_double_decoded():
+    inner = {"@context": "https://schema.org", "@type": "Article"}
+    out = replace_meta_tags("<head></head>", _data(structured_data=json.dumps(json.dumps(inner))), Manifest())
+    assert (
+        '<script type="application/ld+json" data-seojuice="schema">{"@context":"https://schema.org","@type":"Article"}</script>'
+        in out
+    )
+
+
+def test_h1_replaced_and_marked():
+    assert replace_h1("<h1 class='t'>old</h1>", _data(h1="New"), Manifest()) == '<h1 class=\'t\' data-seojuice="h1">New</h1>'
