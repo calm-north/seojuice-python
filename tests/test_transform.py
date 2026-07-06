@@ -77,6 +77,25 @@ def test_structured_data_double_decoded():
     )
 
 
+def test_structured_data_single_decoded():
+    # M1 — the real /suggestions payload shape: build_page_suggestions_payload
+    # calls json.dumps(dict) once, so structured_data is single-encoded. Must
+    # still inject, not silently skip (bug A).
+    inner = {"@context": "https://schema.org", "@type": "Article"}
+    out = replace_meta_tags("<head></head>", _data(structured_data=json.dumps(inner)), Manifest())
+    assert (
+        '<script type="application/ld+json" data-seojuice="schema">{"@context":"https://schema.org","@type":"Article"}</script>'
+        in out
+    )
+
+
+def test_structured_data_malformed_skips_without_raising():
+    html = "<head></head>"
+    out = replace_meta_tags(html, _data(structured_data="not valid json {{{"), Manifest())
+    assert out == html
+    assert "application/ld+json" not in out
+
+
 def test_h1_replaced_and_marked():
     assert replace_h1("<h1 class='t'>old</h1>", _data(h1="New"), Manifest()) == '<h1 class=\'t\' data-seojuice="h1">New</h1>'
 
@@ -154,6 +173,14 @@ def test_asian_boundary_links_between_han():
     assert '<a href="/x" data-seojuice-cs="2">投资</a>' in out
 
 
+def test_asian_link_before_full_width_sentence_terminator():
+    # bug B — a keyword ending a Japanese sentence (投資信託。) must still link;
+    # the lookahead must accept full-width 。 (and 、！？）」』), not just ASCII.
+    data = {**_data(), "isAsian": True, "suggestions": [{"keyword": "投資信託", "url": "/toushin", "id": 777}]}
+    out = inject_internal_links("<p>私は投資信託。詳しく学びます。</p>", data, Manifest())
+    assert out == '<p>私は<a href="/toushin" data-seojuice-cs="777">投資信託</a>。詳しく学びます。</p>'
+
+
 # ---------------------------------------------------------------------------
 # apply_content_diffs (Task 5)
 # ---------------------------------------------------------------------------
@@ -177,6 +204,32 @@ def test_skips_drifted():
     html = "<p>present</p>"
     assert (
         apply_content_diffs(html, [{"id": 1, "original_text": "missing", "replacement_html": "X"}], Manifest()) == html
+    )
+
+
+def test_diff_applies_to_body_ignoring_script_duplicate():
+    # bug C — the target text also appears inside a <script> (e.g. Next.js
+    # App Router's __next_f hydration payload); that duplicate must not block
+    # the visible-body replacement.
+    html = '<body><p>Old paragraph text.</p><script>window.__d="Old paragraph text.";</script></body>'
+    out = apply_content_diffs(
+        html,
+        [{"id": 21, "original_text": "Old paragraph text.", "replacement_html": "<strong>New paragraph text.</strong>"}],
+        Manifest(),
+    )
+    assert out == (
+        '<body><p><strong data-seojuice-cs="21">New paragraph text.</strong></p>'
+        '<script>window.__d="Old paragraph text.";</script></body>'
+    )
+
+
+def test_diff_still_skips_when_ambiguous_in_visible_body_alongside_script_copy():
+    html = '<body><p>dup text</p><p>dup text</p><script>window.__d="dup text";</script></body>'
+    assert (
+        apply_content_diffs(
+            html, [{"id": 2, "original_text": "dup text", "replacement_html": "<strong>X</strong>"}], Manifest()
+        )
+        == html
     )
 
 

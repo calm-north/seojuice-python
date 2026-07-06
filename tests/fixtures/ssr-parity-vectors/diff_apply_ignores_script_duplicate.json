@@ -1,0 +1,43 @@
+{
+  "name": "diff_apply_ignores_script_duplicate",
+  "input_html": "<html><head></head><body><p>Old paragraph text.</p><script>window.__d=\"Old paragraph text.\";</script></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [
+      {
+        "id": 21,
+        "selector": "body > p",
+        "semantic": "",
+        "operation": "REWRITE",
+        "original_text": "Old paragraph text.",
+        "replacement_html": "<strong>New paragraph text.</strong>",
+        "order": 0,
+        "batch_id": "b3"
+      }
+    ],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p><strong data-seojuice-cs=\"21\">New paragraph text.</strong></p><script>window.__d=\"Old paragraph text.\";</script><!-- seojuice: cs=[21] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "script/style duplicate must not block the visible-body diff (bug C)."
+}

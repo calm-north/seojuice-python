@@ -106,8 +106,15 @@ def replace_meta_tags(html: str, data: Dict[str, Any], manifest: Manifest) -> st
     raw = data.get("structured_data")
     if raw and raw != "null":
         try:
-            inner = json.loads(raw)
-            obj = json.loads(inner)
+            # M1 — defensive single-or-double decode: the real /suggestions payload
+            # (build_page_suggestions_payload) serializes structured_data as a SINGLE
+            # json.dumps(dict) — a JSON string of the object. A legacy caller may
+            # still send it double-encoded (a JSON string containing an inner JSON
+            # string). Parse once; if the result is still a string, parse again.
+            # Either shape must produce byte-identical injected JSON-LD.
+            obj = json.loads(raw)
+            if isinstance(obj, str):
+                obj = json.loads(obj)
             if not re.search(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>', html, re.IGNORECASE):
                 tag = (
                     '<script type="application/ld+json" data-seojuice="schema">'
@@ -193,7 +200,9 @@ _ASIAN = r"一-鿿぀-ゟ゠-ヿ"
 def _keyword_pattern(keyword: str, is_asian: bool) -> "re.Pattern[str]":
     kw = re.escape(keyword)
     if is_asian:
-        return re.compile(rf"(^|[{_ASIAN}])({kw})(?=[{_ASIAN}.!?)\]/]|$)")
+        # Lookahead includes full-width JP sentence punctuation (。、！？）」』)
+        # so a keyword ending a Japanese sentence (投資信託。) still links (bug B).
+        return re.compile(rf"(^|[{_ASIAN}])({kw})(?=[{_ASIAN}.!?)\]/。、！？）」』]|$)")
     pre = r"(^|[\s([{<>\"'«‹„/:|\-])"
     post = r"(?=$|[\s)\]}>\"'»›/.,:;!?|\-])"
     return re.compile(pre + rf"({kw})" + post, re.IGNORECASE)
@@ -282,6 +291,21 @@ def inject_internal_links(html: str, data: Dict[str, Any], manifest: Manifest) -
 
 _SINGLE_ROOT_RE = re.compile(r"^<(\w+)(\s[^>]*)?>")
 
+# Bug C: whole-document find() treats text duplicated inside <script>/<style>
+# (e.g. Next.js App Router's __next_f hydration payload) as ambiguous, so the
+# diff never applies to the visible body. Compute occurrence/ambiguity against
+# a masked copy where script/style *contents* (not the tags) are blanked to
+# same-length \x00 runs, then splice the real html at the same index.
+_SCRIPT_STYLE_RE = re.compile(r"(<(script|style)\b[^>]*>)([\s\S]*?)(</\2>)", re.IGNORECASE)
+
+
+def _mask_script_style(html: str) -> str:
+    def _repl(m: "re.Match[str]") -> str:
+        open_tag, body, close_tag = m.group(1), m.group(3), m.group(4)
+        return open_tag + "\x00" * len(body) + close_tag
+
+    return _SCRIPT_STYLE_RE.sub(_repl, html)
+
 
 def apply_content_diffs(html: str, diffs: List[Dict[str, Any]], manifest: Manifest) -> str:
     if not isinstance(diffs, list):
@@ -293,14 +317,16 @@ def apply_content_diffs(html: str, diffs: List[Dict[str, Any]], manifest: Manife
             replacement = d.get("replacement_html") or ""
             if not original or not replacement:
                 continue
-            if replacement in html and original not in html:
+
+            masked = _mask_script_style(html)
+            if replacement in masked and original not in masked:
                 continue  # already applied
 
-            idx = html.find(original)
+            idx = masked.find(original)
             if idx == -1:
-                continue  # DOM drift → skip
-            if html.find(original, idx + 1) != -1:
-                continue  # ambiguous → skip
+                continue  # not in the visible region → skip (DOM drift, or only in script/style)
+            if masked.find(original, idx + len(original)) != -1:
+                continue  # ambiguous in the visible region → skip
 
             diff_id = d.get("id")
             if diff_id is not None:
