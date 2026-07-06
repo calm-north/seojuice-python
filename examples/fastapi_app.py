@@ -9,6 +9,8 @@ Requirements:
 
 Run:
     uvicorn examples.fastapi_app:app --reload
+
+# apply_suggestions now performs full server-side parity (links, alt, diffs, h1, broken-links) and fails open.
 """
 from __future__ import annotations
 

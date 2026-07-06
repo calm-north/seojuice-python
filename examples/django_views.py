@@ -15,6 +15,8 @@ Middleware setup — add to settings.py:
     SEOJUICE_INJECTION_ENABLED = True
     SEOJUICE_INJECTION_TIMEOUT = 5.0
 
+# apply_suggestions now performs full server-side parity (links, alt, diffs, h1, broken-links) and fails open.
+
 Template usage:
     {{ seo.meta_description }}
     {{ seo.seo_score }}

@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.2.0 (2026-07-06)
+
+### Server-Side Injection: Full Parity
+
+`apply_suggestions()` (used by `SEOJuiceDjangoMiddleware` and `SEOJuiceASGIMiddleware`) now ports the full Cloudflare Worker + WordPress plugin transform pipeline instead of a head-only meta-tag injector:
+
+- **Internal links** — keyword-to-URL injection with first-occurrence dedup, skip-tags (`<a>`, `<script>`, `<style>`, `<title>`, `h1`–`h6`), custom link class, and CJK/Japanese boundary detection (`isAsian`)
+- **Image alt-text** — fills missing or short (`< 5` chars) `alt` attributes matched by normalized `src`/`data-src` URL
+- **Content diffs** — replace-only content mutation with drift/ambiguity/idempotency guards
+- **H1 replacement** — with `data-seojuice="h1"` marker
+- **Broken-link fixes** — `replace`/`unlink` actions on `<a href>`/`<img src>`, reading `new_url` with a `replacement_url` fallback
+- **`validate_api_response`** gate — rejects payloads with no actionable content or an `errors` field before running any transform
+- **Content-area targeting** (`insert_into_content_only`) — restricts link injection to block-content tags (`p`, `li`, `span`, `div`, `td`, `blockquote`, `dd`, `figcaption`) when enabled
+- **`data-seojuice*` markers** + a `<!-- seojuice: ... -->` manifest comment for idempotency and observability
+- **`window.seojuiceSSR = true`** SSR flag appended before `</body>`
+- **Fail-open** — any exception, empty output, output `< 0.5×` original length, or a missing `<body>` tag reverts to the original HTML unchanged
+- Fixed a `structured_data` single-encode bug — the field is stored double-JSON-encoded upstream and is now double-decoded before rendering as `<script type="application/ld+json">`
+
+No new runtime dependency — stdlib `re`/`json` only (`httpx` unchanged). The Django/ASGI middleware are unchanged in wiring; they gain full parity automatically by calling `apply_suggestions`.
+
 ## 1.1.0 (2026-03-13)
 
 ### New Features
