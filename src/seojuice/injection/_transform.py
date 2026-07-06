@@ -368,3 +368,35 @@ def apply_broken_link_fixes(html: str, fixes: List[Dict[str, Any]]) -> str:
             pass  # one bad fix never aborts the page
 
     return html
+
+
+def validate_api_response(data: object) -> bool:
+    """Port of WP seojuice.php:429-468 (C1).
+
+    Extends the WP checklist with ``broken_link_fixes``: the Worker-generated
+    golden vectors include payloads whose only actionable field is
+    broken_link_fixes (title/meta_description/suggestions/images/structured_data/
+    og_title/diffs all empty), and the Worker still applies those fixes. Treating
+    broken_link_fixes as non-actionable would make apply_suggestions a no-op for
+    that shape of payload, contradicting the canonical Worker behavior.
+    """
+    if not isinstance(data, dict):
+        return False
+    if data.get("errors"):
+        return False
+    has_content = bool(
+        data.get("title")
+        or data.get("meta_description")
+        or data.get("suggestions")
+        or data.get("images")
+        or data.get("structured_data")
+        or data.get("og_title")
+        or (isinstance(data.get("diffs"), list) and data.get("diffs"))
+        or (isinstance(data.get("broken_link_fixes"), list) and data.get("broken_link_fixes"))
+    )
+    if not has_content:
+        return False
+    for key in ("suggestions", "images", "diffs", "broken_link_fixes"):
+        if key in data and not isinstance(data[key], list):
+            return False
+    return True

@@ -14,6 +14,7 @@ from seojuice.injection._transform import (
     replace_images,
     replace_meta_tags,
     tokenize_html,
+    validate_api_response,
 )
 
 
@@ -195,4 +196,45 @@ def test_does_not_touch_data_href():
             [{"action": "replace", "tag": "a", "attr": "href", "broken_url": "/dead", "new_url": "/live"}],
         )
         == html
+    )
+
+
+# ---------------------------------------------------------------------------
+# validate_api_response (Task 9 / C1)
+# ---------------------------------------------------------------------------
+
+
+def test_rejects_no_actionable_field():
+    assert (
+        validate_api_response(
+            {"errors": [], "suggestions": [], "images": [], "diffs": [], "title": "", "meta_description": "", "og_title": "", "structured_data": ""}
+        )
+        is False
+    )
+
+
+def test_rejects_errors_present():
+    assert validate_api_response({"errors": ["Page doesn't exist"], "title": "x"}) is False
+
+
+def test_accepts_actionable():
+    assert validate_api_response({"errors": [], "suggestions": [{"keyword": "a", "url": "/a", "id": 1}]}) is True
+
+
+def test_rejects_non_list_suggestions():
+    assert validate_api_response({"suggestions": "nope"}) is False
+
+
+def test_accepts_broken_link_fixes_only():
+    """broken_link_fixes-only payloads (no title/meta/suggestions/images/diffs/og_title) are still actionable.
+
+    Matches the Worker-generated brokenlink_* golden vectors, whose payloads carry
+    only broken_link_fixes; the WP source's has-content checklist omits this field,
+    which would otherwise make apply_suggestions a no-op for those vectors.
+    """
+    assert (
+        validate_api_response(
+            {"errors": [], "title": "", "suggestions": [], "images": [], "diffs": [], "og_title": "", "structured_data": "", "broken_link_fixes": [{"action": "replace", "tag": "a", "attr": "href", "broken_url": "/dead", "new_url": "/live"}]}
+        )
+        is True
     )
