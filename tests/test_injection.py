@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import time
 from typing import Any, Dict
 from unittest.mock import MagicMock, patch
@@ -247,49 +248,53 @@ class TestApplySuggestions:
     def test_injects_meta_description(self):
         data = {"meta_description": "A great page about SEO"}
         result = apply_suggestions(self.BASE_HTML, data)
-        assert '<meta name="description" content="A great page about SEO">' in result
+        assert '<meta name="description" content="A great page about SEO" data-seojuice="meta-description">' in result
         assert result.index('<meta name="description"') < result.index("</head>")
 
     def test_injects_og_title(self):
         data = {"og_title": "OG Title Here"}
         result = apply_suggestions(self.BASE_HTML, data)
-        assert '<meta property="og:title" content="OG Title Here">' in result
+        assert '<meta property="og:title" content="OG Title Here" data-seojuice="og-title">' in result
 
     def test_injects_og_description(self):
-        data = {"og_description": "OG Description"}
+        # og_description alone isn't "actionable" per validate_api_response (C1) —
+        # pair it with og_title, which is on the has-content checklist.
+        data = {"og_title": "OG Title", "og_description": "OG Description"}
         result = apply_suggestions(self.BASE_HTML, data)
-        assert '<meta property="og:description" content="OG Description">' in result
+        assert '<meta property="og:description" content="OG Description" data-seojuice="og-description">' in result
 
     def test_injects_og_url(self):
-        data = {"og_url": "https://example.com/page"}
+        data = {"og_title": "OG Title", "og_url": "https://example.com/page"}
         result = apply_suggestions(self.BASE_HTML, data)
         assert '<meta property="og:url" content="https://example.com/page">' in result
 
     def test_injects_og_image(self):
-        data = {"og_image": "https://example.com/img.png"}
+        data = {"og_title": "OG Title", "og_image": "https://example.com/img.png"}
         result = apply_suggestions(self.BASE_HTML, data)
         assert '<meta property="og:image" content="https://example.com/img.png">' in result
 
     def test_injects_structured_data_as_json_ld(self):
         sd = {"@type": "Article", "name": "Test Article"}
-        data = {"structured_data": sd}
+        # structured_data is stored double-JSON-encoded upstream (json.dumps(json.dumps(obj))).
+        data = {"structured_data": json.dumps(json.dumps(sd))}
         result = apply_suggestions(self.BASE_HTML, data)
-        assert '<script type="application/ld+json">' in result
+        assert '<script type="application/ld+json" data-seojuice="schema">' in result
         assert '"@type":"Article"' in result
         assert '"name":"Test Article"' in result
 
     def test_replaces_title_tag(self):
+        # BASE_HTML already has a <title>, so the present-guard leaves it untouched
+        # (matches Worker/WP idempotency: never duplicate an existing <title>).
+        html = "<html><head></head><body><h1>Hello</h1></body></html>"
         data = {"title": "New SEO Title"}
-        result = apply_suggestions(self.BASE_HTML, data)
-        assert "<title>New SEO Title</title>" in result
-        assert "<title>Original Title</title>" not in result
+        result = apply_suggestions(html, data)
+        assert '<title data-seojuice="title">New SEO Title</title>' in result
 
     def test_title_replacement_escapes_html_characters(self):
+        html = "<html><head></head><body><h1>Hello</h1></body></html>"
         data = {"title": "Title with <script> & stuff"}
-        result = apply_suggestions(self.BASE_HTML, data)
-        assert "<title>Title with &lt;script&gt; &amp; stuff</title>" not in result
-        # The actual implementation only escapes < and >
-        assert "<title>Title with &lt;script&gt; & stuff</title>" in result
+        result = apply_suggestions(html, data)
+        assert "<title data-seojuice=\"title\">Title with &lt;script&gt; &amp; stuff</title>" in result
 
     def test_multiple_tags_injected_together(self):
         data = {
@@ -298,50 +303,51 @@ class TestApplySuggestions:
             "og_description": "OG Desc",
         }
         result = apply_suggestions(self.BASE_HTML, data)
-        assert '<meta name="description" content="Description">' in result
-        assert '<meta property="og:title" content="OG Title">' in result
-        assert '<meta property="og:description" content="OG Desc">' in result
+        assert '<meta name="description" content="Description" data-seojuice="meta-description">' in result
+        assert '<meta property="og:title" content="OG Title" data-seojuice="og-title">' in result
+        assert '<meta property="og:description" content="OG Desc" data-seojuice="og-description">' in result
 
     def test_escapes_double_quotes_in_meta_content(self):
         data = {"meta_description": 'A "great" page'}
         result = apply_suggestions(self.BASE_HTML, data)
-        assert '<meta name="description" content="A &quot;great&quot; page">' in result
+        assert '<meta name="description" content="A &quot;great&quot; page" data-seojuice="meta-description">' in result
 
     def test_escapes_double_quotes_in_og_content(self):
         data = {"og_title": 'Title with "quotes"'}
         result = apply_suggestions(self.BASE_HTML, data)
-        assert '<meta property="og:title" content="Title with &quot;quotes&quot;">' in result
+        assert '<meta property="og:title" content="Title with &quot;quotes&quot;" data-seojuice="og-title">' in result
 
-    def test_only_title_no_tags_injected_before_head(self):
-        """When only title is provided and no meta/og tags, no injection before </head>."""
+    def test_only_title_no_meta_og_tags_injected(self):
+        """When only title is provided, no meta/og tags are injected — just the title."""
         data = {"title": "New Title Only"}
-        html = "<html><head><title>Old</title></head><body></body></html>"
+        html = "<html><head></head><body><h1>Hello</h1></body></html>"
         result = apply_suggestions(html, data)
-        assert "<title>New Title Only</title>" in result
-        # The closing </head> should NOT have extra tags before it
-        # (since tags list is empty, the _HEAD_CLOSE_RE.sub is skipped)
+        assert '<title data-seojuice="title">New Title Only</title>' in result
+        assert "<meta" not in result
 
     def test_case_insensitive_head_close(self):
-        html = "<html><HEAD><title>Old</title></HEAD><body></body></html>"
+        html = "<html><HEAD></HEAD><body><h1>Hello</h1></body></html>"
         data = {"meta_description": "Test"}
         result = apply_suggestions(html, data)
-        assert '<meta name="description" content="Test">' in result
+        assert '<meta name="description" content="Test" data-seojuice="meta-description">' in result
 
     def test_case_insensitive_title_replacement(self):
-        html = "<html><head><TITLE>Old Title</TITLE></head><body></body></html>"
+        html = "<html><head></head><body><h1>Hello</h1></body></html>"
         data = {"title": "New Title"}
         result = apply_suggestions(html, data)
-        assert "<title>New Title</title>" in result
+        assert '<title data-seojuice="title">New Title</title>' in result
 
-    def test_html_without_head_tag_returns_unchanged_for_meta(self):
-        """If there's no </head>, meta tags have nowhere to go."""
-        html = "<html><body><h1>Hello</h1></body></html>"
+    def test_html_without_body_tag_fails_open(self):
+        """If there's no <body>, the fail-open check reverts the whole page unchanged."""
+        html = "<html><head></head><p>Hello</p></html>"
         data = {"meta_description": "Description"}
         result = apply_suggestions(html, data)
-        # The regex won't match, so the injection string is not inserted
         assert result == html
 
     def test_empty_string_values_are_not_injected(self):
         data = {"meta_description": "", "og_title": ""}
         result = apply_suggestions(self.BASE_HTML, data)
-        assert result == self.BASE_HTML
+        # No actionable content -> validate_api_response gates the transforms off;
+        # add_ssr_flag still appends its script unconditionally (matches the Worker).
+        assert "<meta" not in result
+        assert "window.seojuiceSSR" in result

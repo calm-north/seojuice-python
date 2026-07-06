@@ -5,6 +5,8 @@ from typing import Any, Dict
 
 from seojuice.injection._transform import (
     Manifest,
+    add_manifest_comment,
+    add_ssr_flag,
     apply_broken_link_fixes,
     apply_content_diffs,
     escape_html,
@@ -254,3 +256,24 @@ def test_content_only_links_in_p_not_nav():
 def test_broad_mode_links_in_nav():
     data = {**_data(), "insert_into_content_only": False, "suggestions": [{"keyword": "SWP", "url": "/swp", "id": 1}]}
     assert '<a href="/swp"' in inject_internal_links("<nav>SWP</nav>", data, Manifest())
+
+
+# ---------------------------------------------------------------------------
+# manifest comment + SSR flag (Task 7)
+# ---------------------------------------------------------------------------
+
+
+def test_ssr_flag_added_once():
+    once = add_ssr_flag("<body></body>")
+    assert "<script>window.seojuiceSSR = true;</script>" in once
+    assert add_ssr_flag(once) == once
+
+
+def test_manifest_comment_lists_parts_before_body_close():
+    manifest = Manifest(cs=[1, 2], meta=["title"], img=1)
+    out = add_manifest_comment("<body></body>", manifest)
+    assert out == "<body><!-- seojuice: cs=[1,2] meta=[title] img=1 -->\n</body>"
+
+
+def test_manifest_comment_noop_when_empty():
+    assert add_manifest_comment("<body></body>", Manifest()) == "<body></body>"

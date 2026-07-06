@@ -411,3 +411,41 @@ def validate_api_response(data: object) -> bool:
         if key in data and not isinstance(data[key], list):
             return False
     return True
+
+
+_BODY_CLOSE_RE = re.compile(r"</body>", re.IGNORECASE)
+
+
+def add_manifest_comment(html: str, manifest: Manifest) -> str:
+    if "<!-- seojuice:" in html:
+        return html  # idempotent
+
+    parts: List[str] = []
+
+    if manifest.cs:
+        parts.append(f"cs=[{','.join(str(i) for i in manifest.cs)}]")
+
+    if manifest.meta:
+        parts.append(f"meta=[{','.join(manifest.meta)}]")
+
+    if manifest.img > 0:
+        parts.append(f"img={manifest.img}")
+
+    if manifest.schema:
+        parts.append("schema=1")
+
+    if manifest.h1:
+        parts.append("h1=1")
+
+    if not parts:
+        return html
+
+    comment = f"<!-- seojuice: {' '.join(parts)} -->"
+    return _BODY_CLOSE_RE.sub(f"{comment}\n</body>", html, count=1)
+
+
+def add_ssr_flag(html: str) -> str:
+    script = "<script>window.seojuiceSSR = true;</script>"
+    if "window.seojuiceSSR" in html:
+        return html
+    return _BODY_CLOSE_RE.sub(f"{script}\n</body>", html, count=1)

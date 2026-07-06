@@ -1,12 +1,24 @@
 from __future__ import annotations
 
-import json
 import logging
 import re
 import time
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import httpx
+
+from seojuice.injection._transform import (
+    Manifest,
+    add_manifest_comment,
+    add_ssr_flag,
+    apply_broken_link_fixes,
+    apply_content_diffs,
+    inject_internal_links,
+    replace_h1,
+    replace_images,
+    replace_meta_tags,
+    validate_api_response,
+)
 
 logger = logging.getLogger("seojuice.injection")
 
@@ -92,93 +104,47 @@ async def fetch_suggestions_async(
 
 
 # ---------------------------------------------------------------------------
-# Shared HTML injection helpers
+# Shared HTML injection: full server-side parity with the Cloudflare Worker.
 # ---------------------------------------------------------------------------
 
-_HEAD_CLOSE_RE = re.compile(r"</head>", re.IGNORECASE)
-
-
-def _build_meta_tag(name: str, content: str) -> str:
-    safe_content = content.replace('"', "&quot;")
-    return f'<meta name="{name}" content="{safe_content}">'
-
-
-def _build_og_tag(prop: str, content: str) -> str:
-    safe_content = content.replace('"', "&quot;")
-    return f'<meta property="og:{prop}" content="{safe_content}">'
+_BODY_TAG_RE = re.compile(r"<body[\s>]", re.IGNORECASE)
 
 
 def apply_suggestions(html: str, data: Dict[str, Any]) -> str:
-    """Inject SEO tags from suggestions data before </head>."""
+    """Inject SEO suggestions into HTML, mirroring the Worker's ``transformHTML``.
+
+    Applies meta/OG/schema tags, image alt-text, internal links, content diffs,
+    h1 replacement, and broken-link fixes, then appends a manifest comment and
+    an SSR flag. Fails open (returns the original HTML unchanged) on any
+    exception, or if the result is empty, less than half the original length,
+    or missing a ``<body>`` tag.
+
+    ``validate_api_response`` (C1) gates the content-mutating transforms only;
+    the manifest comment and SSR flag are appended unconditionally whenever
+    ``data`` is truthy, matching the Worker's unconditional ``addSSRFlag`` call.
+    """
     if not data:
         return html
 
-    tags: List[str] = []
+    original = html
+    out = html
+    manifest = Manifest()
+    try:
+        if validate_api_response(data):
+            out = replace_meta_tags(out, data, manifest)
+            out = replace_images(out, data, manifest)
+            out = inject_internal_links(out, data, manifest)
+            out = apply_content_diffs(out, data.get("diffs") or [], manifest)
+            out = replace_h1(out, data, manifest)
+            out = apply_broken_link_fixes(out, data.get("broken_link_fixes") or [])
 
-    meta_description = data.get("meta_description")
-    if meta_description:
-        tags.append(_build_meta_tag("description", meta_description))
+        out = add_manifest_comment(out, manifest)
+        out = add_ssr_flag(out)
 
-    og_title = data.get("og_title")
-    if og_title:
-        tags.append(_build_og_tag("title", og_title))
+        if not out or len(out) < len(original) * 0.5 or not _BODY_TAG_RE.search(out):
+            out = original
+    except Exception:
+        logger.debug("Failed to apply suggestions, failing open", exc_info=True)
+        out = original
 
-    og_description = data.get("og_description")
-    if og_description:
-        tags.append(_build_og_tag("description", og_description))
-
-    og_url = data.get("og_url")
-    if og_url:
-        tags.append(_build_og_tag("url", og_url))
-
-    og_image = data.get("og_image")
-    if og_image:
-        tags.append(_build_og_tag("image", og_image))
-
-    structured_data = data.get("structured_data")
-    if structured_data:
-        sd_json = json.dumps(structured_data, separators=(",", ":"))
-        tags.append(f'<script type="application/ld+json">{sd_json}</script>')
-
-    title = data.get("title")
-    if title:
-        safe_title = title.replace("<", "&lt;").replace(">", "&gt;")
-        html = re.sub(
-            r"<title>[^<]*</title>",
-            f"<title>{safe_title}</title>",
-            html,
-            count=1,
-            flags=re.IGNORECASE,
-        )
-
-    broken_link_fixes = data.get("broken_link_fixes") or []
-    for fix in broken_link_fixes:
-        broken_url = fix.get("broken_url", "")
-        action = fix.get("action", "")
-        if not broken_url or not action:
-            continue
-        escaped = re.escape(broken_url)
-        if action == "unlink":
-            html = re.sub(
-                r'<a\s[^>]*href=["\']' + escaped + r'["\'][^>]*>(.*?)</a>',
-                r"\1",
-                html,
-                flags=re.IGNORECASE | re.DOTALL,
-            )
-        elif action == "replace":
-            replacement_url = fix.get("replacement_url", "")
-            if replacement_url:
-                safe_url = replacement_url.replace('"', "&quot;")
-                html = re.sub(
-                    r'(<a\s[^>]*href=)["\']' + escaped + r'["\']([^>]*>)',
-                    r'\g<1>"' + safe_url + r'"\g<2>',
-                    html,
-                    flags=re.IGNORECASE,
-                )
-
-    if not tags:
-        return html
-
-    injection = "\n".join(tags) + "\n"
-    html = _HEAD_CLOSE_RE.sub(injection + "</head>", html, count=1)
-    return html
+    return out
