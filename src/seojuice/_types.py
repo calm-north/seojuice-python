@@ -502,6 +502,7 @@ class ChangeRecord(TypedDict):
     id: int
     change_type: str
     status: str
+    risk_level: Optional[str]
     page_url: Optional[str]
     proposed_value: Optional[str]
     previous_value: Optional[str]
@@ -523,6 +524,9 @@ class ChangeRecord(TypedDict):
     verified_at: Optional[str]
     reverted_at: Optional[str]
     revert_reason: Optional[str]
+    batch_id: Optional[str]
+    batch_label: Optional[str]
+    edited_manually: bool
 
 
 class ChangeStats(TypedDict):
@@ -536,6 +540,7 @@ class ChangeSettings(TypedDict):
     meta_tags_mode: str
     og_tags_mode: str
     title_tags_mode: str
+    h1_tags_mode: str
     structured_data_mode: str
     image_alt_mode: str
     accessibility_mode: str
@@ -543,7 +548,7 @@ class ChangeSettings(TypedDict):
     gbp_review_reply_mode: str
     max_changes_per_page_per_day: int
     max_changes_per_day: int
-    exclude_paths: str
+    exclude_paths: Optional[str]
 
 
 class BulkActionResult(TypedDict):

@@ -7,6 +7,10 @@
 - **JSON-LD is emitted as raw UTF-8** (`ensure_ascii=False`) to match the node/php SDKs and the edge Worker byte-for-byte on localized schema.
 - **CJK internal links at sentence end** — the link boundary now allows full-width Japanese punctuation (`。、！？）」』`).
 - **Content diffs on hydrated pages** — occurrence/ambiguity detection now ignores `<script>`/`<style>` regions, so hydration-script duplicates (e.g. Next.js App Router) no longer skip the visible-body diff.
+- **Async `create_report` / `reply_to_review` sent the wrong request-body keys.** `AsyncWebsiteResource` built its POST bodies with `report_type`/`reply` instead of the API's `type`/`reply_text`, so async report creation silently defaulted to `this_month` and async GBP review replies posted empty text (server 400). Both corrected; the sync client was already correct.
+
+### Added
+- **`ChangeRecord` / `ChangeSettings` type completeness** — `ChangeRecord` gains `risk_level`, `batch_id`, `batch_label`, `edited_manually`; `ChangeSettings` gains `h1_tags_mode`; `exclude_paths` is now optional — matching the live API's change schema.
 
 ## 1.2.0 (2026-07-06)
 
