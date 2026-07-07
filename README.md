@@ -240,15 +240,13 @@ with SEOJuice("your-api-key") as client:
 Verify incoming webhook signatures using HMAC-SHA256:
 
 ```python
-from seojuice import SEOJuice
-
-client = SEOJuice("your-api-key")
+from seojuice import verify_webhook_signature
 
 # In your webhook handler
-is_valid = client.verify_webhook_signature(
-    payload=request.body,
-    signature=request.headers.get("X-SEOJuice-Signature"),
+is_valid = verify_webhook_signature(
     secret="your-webhook-secret",
+    body=request.body,
+    signature=request.headers.get("X-SEOJuice-Signature"),
 )
 
 if not is_valid:
@@ -257,7 +255,7 @@ if not is_valid:
 
 See [`examples/webhook_receiver.py`](examples/webhook_receiver.py) for a complete Flask-based receiver.
 
-## New Endpoints
+## Scores & Additional Endpoints
 
 ```python
 with SEOJuice("your-api-key") as client:
@@ -274,12 +272,12 @@ with SEOJuice("your-api-key") as client:
     benchmarks = site.benchmarks()
 
     # Page-scoped endpoints (require page_id)
-    quality = site.content_quality(page_id="123")
-    geo = site.geo_readiness(page_id="123")
-    content = site.page_content(page_id="123")
+    quality = site.content_quality(page_id=123)
+    geo = site.geo_readiness(page_id=123)
+    content = site.page_content(page_id=123)
 
     # Submit URLs for processing
-    site.submit_urls(urls=["https://example.com/new-page"])
+    site.submit_urls(urls=[{"url": "https://example.com/new-page"}])
     status = site.url_status(url="https://example.com/new-page")
 ```
 

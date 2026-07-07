@@ -59,8 +59,9 @@ from seojuice._types import (
     WebsiteDetail,
     WebsiteListResponse,
 )
+from seojuice._webhooks import verify_webhook_signature
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 __all__ = [
     "SEOJuice",
@@ -121,4 +122,5 @@ __all__ = [
     "TopologyResponse",
     "WebsiteDetail",
     "WebsiteListResponse",
+    "verify_webhook_signature",
 ]
