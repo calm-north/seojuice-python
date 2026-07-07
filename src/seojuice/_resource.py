@@ -390,7 +390,7 @@ class AsyncWebsiteResource:
     ) -> ReportCreated:
         return await self._client._apost(
             f"/websites/{self._domain}/reports/",
-            {"report_type": report_type},
+            {"type": report_type},
         )
 
     async def report(self, report_id: int) -> ReportDetail:
@@ -575,7 +575,7 @@ class AsyncWebsiteResource:
     ) -> GBPReviewReplyResponse:
         return await self._client._apost(
             f"/websites/{self._domain}/gbp/reviews/{review_id}/reply/",
-            {"reply": reply_text},
+            {"reply_text": reply_text},
         )
 
     # Changes management

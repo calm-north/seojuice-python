@@ -232,7 +232,7 @@ class TestWebsiteResource:
         client, http = _make_sync_client(api_key, handler)
         client.website(DOMAIN).create_report("last_month")
         body = json.loads(reqs[0].content)
-        assert body == {"report_type": "last_month"}
+        assert body == {"type": "last_month"}
         http.close()
 
     def test_report_delegates(self, api_key: str):
@@ -368,7 +368,7 @@ class TestWebsiteResource:
         client, http = _make_sync_client(api_key, handler)
         client.website(DOMAIN).reply_to_review(7, "Thanks!")
         body = json.loads(reqs[0].content)
-        assert body == {"reply": "Thanks!"}
+        assert body == {"reply_text": "Thanks!"}
         http.close()
 
 
@@ -480,7 +480,7 @@ class TestAsyncWebsiteResource:
         client, http = _make_async_client(api_key, handler)
         await client.website(DOMAIN).create_report("last_month")
         body = json.loads(reqs[0].content)
-        assert body == {"report_type": "last_month"}
+        assert body == {"type": "last_month"}
         await http.aclose()
 
     async def test_keywords_delegates(self, api_key: str):
@@ -519,5 +519,5 @@ class TestAsyncWebsiteResource:
         client, http = _make_async_client(api_key, handler)
         await client.website(DOMAIN).reply_to_review(7, "Thanks!")
         body = json.loads(reqs[0].content)
-        assert body == {"reply": "Thanks!"}
+        assert body == {"reply_text": "Thanks!"}
         await http.aclose()

@@ -336,7 +336,7 @@ class TestCreateReport:
         result = client.create_report("example.com", "last_month")
 
         body = json.loads(requests_made[0].content)
-        assert body == {"report_type": "last_month"}
+        assert body == {"type": "last_month"}
         assert result["report_id"] == 42
         http_client.close()
 
@@ -589,7 +589,7 @@ class TestSimpleGetEndpoints:
         client, http, reqs = self._make_client(api_key, data)
         client.reply_to_gbp_review("example.com", 7, "Thanks!")
         body = json.loads(reqs[0].content)
-        assert body == {"reply": "Thanks!"}
+        assert body == {"reply_text": "Thanks!"}
         assert reqs[0].method == "POST"
         http.close()
 
