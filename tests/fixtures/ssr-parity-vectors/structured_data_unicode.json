@@ -1,0 +1,32 @@
+{
+  "name": "structured_data_unicode",
+  "input_html": "<html><head></head><body><p>content</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"投資信託 — Übersicht\"}",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head><script type=\"application/ld+json\" data-seojuice=\"schema\">{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"投資信託 — Übersicht\"}</script>\n</head><body><p>content</p><!-- seojuice: schema=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "non-ASCII JSON-LD must emit raw UTF-8 (not \\uXXXX-escaped) byte-identically across node (JSON.stringify), python (json.dumps ensure_ascii=False), and php (JSON_UNESCAPED_UNICODE) + the Worker."
+}

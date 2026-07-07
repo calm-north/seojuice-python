@@ -118,7 +118,7 @@ def replace_meta_tags(html: str, data: Dict[str, Any], manifest: Manifest) -> st
             if not re.search(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>', html, re.IGNORECASE):
                 tag = (
                     '<script type="application/ld+json" data-seojuice="schema">'
-                    f"{json.dumps(obj, separators=(',', ':'))}</script>"
+                    f"{json.dumps(obj, separators=(',', ':'), ensure_ascii=False)}</script>"
                 )
                 html = re.sub(
                     r"</head>", lambda m, tag=tag: tag + "\n" + m.group(0), html, count=1, flags=re.IGNORECASE

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+
+### Fixed
+- **structured_data now injects as valid JSON-LD against the live payload** (single- or double-encoded, defensively decoded; the previous double-decode silently dropped the schema on the real single-encoded payload).
+- **JSON-LD is emitted as raw UTF-8** (`ensure_ascii=False`) to match the node/php SDKs and the edge Worker byte-for-byte on localized schema.
+- **CJK internal links at sentence end** — the link boundary now allows full-width Japanese punctuation (`。、！？）」』`).
+- **Content diffs on hydrated pages** — occurrence/ambiguity detection now ignores `<script>`/`<style>` regions, so hydration-script duplicates (e.g. Next.js App Router) no longer skip the visible-body diff.
+
 ## 1.2.0 (2026-07-06)
 
 ### Server-Side Injection: Full Parity
