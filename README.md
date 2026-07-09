@@ -191,7 +191,7 @@ with SEOJuice("your-api-key") as client:
     # Bulk actions
     result = site.bulk_change_action(
         action="approve",
-        change_ids=[10, 11, 12],
+        ids=[10, 11, 12],
     )
     print(f"Succeeded: {result['total_succeeded']}")
 
@@ -232,7 +232,7 @@ with SEOJuice("your-api-key") as client:
     )
 
     # Update status
-    site.update_action_item(item_id=99, status="completed")
+    site.update_action_item(item_id=99, action="complete")
 ```
 
 ## Webhook Verification
@@ -253,7 +253,7 @@ if not is_valid:
     return Response(status=401)
 ```
 
-See [`examples/webhook_receiver.py`](examples/webhook_receiver.py) for a complete Flask-based receiver.
+See [`examples/webhook_receiver.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/webhook_receiver.py) for a complete Flask-based receiver.
 
 ## Scores & Additional Endpoints
 
@@ -319,7 +319,7 @@ SEOJUICE_INJECTION_TIMEOUT = 5.0    # Default: 5.0 seconds
 The middleware fetches suggestions from `smart.seojuice.io` and injects:
 - `<meta name="description">` tag
 - Open Graph tags (`og:title`, `og:description`, `og:url`, `og:image`)
-- `<title>` tag replacement
+- `<title>` tag injection when missing
 - JSON-LD structured data
 
 Responses are cached in-memory with a 5-minute TTL. Non-HTML responses are passed through unchanged.
@@ -386,17 +386,17 @@ pip install seojuice[flask]
 
 | Example | Description |
 |---------|-------------|
-| [`intelligence_api.py`](examples/intelligence_api.py) | Full Intelligence API workflow — overview, gaps, decay, PageSpeed |
-| [`changes_management.py`](examples/changes_management.py) | Change lifecycle: stats, triage, bulk approve, review/reject, automation settings |
-| [`webhook_receiver.py`](examples/webhook_receiver.py) | Flask webhook receiver with HMAC-SHA256 signature verification |
-| [`action_items.py`](examples/action_items.py) | Action items: summary, listing, groups, create, update |
-| [`django_views.py`](examples/django_views.py) | Django views and class-based mixin for SEO context |
-| [`fastapi_app.py`](examples/fastapi_app.py) | FastAPI app with async client lifecycle and ASGI middleware |
-| [`flask_app.py`](examples/flask_app.py) | Flask app with request hooks and TTL cache |
-| [`async_workflow.py`](examples/async_workflow.py) | Concurrent fetching, async pagination, batch domain processing |
-| [`celery_tasks.py`](examples/celery_tasks.py) | Background analysis, periodic decay checks, PDF report generation |
-| [`redis_cache.py`](examples/redis_cache.py) | Redis caching layer with pattern-based invalidation |
-| [`cms_integration.py`](examples/cms_integration.py) | Wagtail, Django CMS, and headless WordPress integrations |
+| [`intelligence_api.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/intelligence_api.py) | Full Intelligence API workflow — overview, gaps, decay, PageSpeed |
+| [`changes_management.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/changes_management.py) | Change lifecycle: stats, triage, bulk approve, review/reject, automation settings |
+| [`webhook_receiver.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/webhook_receiver.py) | Flask webhook receiver with HMAC-SHA256 signature verification |
+| [`action_items.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/action_items.py) | Action items: summary, listing, groups, create, update |
+| [`django_views.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/django_views.py) | Django views and class-based mixin for SEO context |
+| [`fastapi_app.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/fastapi_app.py) | FastAPI app with async client lifecycle and ASGI middleware |
+| [`flask_app.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/flask_app.py) | Flask app with request hooks and TTL cache |
+| [`async_workflow.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/async_workflow.py) | Concurrent fetching, async pagination, batch domain processing |
+| [`celery_tasks.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/celery_tasks.py) | Background analysis, periodic decay checks, PDF report generation |
+| [`redis_cache.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/redis_cache.py) | Redis caching layer with pattern-based invalidation |
+| [`cms_integration.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/cms_integration.py) | Wagtail, Django CMS, and headless WordPress integrations |
 
 ## Requirements
 
