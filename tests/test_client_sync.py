@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from typing import Any, Dict, List
-from unittest.mock import MagicMock, patch
 
 import httpx
 import pytest
@@ -95,8 +94,13 @@ class TestSEOJuiceConstruction:
         client.close()
 
     def test_sets_user_agent_header(self, api_key: str):
+        import seojuice
+
         client = SEOJuice(api_key)
-        assert "seojuice-python/" in client._client.headers["user-agent"]
+        assert (
+            client._client.headers["user-agent"]
+            == f"seojuice-python/{seojuice.__version__}"
+        )
         client.close()
 
     def test_sets_accept_json_header(self, api_key: str):

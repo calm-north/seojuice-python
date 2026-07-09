@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from seojuice._version import __version__
+
 from seojuice._async import AsyncSEOJuice
 from seojuice._exceptions import (
     APIConnectionError,
@@ -63,9 +65,8 @@ from seojuice._types import (
 )
 from seojuice._webhooks import verify_webhook_signature
 
-__version__ = "1.3.0"
-
 __all__ = [
+    "__version__",
     "SEOJuice",
     "AsyncSEOJuice",
     "PagedResult",

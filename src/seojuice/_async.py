@@ -9,8 +9,8 @@ from seojuice._exceptions import APIConnectionError, APITimeoutError, raise_for_
 from seojuice._pagination import PagedResult
 from seojuice._resource import AsyncWebsiteResource
 from seojuice._types import PaginationMeta
+from seojuice._version import __version__ as _VERSION
 
-_VERSION = "0.1.0"
 _USER_AGENT = f"seojuice-python/{_VERSION}"
 
 

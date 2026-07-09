@@ -28,3 +28,16 @@ def _pyproject_version() -> str:
 class TestVersion:
     def test_package_version_matches_pyproject(self):
         assert seojuice.__version__ == _pyproject_version()
+
+    def test_user_agent_embeds_version(self):
+        from seojuice._async import _USER_AGENT as async_ua
+        from seojuice._sync import _USER_AGENT as sync_ua
+
+        assert sync_ua == f"seojuice-python/{seojuice.__version__}"
+        assert async_ua == f"seojuice-python/{seojuice.__version__}"
+
+    def test_user_agent_is_not_stale_0_1_0(self):
+        from seojuice._sync import _VERSION
+
+        assert _VERSION != "0.1.0"
+        assert _VERSION == seojuice.__version__

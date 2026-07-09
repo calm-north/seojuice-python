@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List
+from typing import List
 
 import httpx
 import pytest
@@ -40,8 +40,13 @@ class TestAsyncSEOJuiceConstruction:
         assert client._client.headers["authorization"] == f"Bearer {api_key}"
 
     def test_sets_user_agent_header(self, api_key: str):
+        import seojuice
+
         client = AsyncSEOJuice(api_key)
-        assert "seojuice-python/" in client._client.headers["user-agent"]
+        assert (
+            client._client.headers["user-agent"]
+            == f"seojuice-python/{seojuice.__version__}"
+        )
 
     def test_sets_accept_json_header(self, api_key: str):
         client = AsyncSEOJuice(api_key)
