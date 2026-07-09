@@ -41,7 +41,7 @@ client.close()
 
 ## Domain-Scoped Client
 
-Use `.website(domain)` for a cleaner interface when working with a single domain:
+Use `.website(domain)` to scope every call to one domain without repeating it. The returned `WebsiteResource` is fully typed, so autocomplete and mypy work across its methods:
 
 ```python
 from seojuice import SEOJuice
@@ -164,10 +164,16 @@ Exception hierarchy:
     - `NotFoundError` -- 404
     - `RateLimitError` -- 429
     - `ServerError` -- 5xx
+  - `APIConnectionError` -- connection refused, DNS failure, reset
+    - `APITimeoutError` -- connect or read timeout
+
+Everything the client can raise for a network round-trip is a `SEOJuiceError`, so a single `except SEOJuiceError` catches it all. A non-JSON error body (an HTML 502/504, an empty 503/429) surfaces as the typed `ServerError`/`RateLimitError` for its status code, not a raw `JSONDecodeError`. Connect/read timeouts and transport failures raise `APITimeoutError`/`APIConnectionError`.
+
+The client does not retry. Wrap the call and retry on `APITimeoutError`, `APIConnectionError`, or `RateLimitError` if you want that.
 
 ## Changes Management
 
-Full lifecycle management for SEO changes — review, approve, reject, revert, and automate:
+Review, approve, reject, revert, and automate SEO changes over their lifecycle:
 
 ```python
 with SEOJuice("your-api-key") as client:
@@ -209,7 +215,7 @@ with SEOJuice("your-api-key") as client:
 
 ## Action Items
 
-Track and manage SEO action items with priorities and categories:
+List, create, and update SEO action items by priority and category:
 
 ```python
 with SEOJuice("your-api-key") as client:
@@ -257,6 +263,8 @@ is_valid = verify_webhook_signature(
 if not is_valid:
     return Response(status=401)
 ```
+
+`verify_webhook_signature` fails closed: it returns `False` (never raises) when the secret, body, or signature is missing, `None`, or the wrong type. A request with no `X-SEOJuice-Signature` header rejects with 401 instead of raising a 500 inside your handler — so passing `request.headers.get(...)` straight through, as above, is safe. `signature` must be the raw hex digest from the header, with no `sha256=` prefix.
 
 See [`examples/webhook_receiver.py`](https://github.com/calm-north/seojuice-python/blob/main/examples/webhook_receiver.py) for a complete Flask-based receiver.
 
@@ -357,6 +365,8 @@ Both clients accept these constructor arguments:
 | `base_url`    | `str`             | `https://seojuice.com/api/v2`    | API base URL                   |
 | `timeout`     | `float`           | `30.0`                           | Request timeout in seconds     |
 | `http_client` | `httpx.Client`    | `None`                           | Custom httpx client instance   |
+
+Constructing with an empty, whitespace, or `None` key raises `ValueError("api_key is required")` at call time — the client never sends `Bearer None`.
 
 ## Flask Integration
 
