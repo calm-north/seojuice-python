@@ -69,3 +69,39 @@ class TestVerifyWebhookSignature:
         body = b"payload"
 
         assert verify_webhook_signature(secret, body, "not-hex-at-all!!") is False
+
+    def test_none_signature_returns_false_not_raises(self):
+        secret = "whsec_test123"
+        body = b"payload"
+        assert verify_webhook_signature(secret, body, None) is False
+
+    def test_none_secret_returns_false_not_raises(self):
+        body = b"payload"
+        sig = _sign("whsec_test123", body)
+        assert verify_webhook_signature(None, body, sig) is False
+
+    def test_empty_secret_returns_false(self):
+        body = b"payload"
+        sig = _sign("whsec_test123", body)
+        assert verify_webhook_signature("", body, sig) is False
+
+    def test_empty_signature_returns_false(self):
+        secret = "whsec_test123"
+        body = b"payload"
+        assert verify_webhook_signature(secret, body, "") is False
+
+    def test_none_body_returns_false(self):
+        secret = "whsec_test123"
+        sig = _sign(secret, b"")
+        assert verify_webhook_signature(secret, None, sig) is False
+
+    def test_non_str_signature_returns_false(self):
+        secret = "whsec_test123"
+        body = b"payload"
+        assert verify_webhook_signature(secret, body, 12345) is False
+
+    def test_valid_signature_still_verifies_after_guards(self):
+        secret = "whsec_test123"
+        body = b'{"event": "change.applied"}'
+        sig = _sign(secret, body)
+        assert verify_webhook_signature(secret, body, sig) is True
