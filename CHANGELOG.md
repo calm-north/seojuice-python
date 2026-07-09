@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.4.0
+
+### Fixed
+- **Error boundary no longer crashes on non-JSON error bodies (security-shaped).** `_request`/`_arequest` now check the HTTP status before parsing and synthesize the typed error from the status code when the body isn't JSON — an HTML 502/504, a plain-text 503, or an empty-body 429 now raise `ServerError`/`RateLimitError` (both `SEOJuiceError`) instead of a raw `json.JSONDecodeError` that bypassed every documented `except`.
+- **Webhook verifier fails closed (security).** `verify_webhook_signature` now returns `False` (never raises) on a `None`/empty/non-`str` secret, body, or signature — a request with a missing `X-SEOJuice-Signature` header rejects with 401 instead of an unhandled 500. `signature` is widened to `Optional[str]`.
+- **`WebsiteResource` write-path methods are now explicitly typed.** `bulk_change_action`, `update_action_item`, `create_action_item`, `reject_change`, `revert_change`, `pull_change`, `verify_change`, `submit_urls`, and `url_status` gained the real keyword-only signatures (mirroring the async client), so mypy catches wrong kwargs on the `.website(...)` facade. `update_change_settings` stays variadic by design.
+- **User-Agent version drift.** The UA advertised `seojuice-python/0.1.0` on every release; it now derives from `__version__` (single-sourced in `_version.py`).
+- **Falsy API keys are rejected.** `SEOJuice(None)`/`("")`/`("  ")` now raise `ValueError("api_key is required")` instead of sending `Bearer None`.
+
+### Added
+- **`APIConnectionError` / `APITimeoutError`** (both subclasses of `SEOJuiceError`). `httpx` connect/read timeouts, connection-refused, and DNS failures are now wrapped into the typed hierarchy, so `except SEOJuiceError` catches the most common production failure.
+
+### Docs
+- Corrected the README `bulk_change_action` (`ids=`) and `update_action_item` (`action=`) snippets, reworded the Django `<title>` claim to "injection when missing", and repointed the 11 `examples/*.py` links to absolute GitHub URLs (they 404'd on PyPI). Added a CI gate that compiles every README fence and imports every example to block future drift.
+
 ## 1.3.0
 
 ### Fixed
