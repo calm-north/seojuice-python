@@ -166,20 +166,41 @@ class WebsiteResource:
     def approve_change(self, change_id: int) -> ChangeRecord:
         return self._client.approve_change(self._domain, change_id)
 
-    def reject_change(self, change_id: int, **kwargs: Any) -> ChangeRecord:
-        return self._client.reject_change(self._domain, change_id, **kwargs)
+    def reject_change(
+        self, change_id: int, *, reason: Optional[str] = None
+    ) -> ChangeRecord:
+        return self._client.reject_change(self._domain, change_id, reason=reason)
 
-    def revert_change(self, change_id: int, **kwargs: Any) -> ChangeRecord:
-        return self._client.revert_change(self._domain, change_id, **kwargs)
+    def revert_change(
+        self, change_id: int, *, reason: Optional[str] = None
+    ) -> ChangeRecord:
+        return self._client.revert_change(self._domain, change_id, reason=reason)
 
-    def pull_change(self, change_id: int, **kwargs: Any) -> ChangeRecord:
-        return self._client.pull_change(self._domain, change_id, **kwargs)
+    def pull_change(self, change_id: int, *, integration: str) -> ChangeRecord:
+        return self._client.pull_change(
+            self._domain, change_id, integration=integration
+        )
 
-    def verify_change(self, change_id: int, **kwargs: Any) -> ChangeRecord:
-        return self._client.verify_change(self._domain, change_id, **kwargs)
+    def verify_change(self, change_id: int, *, integration: str) -> ChangeRecord:
+        return self._client.verify_change(
+            self._domain, change_id, integration=integration
+        )
 
-    def bulk_change_action(self, **kwargs: Any) -> BulkActionResult:
-        return self._client.bulk_change_action(self._domain, **kwargs)
+    def bulk_change_action(
+        self,
+        *,
+        action: str,
+        ids: List[int],
+        reason: Optional[str] = None,
+        integration: Optional[str] = None,
+    ) -> BulkActionResult:
+        return self._client.bulk_change_action(
+            self._domain,
+            action=action,
+            ids=ids,
+            reason=reason,
+            integration=integration,
+        )
 
     # Action Items
     def action_items(self, **kwargs: Any) -> PagedResult[Any]:
@@ -188,11 +209,39 @@ class WebsiteResource:
     def action_item(self, item_id: int) -> ActionItem:
         return self._client.get_action_item(self._domain, item_id)
 
-    def create_action_item(self, **kwargs: Any) -> ActionItem:
-        return self._client.create_action_item(self._domain, **kwargs)
+    def create_action_item(
+        self,
+        *,
+        title: str,
+        description: Optional[str] = None,
+        guidance: Optional[str] = None,
+        category: Optional[str] = None,
+        priority: Optional[str] = None,
+        estimated_effort: Optional[str] = None,
+    ) -> ActionItem:
+        return self._client.create_action_item(
+            self._domain,
+            title=title,
+            description=description,
+            guidance=guidance,
+            category=category,
+            priority=priority,
+            estimated_effort=estimated_effort,
+        )
 
-    def update_action_item(self, item_id: int, **kwargs: Any) -> ActionItem:
-        return self._client.update_action_item(self._domain, item_id, **kwargs)
+    def update_action_item(
+        self,
+        item_id: int,
+        *,
+        action: str,
+        snooze_days: Optional[int] = None,
+    ) -> ActionItem:
+        return self._client.update_action_item(
+            self._domain,
+            item_id,
+            action=action,
+            snooze_days=snooze_days,
+        )
 
     def action_item_groups(self, **kwargs: Any) -> PagedResult[ActionItemGroup]:
         return self._client.get_action_item_groups(self._domain, **kwargs)
@@ -219,11 +268,11 @@ class WebsiteResource:
     def page_content(self, page_id: int) -> PageContentResponse:
         return self._client.get_page_content(self._domain, page_id)
 
-    def submit_urls(self, **kwargs: Any) -> Dict[str, Any]:
-        return self._client.submit_urls(self._domain, **kwargs)
+    def submit_urls(self, *, urls: List[Dict[str, Any]]) -> Dict[str, Any]:
+        return self._client.submit_urls(self._domain, urls=urls)
 
-    def url_status(self, **kwargs: Any) -> Dict[str, Any]:
-        return self._client.get_url_status(self._domain, **kwargs)
+    def url_status(self, *, url: str) -> Dict[str, Any]:
+        return self._client.get_url_status(self._domain, url=url)
 
 
 class AsyncWebsiteResource:
@@ -585,14 +634,10 @@ class AsyncWebsiteResource:
         )
 
     async def change_stats(self) -> ChangeStats:
-        return await self._client._aget(
-            f"/websites/{self._domain}/changes/stats/"
-        )
+        return await self._client._aget(f"/websites/{self._domain}/changes/stats/")
 
     async def change_settings(self) -> ChangeSettings:
-        return await self._client._aget(
-            f"/websites/{self._domain}/changes/settings/"
-        )
+        return await self._client._aget(f"/websites/{self._domain}/changes/settings/")
 
     async def update_change_settings(self, **settings: Any) -> ChangeSettings:
         return await self._client._apatch(
@@ -620,17 +665,13 @@ class AsyncWebsiteResource:
             f"/websites/{self._domain}/changes/{change_id}/revert/", body
         )
 
-    async def pull_change(
-        self, change_id: int, *, integration: str
-    ) -> ChangeRecord:
+    async def pull_change(self, change_id: int, *, integration: str) -> ChangeRecord:
         return await self._client._apost(
             f"/websites/{self._domain}/changes/{change_id}/pull/",
             {"integration": integration},
         )
 
-    async def verify_change(
-        self, change_id: int, *, integration: str
-    ) -> ChangeRecord:
+    async def verify_change(self, change_id: int, *, integration: str) -> ChangeRecord:
         return await self._client._apost(
             f"/websites/{self._domain}/changes/{change_id}/verify/",
             {"integration": integration},
@@ -757,9 +798,7 @@ class AsyncWebsiteResource:
         )
 
     async def benchmarks(self) -> BenchmarkResponse:
-        return await self._client._aget(
-            f"/websites/{self._domain}/benchmarks/"
-        )
+        return await self._client._aget(f"/websites/{self._domain}/benchmarks/")
 
     async def content_quality(
         self,
@@ -788,9 +827,7 @@ class AsyncWebsiteResource:
             f"/websites/{self._domain}/pages/{page_id}/content/"
         )
 
-    async def submit_urls(
-        self, *, urls: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+    async def submit_urls(self, *, urls: List[Dict[str, Any]]) -> Dict[str, Any]:
         return await self._client._apost(
             f"/websites/{self._domain}/urls/", {"urls": urls}
         )
