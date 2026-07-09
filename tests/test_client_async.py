@@ -7,7 +7,7 @@ import httpx
 import pytest
 
 from seojuice._async import AsyncSEOJuice
-from seojuice._exceptions import AuthError, NotFoundError, ServerError
+from seojuice._exceptions import AuthError, NotFoundError, RateLimitError, ServerError
 from seojuice._pagination import PagedResult
 from seojuice._resource import AsyncWebsiteResource
 
@@ -311,3 +311,37 @@ class TestAgetCleanParams:
         assert url.params["include_history"] == "true"
         assert "optional" not in url.params
         await http_client.aclose()
+
+
+# ---------------------------------------------------------------------------
+# Async error responses with non-JSON bodies (item 1)
+# ---------------------------------------------------------------------------
+
+
+class TestAsyncNonJsonErrorBodies:
+    async def _client(self, api_key: str, response: httpx.Response) -> tuple[AsyncSEOJuice, httpx.AsyncClient]:
+        transport = _make_async_transport(lambda req: response)
+        http = httpx.AsyncClient(base_url="https://seojuice.com/api/v2", transport=transport)
+        return AsyncSEOJuice(api_key, http_client=http), http
+
+    async def test_html_502_raises_server_error_not_jsondecode(self, api_key: str):
+        resp = httpx.Response(502, headers={"content-type": "text/html"}, content=b"<html>502</html>")
+        client, http = await self._client(api_key, resp)
+        with pytest.raises(ServerError) as exc_info:
+            await client._aget("/websites/")
+        assert exc_info.value.status_code == 502
+        await http.aclose()
+
+    async def test_empty_body_503_raises_server_error(self, api_key: str):
+        resp = httpx.Response(503, content=b"")
+        client, http = await self._client(api_key, resp)
+        with pytest.raises(ServerError):
+            await client._aget("/websites/")
+        await http.aclose()
+
+    async def test_non_json_429_raises_rate_limit_error(self, api_key: str):
+        resp = httpx.Response(429, headers={"content-type": "text/plain"}, content=b"Too Many Requests")
+        client, http = await self._client(api_key, resp)
+        with pytest.raises(RateLimitError):
+            await client._aget("/websites/")
+        await http.aclose()

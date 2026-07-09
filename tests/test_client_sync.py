@@ -656,3 +656,49 @@ class TestPaginationFallback:
         assert result.pagination["total_pages"] == 1
         assert result.pagination["total_count"] == 2
         http_client.close()
+
+
+# ---------------------------------------------------------------------------
+# Error responses with non-JSON bodies (item 1)
+# ---------------------------------------------------------------------------
+
+
+class TestNonJsonErrorBodies:
+    def _client(self, api_key: str, response: httpx.Response) -> tuple[SEOJuice, httpx.Client]:
+        def handler(request: httpx.Request) -> httpx.Response:
+            return response
+
+        transport = httpx.MockTransport(handler)
+        http = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        return SEOJuice(api_key, http_client=http), http
+
+    def test_html_502_raises_server_error_not_jsondecode(self, api_key: str):
+        resp = httpx.Response(502, headers={"content-type": "text/html"}, content=b"<html>502 Bad Gateway</html>")
+        client, http = self._client(api_key, resp)
+        with pytest.raises(ServerError) as exc_info:
+            client.list_websites()
+        assert exc_info.value.status_code == 502
+        http.close()
+
+    def test_empty_body_503_raises_server_error(self, api_key: str):
+        resp = httpx.Response(503, content=b"")
+        client, http = self._client(api_key, resp)
+        with pytest.raises(ServerError):
+            client.list_websites()
+        http.close()
+
+    def test_non_json_429_raises_rate_limit_error(self, api_key: str):
+        resp = httpx.Response(429, headers={"content-type": "text/plain"}, content=b"Too Many Requests")
+        client, http = self._client(api_key, resp)
+        with pytest.raises(RateLimitError):
+            client.list_websites()
+        http.close()
+
+    def test_non_json_error_is_seojuice_error_subclass(self, api_key: str):
+        from seojuice._exceptions import SEOJuiceError
+
+        resp = httpx.Response(500, content=b"boom")
+        client, http = self._client(api_key, resp)
+        with pytest.raises(SEOJuiceError):
+            client.list_websites()
+        http.close()

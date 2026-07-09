@@ -89,9 +89,13 @@ class AsyncSEOJuice(_BaseClient):
             params=params,
             json=json,
         )
-        body = response.json()
-        raise_for_response(response.status_code, body if isinstance(body, dict) else {})
-        return body
+        if response.status_code >= 400:
+            try:
+                body = response.json()
+            except Exception:
+                body = {}
+            raise_for_response(response.status_code, body if isinstance(body, dict) else {})
+        return response.json()
 
     async def _arequest_bytes(
         self,
