@@ -122,13 +122,18 @@ asyncio.run(main())
 ### Async Auto-Pagination
 
 ```python
+import asyncio
+from seojuice import AsyncSEOJuice
 from seojuice._pagination import async_auto_paginate
 
-async with AsyncSEOJuice("your-api-key") as client:
-    site = client.website("example.com")
+async def main():
+    async with AsyncSEOJuice("your-api-key") as client:
+        site = client.website("example.com")
 
-    async for page in async_auto_paginate(site.pages, page_size=100):
-        print(page["url"])
+        async for page in async_auto_paginate(site.pages, page_size=100):
+            print(page["url"])
+
+asyncio.run(main())
 ```
 
 ## Error Handling
