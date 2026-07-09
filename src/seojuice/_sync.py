@@ -23,6 +23,8 @@ class SEOJuice(_BaseClient):
         timeout: float = 30.0,
         http_client: Optional[httpx.Client] = None,
     ) -> None:
+        if not api_key or not api_key.strip():
+            raise ValueError("api_key is required")
         self._base_url = base_url.rstrip("/")
         self._api_key = api_key
         if http_client is not None:

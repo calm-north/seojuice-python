@@ -127,6 +127,18 @@ class TestSEOJuiceConstruction:
         custom.close()
 
 
+class TestApiKeyValidation:
+    @pytest.mark.parametrize("bad_key", [None, "", "   "])
+    def test_falsy_api_key_raises_value_error(self, bad_key):
+        with pytest.raises(ValueError, match="api_key is required"):
+            SEOJuice(bad_key)
+
+    def test_valid_api_key_constructs(self):
+        client = SEOJuice("sk_live_123")
+        assert client._api_key == "sk_live_123"
+        client.close()
+
+
 # ---------------------------------------------------------------------------
 # Context manager
 # ---------------------------------------------------------------------------
