@@ -20,7 +20,11 @@ from seojuice._pagination import PagedResult
 from seojuice._resource import WebsiteResource
 from seojuice._sync import SEOJuice
 
-from .conftest import make_error_response, make_paginated_response, make_transport_handler
+from .conftest import (
+    make_error_response,
+    make_paginated_response,
+    make_transport_handler,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -52,14 +56,21 @@ class TestCleanParams:
         assert _clean_params({"a": None, "b": None}) == {}
 
     def test_mixed_types(self):
-        result = _clean_params({
+        result = _clean_params(
+            {
+                "page": 1,
+                "active": True,
+                "deleted": False,
+                "name": None,
+                "query": "seo",
+            }
+        )
+        assert result == {
             "page": 1,
-            "active": True,
-            "deleted": False,
-            "name": None,
+            "active": "true",
+            "deleted": "false",
             "query": "seo",
-        })
-        assert result == {"page": 1, "active": "true", "deleted": "false", "query": "seo"}
+        }
 
 
 # ---------------------------------------------------------------------------
@@ -148,7 +159,9 @@ class TestContextManager:
 class TestWebsiteResourceProxy:
     def test_website_returns_website_resource(self, api_key: str):
         transport = make_transport_handler()
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
         resource = client.website("example.com")
         assert isinstance(resource, WebsiteResource)
@@ -162,7 +175,9 @@ class TestWebsiteResourceProxy:
 
 
 class TestListWebsites:
-    def test_calls_get_websites(self, api_key: str, sample_websites_list: Dict[str, Any]):
+    def test_calls_get_websites(
+        self, api_key: str, sample_websites_list: Dict[str, Any]
+    ):
         requests_made: List[httpx.Request] = []
 
         def handler(request: httpx.Request) -> httpx.Response:
@@ -170,7 +185,9 @@ class TestListWebsites:
             return httpx.Response(200, json=sample_websites_list)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         result = client.list_websites()
@@ -183,7 +200,9 @@ class TestListWebsites:
 
 
 class TestGetWebsite:
-    def test_calls_get_website_with_domain(self, api_key: str, sample_website: Dict[str, Any]):
+    def test_calls_get_website_with_domain(
+        self, api_key: str, sample_website: Dict[str, Any]
+    ):
         requests_made: List[httpx.Request] = []
 
         def handler(request: httpx.Request) -> httpx.Response:
@@ -191,7 +210,9 @@ class TestGetWebsite:
             return httpx.Response(200, json=sample_website)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         result = client.get_website("example.com")
@@ -214,7 +235,9 @@ class TestListPages:
             return httpx.Response(200, json=sample_paginated_pages)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         result = client.list_pages("example.com", page=2, page_size=25)
@@ -247,7 +270,9 @@ class TestGetIntelligence:
             return httpx.Response(200, json=intelligence_data)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         client.get_intelligence(
@@ -271,10 +296,14 @@ class TestGetIntelligence:
             return httpx.Response(200, json={"domain": "example.com"})
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
-        client.get_intelligence("example.com", include_history=False, include_trends=False)
+        client.get_intelligence(
+            "example.com", include_history=False, include_trends=False
+        )
 
         url = requests_made[0].url
         assert url.params["include_history"] == "false"
@@ -303,7 +332,9 @@ class TestAnalyzePage:
             return httpx.Response(200, json=response_data)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         result = client.analyze_page("example.com", "https://example.com/page")
@@ -330,7 +361,9 @@ class TestCreateReport:
             return httpx.Response(200, json=response_data)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         result = client.create_report("example.com", "last_month")
@@ -354,7 +387,9 @@ class TestDownloadReportPdf:
             return httpx.Response(200, content=pdf_bytes)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         result = client.download_report_pdf("example.com", 42)
@@ -369,7 +404,9 @@ class TestDownloadReportPdf:
             )
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         with pytest.raises(NotFoundError):
@@ -392,7 +429,9 @@ class TestPaginatedEndpoints:
             return httpx.Response(200, json=response_data)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         return SEOJuice(api_key, http_client=http_client), http_client
 
     def test_list_links_returns_paged_result(self, api_key: str):
@@ -419,7 +458,9 @@ class TestPaginatedEndpoints:
             return httpx.Response(200, json=data)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         client.list_content_gaps("example.com", category="seo", intent="informational")
@@ -438,7 +479,9 @@ class TestPaginatedEndpoints:
             return httpx.Response(200, json=data)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         client.list_content_gaps("example.com")
@@ -470,7 +513,9 @@ class TestPaginatedEndpoints:
         http.close()
 
     def test_list_backlinks_returns_paged_result(self, api_key: str):
-        data = make_paginated_response([{"id": 1, "source_url": "https://blog.com/link"}])
+        data = make_paginated_response(
+            [{"id": 1, "source_url": "https://blog.com/link"}]
+        )
         client, http = self._make_client(api_key, data)
         result = client.list_backlinks("example.com", status="active", dofollow=True)
         assert isinstance(result, PagedResult)
@@ -516,7 +561,9 @@ class TestSimpleGetEndpoints:
             return httpx.Response(200, json=response_data)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         return SEOJuice(api_key, http_client=http_client), http_client, requests_made
 
     def test_get_page(self, api_key: str, sample_page: Dict[str, Any]):
@@ -564,7 +611,11 @@ class TestSimpleGetEndpoints:
         http.close()
 
     def test_get_analysis_status(self, api_key: str):
-        data = {"analysis_id": "abc-123", "status": "completed", "url": "https://example.com"}
+        data = {
+            "analysis_id": "abc-123",
+            "status": "completed",
+            "url": "https://example.com",
+        }
         client, http, reqs = self._make_client(api_key, data)
         client.get_analysis_status("example.com", "abc-123")
         assert b"/api/v2/websites/example.com/analyze/abc-123/" in reqs[0].url.raw_path
@@ -624,7 +675,9 @@ class TestErrorResponses:
             )
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         with pytest.raises(error_cls):
@@ -646,7 +699,9 @@ class TestPaginationFallback:
             return httpx.Response(200, json=data)
 
         transport = httpx.MockTransport(handler)
-        http_client = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        http_client = httpx.Client(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         client = SEOJuice(api_key, http_client=http_client)
 
         result = client.list_pages("example.com")
@@ -664,7 +719,9 @@ class TestPaginationFallback:
 
 
 class TestNonJsonErrorBodies:
-    def _client(self, api_key: str, response: httpx.Response) -> tuple[SEOJuice, httpx.Client]:
+    def _client(
+        self, api_key: str, response: httpx.Response
+    ) -> tuple[SEOJuice, httpx.Client]:
         def handler(request: httpx.Request) -> httpx.Response:
             return response
 
@@ -673,7 +730,11 @@ class TestNonJsonErrorBodies:
         return SEOJuice(api_key, http_client=http), http
 
     def test_html_502_raises_server_error_not_jsondecode(self, api_key: str):
-        resp = httpx.Response(502, headers={"content-type": "text/html"}, content=b"<html>502 Bad Gateway</html>")
+        resp = httpx.Response(
+            502,
+            headers={"content-type": "text/html"},
+            content=b"<html>502 Bad Gateway</html>",
+        )
         client, http = self._client(api_key, resp)
         with pytest.raises(ServerError) as exc_info:
             client.list_websites()
@@ -688,7 +749,9 @@ class TestNonJsonErrorBodies:
         http.close()
 
     def test_non_json_429_raises_rate_limit_error(self, api_key: str):
-        resp = httpx.Response(429, headers={"content-type": "text/plain"}, content=b"Too Many Requests")
+        resp = httpx.Response(
+            429, headers={"content-type": "text/plain"}, content=b"Too Many Requests"
+        )
         client, http = self._client(api_key, resp)
         with pytest.raises(RateLimitError):
             client.list_websites()
@@ -699,6 +762,52 @@ class TestNonJsonErrorBodies:
 
         resp = httpx.Response(500, content=b"boom")
         client, http = self._client(api_key, resp)
+        with pytest.raises(SEOJuiceError):
+            client.list_websites()
+        http.close()
+
+
+# ---------------------------------------------------------------------------
+# Transport errors wrapped into the typed hierarchy (item 4a)
+# ---------------------------------------------------------------------------
+
+
+class TestTransportErrorWrapping:
+    def test_connect_timeout_raises_api_timeout_error(self, api_key: str):
+        from seojuice._exceptions import APITimeoutError
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.ConnectTimeout("connect timed out", request=request)
+
+        transport = httpx.MockTransport(handler)
+        http = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        client = SEOJuice(api_key, http_client=http)
+        with pytest.raises(APITimeoutError):
+            client.list_websites()
+        http.close()
+
+    def test_connect_error_raises_api_connection_error(self, api_key: str):
+        from seojuice._exceptions import APIConnectionError
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.ConnectError("connection refused", request=request)
+
+        transport = httpx.MockTransport(handler)
+        http = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        client = SEOJuice(api_key, http_client=http)
+        with pytest.raises(APIConnectionError):
+            client.list_websites()
+        http.close()
+
+    def test_timeout_is_catchable_as_seojuice_error(self, api_key: str):
+        from seojuice._exceptions import SEOJuiceError
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.ReadTimeout("read timed out", request=request)
+
+        transport = httpx.MockTransport(handler)
+        http = httpx.Client(base_url="https://seojuice.com/api/v2", transport=transport)
+        client = SEOJuice(api_key, http_client=http)
         with pytest.raises(SEOJuiceError):
             client.list_websites()
         http.close()

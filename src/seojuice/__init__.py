@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from seojuice._async import AsyncSEOJuice
 from seojuice._exceptions import (
+    APIConnectionError,
     APIError,
+    APITimeoutError,
     AuthError,
     ForbiddenError,
     NotFoundError,
@@ -70,7 +72,9 @@ __all__ = [
     "auto_paginate",
     "async_auto_paginate",
     "SEOJuiceError",
+    "APIConnectionError",
     "APIError",
+    "APITimeoutError",
     "AuthError",
     "ForbiddenError",
     "NotFoundError",

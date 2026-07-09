@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 import httpx
 
 from seojuice._client import _BaseClient
-from seojuice._exceptions import raise_for_response
+from seojuice._exceptions import APIConnectionError, APITimeoutError, raise_for_response
 from seojuice._resource import WebsiteResource
 
 _VERSION = "0.1.0"
@@ -52,18 +52,25 @@ class SEOJuice(_BaseClient):
         params: Optional[Dict[str, Any]] = None,
         json: Optional[Dict[str, Any]] = None,
     ) -> Any:
-        response = self._client.request(
-            method,
-            path,
-            params=params,
-            json=json,
-        )
+        try:
+            response = self._client.request(
+                method,
+                path,
+                params=params,
+                json=json,
+            )
+        except httpx.TimeoutException as exc:
+            raise APITimeoutError(str(exc)) from exc
+        except httpx.TransportError as exc:
+            raise APIConnectionError(str(exc)) from exc
         if response.status_code >= 400:
             try:
                 body = response.json()
             except Exception:
                 body = {}
-            raise_for_response(response.status_code, body if isinstance(body, dict) else {})
+            raise_for_response(
+                response.status_code, body if isinstance(body, dict) else {}
+            )
         return response.json()
 
     def _request_bytes(
@@ -79,7 +86,9 @@ class SEOJuice(_BaseClient):
                 body = response.json()
             except Exception:
                 body = {}
-            raise_for_response(response.status_code, body if isinstance(body, dict) else {})
+            raise_for_response(
+                response.status_code, body if isinstance(body, dict) else {}
+            )
         return response.content
 
     # ------------------------------------------------------------------

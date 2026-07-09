@@ -39,8 +39,25 @@ class TestExceptionHierarchy:
         assert issubclass(ServerError, APIError)
 
     def test_all_specific_errors_are_catchable_as_seojuice_error(self):
-        for cls in (AuthError, ForbiddenError, NotFoundError, RateLimitError, ServerError):
+        for cls in (
+            AuthError,
+            ForbiddenError,
+            NotFoundError,
+            RateLimitError,
+            ServerError,
+        ):
             assert issubclass(cls, SEOJuiceError)
+
+    def test_api_connection_error_inherits_from_seojuice_error(self):
+        from seojuice._exceptions import APIConnectionError
+
+        assert issubclass(APIConnectionError, SEOJuiceError)
+
+    def test_api_timeout_error_inherits_from_api_connection_error(self):
+        from seojuice._exceptions import APIConnectionError, APITimeoutError
+
+        assert issubclass(APITimeoutError, APIConnectionError)
+        assert issubclass(APITimeoutError, SEOJuiceError)
 
 
 # ---------------------------------------------------------------------------
@@ -90,7 +107,9 @@ class TestRaiseForResponse:
 
     def test_raises_not_found_error_for_404(self):
         with pytest.raises(NotFoundError) as exc_info:
-            raise_for_response(404, {"error": "not_found", "message": "No such resource"})
+            raise_for_response(
+                404, {"error": "not_found", "message": "No such resource"}
+            )
         assert exc_info.value.status_code == 404
 
     def test_raises_rate_limit_error_for_429(self):

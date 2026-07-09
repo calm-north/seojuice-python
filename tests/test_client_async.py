@@ -94,7 +94,9 @@ class TestAsyncContextManager:
             pass
         assert http_client.is_closed
 
-    async def test_async_context_manager_does_not_close_unowned_client(self, api_key: str):
+    async def test_async_context_manager_does_not_close_unowned_client(
+        self, api_key: str
+    ):
         transport = _make_async_transport(lambda req: httpx.Response(200, json={}))
         http_client = httpx.AsyncClient(transport=transport)
         async with AsyncSEOJuice(api_key, http_client=http_client):
@@ -135,7 +137,9 @@ class TestArequest:
 
         def handler(request: httpx.Request) -> httpx.Response:
             requests_made.append(request)
-            return httpx.Response(200, json={"analysis_id": "abc-123", "status": "queued"})
+            return httpx.Response(
+                200, json={"analysis_id": "abc-123", "status": "queued"}
+            )
 
         transport = _make_async_transport(handler)
         http_client = httpx.AsyncClient(
@@ -144,7 +148,9 @@ class TestArequest:
         )
         client = AsyncSEOJuice(api_key, http_client=http_client)
 
-        result = await client._apost("/websites/example.com/analyze/", {"url": "https://example.com/page"})
+        result = await client._apost(
+            "/websites/example.com/analyze/", {"url": "https://example.com/page"}
+        )
 
         assert requests_made[0].method == "POST"
         body = json.loads(requests_made[0].content)
@@ -206,7 +212,9 @@ class TestArequest:
 class TestAsyncErrorHandling:
     async def test_arequest_raises_auth_error(self, api_key: str):
         def handler(request: httpx.Request) -> httpx.Response:
-            return httpx.Response(401, json=make_error_response("unauthorized", "Bad token"))
+            return httpx.Response(
+                401, json=make_error_response("unauthorized", "Bad token")
+            )
 
         transport = _make_async_transport(handler)
         http_client = httpx.AsyncClient(
@@ -222,7 +230,9 @@ class TestAsyncErrorHandling:
 
     async def test_arequest_bytes_raises_not_found(self, api_key: str):
         def handler(request: httpx.Request) -> httpx.Response:
-            return httpx.Response(404, json=make_error_response("not_found", "Not found"))
+            return httpx.Response(
+                404, json=make_error_response("not_found", "Not found")
+            )
 
         transport = _make_async_transport(handler)
         http_client = httpx.AsyncClient(
@@ -263,7 +273,9 @@ class TestAsyncErrorHandling:
         )
         client = AsyncSEOJuice(api_key, http_client=http_client)
 
-        result = await client._arequest_bytes("GET", "/websites/example.com/reports/1/pdf/")
+        result = await client._arequest_bytes(
+            "GET", "/websites/example.com/reports/1/pdf/"
+        )
         assert result == pdf_bytes
         await http_client.aclose()
 
@@ -319,13 +331,19 @@ class TestAgetCleanParams:
 
 
 class TestAsyncNonJsonErrorBodies:
-    async def _client(self, api_key: str, response: httpx.Response) -> tuple[AsyncSEOJuice, httpx.AsyncClient]:
+    async def _client(
+        self, api_key: str, response: httpx.Response
+    ) -> tuple[AsyncSEOJuice, httpx.AsyncClient]:
         transport = _make_async_transport(lambda req: response)
-        http = httpx.AsyncClient(base_url="https://seojuice.com/api/v2", transport=transport)
+        http = httpx.AsyncClient(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
         return AsyncSEOJuice(api_key, http_client=http), http
 
     async def test_html_502_raises_server_error_not_jsondecode(self, api_key: str):
-        resp = httpx.Response(502, headers={"content-type": "text/html"}, content=b"<html>502</html>")
+        resp = httpx.Response(
+            502, headers={"content-type": "text/html"}, content=b"<html>502</html>"
+        )
         client, http = await self._client(api_key, resp)
         with pytest.raises(ServerError) as exc_info:
             await client._aget("/websites/")
@@ -340,8 +358,47 @@ class TestAsyncNonJsonErrorBodies:
         await http.aclose()
 
     async def test_non_json_429_raises_rate_limit_error(self, api_key: str):
-        resp = httpx.Response(429, headers={"content-type": "text/plain"}, content=b"Too Many Requests")
+        resp = httpx.Response(
+            429, headers={"content-type": "text/plain"}, content=b"Too Many Requests"
+        )
         client, http = await self._client(api_key, resp)
         with pytest.raises(RateLimitError):
+            await client._aget("/websites/")
+        await http.aclose()
+
+
+# ---------------------------------------------------------------------------
+# Async transport errors wrapped into the typed hierarchy (item 4a)
+# ---------------------------------------------------------------------------
+
+
+class TestAsyncTransportErrorWrapping:
+    async def test_connect_timeout_raises_api_timeout_error(self, api_key: str):
+        from seojuice._exceptions import APITimeoutError
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.ConnectTimeout("connect timed out", request=request)
+
+        transport = _make_async_transport(handler)
+        http = httpx.AsyncClient(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
+        client = AsyncSEOJuice(api_key, http_client=http)
+        with pytest.raises(APITimeoutError):
+            await client._aget("/websites/")
+        await http.aclose()
+
+    async def test_connect_error_raises_api_connection_error(self, api_key: str):
+        from seojuice._exceptions import APIConnectionError
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            raise httpx.ConnectError("connection refused", request=request)
+
+        transport = _make_async_transport(handler)
+        http = httpx.AsyncClient(
+            base_url="https://seojuice.com/api/v2", transport=transport
+        )
+        client = AsyncSEOJuice(api_key, http_client=http)
+        with pytest.raises(APIConnectionError):
             await client._aget("/websites/")
         await http.aclose()

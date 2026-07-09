@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 import httpx
 
 from seojuice._client import _BaseClient, _clean_params
-from seojuice._exceptions import raise_for_response
+from seojuice._exceptions import APIConnectionError, APITimeoutError, raise_for_response
 from seojuice._pagination import PagedResult
 from seojuice._resource import AsyncWebsiteResource
 from seojuice._types import PaginationMeta
@@ -83,18 +83,25 @@ class AsyncSEOJuice(_BaseClient):
         params: Optional[Dict[str, Any]] = None,
         json: Optional[Dict[str, Any]] = None,
     ) -> Any:
-        response = await self._client.request(
-            method,
-            path,
-            params=params,
-            json=json,
-        )
+        try:
+            response = await self._client.request(
+                method,
+                path,
+                params=params,
+                json=json,
+            )
+        except httpx.TimeoutException as exc:
+            raise APITimeoutError(str(exc)) from exc
+        except httpx.TransportError as exc:
+            raise APIConnectionError(str(exc)) from exc
         if response.status_code >= 400:
             try:
                 body = response.json()
             except Exception:
                 body = {}
-            raise_for_response(response.status_code, body if isinstance(body, dict) else {})
+            raise_for_response(
+                response.status_code, body if isinstance(body, dict) else {}
+            )
         return response.json()
 
     async def _arequest_bytes(
@@ -110,7 +117,9 @@ class AsyncSEOJuice(_BaseClient):
                 body = response.json()
             except Exception:
                 body = {}
-            raise_for_response(response.status_code, body if isinstance(body, dict) else {})
+            raise_for_response(
+                response.status_code, body if isinstance(body, dict) else {}
+            )
         return response.content
 
     # ------------------------------------------------------------------
@@ -132,12 +141,15 @@ class AsyncSEOJuice(_BaseClient):
         params: Optional[Dict[str, Any]] = None,
     ) -> PagedResult[Any]:
         data = await self._aget(path, params)
-        pagination: PaginationMeta = data.get("pagination", {
-            "page": 1,
-            "page_size": len(data.get("results", [])),
-            "total_count": len(data.get("results", [])),
-            "total_pages": 1,
-        })
+        pagination: PaginationMeta = data.get(
+            "pagination",
+            {
+                "page": 1,
+                "page_size": len(data.get("results", [])),
+                "total_count": len(data.get("results", [])),
+                "total_pages": 1,
+            },
+        )
         return PagedResult(results=data.get("results", []), pagination=pagination)
 
     # ------------------------------------------------------------------

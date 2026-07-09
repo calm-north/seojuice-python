@@ -35,6 +35,14 @@ class ServerError(APIError):
     """5xx Server Error."""
 
 
+class APIConnectionError(SEOJuiceError):
+    """Network transport failure (connection refused, DNS failure, reset)."""
+
+
+class APITimeoutError(APIConnectionError):
+    """Request timed out (connect or read)."""
+
+
 _STATUS_TO_EXCEPTION: Dict[int, Type[APIError]] = {
     401: AuthError,
     403: ForbiddenError,
