@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.1
+
+### Fixed
+- **Images served through the Next.js image optimizer (`/_next/image`) each get their own alt text.**
+
 ## 1.4.0
 
 ### Fixed
