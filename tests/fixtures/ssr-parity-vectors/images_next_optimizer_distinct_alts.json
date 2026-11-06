@@ -1,0 +1,41 @@
+{
+  "name": "images_next_optimizer_distinct_alts",
+  "input_html": "<html><head></head><body><p>text</p><img src=\"https://example.com/_next/image?url=%2Fa.jpg&amp;w=640&amp;q=75\"><img src=\"https://example.com/_next/image?url=%2Fb.jpg&amp;w=640&amp;q=75\"><img src=\"https://example.com/_next/image?url=%2Fa.jpg&amp;w=1080&amp;q=75\"></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [
+      {
+        "url": "https://example.com/_next/image?url=%2Fa.jpg",
+        "alt_text": "Alt for A"
+      },
+      {
+        "url": "https://example.com/_next/image?url=%2Fb.jpg",
+        "alt_text": "Alt for B"
+      }
+    ],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>text</p><img alt=\"Alt for A\" data-seojuice=\"alt\" src=\"https://example.com/_next/image?url=%2Fa.jpg&amp;w=640&amp;q=75\"><img alt=\"Alt for B\" data-seojuice=\"alt\" src=\"https://example.com/_next/image?url=%2Fb.jpg&amp;w=640&amp;q=75\"><img alt=\"Alt for A\" data-seojuice=\"alt\" src=\"https://example.com/_next/image?url=%2Fa.jpg&amp;w=1080&amp;q=75\"><!-- seojuice: img=3 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "Next.js optimizer URLs key on the decoded original, not on /_next/image: A and B get their own alts, and the w=1080 variant of A gets A's alt."
+}

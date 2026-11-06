@@ -49,6 +49,17 @@ def test_escape_html_uses_numeric_apostrophe():
     assert escape_html("a'b<c>&\"d") == "a&#039;b&lt;c&gt;&amp;&quot;d"
 
 
+def test_normalize_image_url_keys_next_optimizer_urls_on_the_original_image():
+    k = normalize_image_url
+    assert k("https://x.com/_next/image?url=%2Fa.jpg&w=640&q=75") == "//x.com/a.jpg"
+    assert k("https://x.com/_next/image?url=%2Fa.jpg&w=1080") == k("https://x.com/_next/image?url=%2Fa.jpg&w=640")
+    assert k("https://x.com/_next/image?url=%2Fa.jpg") != k("https://x.com/_next/image?url=%2Fb.jpg")
+    assert k("//x.com/_next/image?url=https%3A%2F%2Fcdn.y.com%2Fa.jpg&w=640") == "//cdn.y.com/a.jpg"
+    assert k("https://x.com/_next/image?w=640") == "//x.com/_next/image"
+    # nested optimizer URL: unwrap once, never recurse
+    assert k("https://x.com/_next/image?url=%2F_next%2Fimage%3Furl%3D%252Fa.jpg%26w%3D640&w=640") == "//x.com/_next/image"
+
+
 def test_normalize_image_url_strips_scheme_and_query():
     assert normalize_image_url("https://x.com/a.png?w=1") == "//x.com/a.png"
     assert normalize_image_url("http://x.com/a.png") == "//x.com/a.png"

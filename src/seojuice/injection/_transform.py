@@ -4,6 +4,7 @@ import json
 import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Tuple
+from urllib.parse import parse_qs, urljoin, urlsplit
 
 
 @dataclass
@@ -27,10 +28,24 @@ def escape_html(text: str) -> str:
     )
 
 
+def _unwrap_next_image_url(url: str) -> str:
+    # Next.js optimizer: the image is the `url` param, not the endpoint.
+    try:
+        parsed = urlsplit(url)
+        if parsed.path != "/_next/image":
+            return url
+        values = parse_qs(parsed.query).get("url")
+        if not values or not values[0]:
+            return url
+        return urljoin(url, values[0]) if parsed.netloc else values[0]
+    except ValueError:
+        return url
+
+
 def normalize_image_url(url: str) -> str:
     if not url:
         return ""
-    url = url.split("?")[0]
+    url = _unwrap_next_image_url(url).split("?")[0]
     if url.startswith("https:"):
         return url[6:]
     if url.startswith("http:"):
