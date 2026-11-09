@@ -71,20 +71,20 @@ class TestAsyncApiKeyValidation:
 
 
 # ---------------------------------------------------------------------------
-# Sync methods raise RuntimeError
+# Inherited endpoint methods are awaitable (they used to raise RuntimeError)
 # ---------------------------------------------------------------------------
 
 
-class TestSyncMethodsRaise:
-    def test_sync_request_raises_runtime_error(self, api_key: str):
-        client = AsyncSEOJuice(api_key)
-        with pytest.raises(RuntimeError, match="Use await"):
-            client._request("GET", "/websites/")
-
-    def test_sync_request_bytes_raises_runtime_error(self, api_key: str):
-        client = AsyncSEOJuice(api_key)
-        with pytest.raises(RuntimeError, match="Use await"):
-            client._request_bytes("GET", "/websites/example.com/reports/1/pdf/")
+class TestInheritedMethodsAreAwaitable:
+    async def test_top_level_method_returns_awaitable(self, api_key: str):
+        http = httpx.AsyncClient(
+            transport=httpx.MockTransport(
+                lambda r: httpx.Response(200, json={"results": []})
+            ),
+            base_url="https://seojuice.com/api/v2",
+        )
+        client = AsyncSEOJuice(api_key, http_client=http)
+        assert await client.list_websites() == {"results": []}
 
 
 # ---------------------------------------------------------------------------

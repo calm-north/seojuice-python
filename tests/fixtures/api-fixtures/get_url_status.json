@@ -1,0 +1,39 @@
+{
+  "operation": "get_url_status",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/urls/status/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": {
+      "url": "https://fixtures.example/pushed/"
+    },
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "id": 1,
+      "url": "https://fixtures.example/pushed/",
+      "title": "Pushed page",
+      "page_type": "other",
+      "is_content": false,
+      "seo_score": null,
+      "content_quality_score": null,
+      "geo_readiness_score": null,
+      "accessibility_score": null,
+      "meta_description": null,
+      "language_code": null,
+      "indexed_at": "2026-11-01T12:00:00+00:00",
+      "processed_at": null,
+      "vectorized_at": null,
+      "links_generated_at": null,
+      "scores_generated_at": null,
+      "seo_score_generated_at": null,
+      "created_at": "2026-11-01T12:00:00+00:00"
+    }
+  }
+}

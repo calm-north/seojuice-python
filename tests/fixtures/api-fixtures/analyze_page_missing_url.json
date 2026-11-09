@@ -1,0 +1,21 @@
+{
+  "operation": "analyze_page_missing_url",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/analyze/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {},
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "missing_parameter",
+      "message": "URL parameter is required"
+    }
+  }
+}

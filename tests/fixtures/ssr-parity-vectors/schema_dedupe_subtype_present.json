@@ -1,0 +1,33 @@
+{
+  "name": "schema_dedupe_subtype_present",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
+  "input_html": "<html><head><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Existing\"}</script></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Fresh headline\"}",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"BlogPosting\",\"headline\":\"Existing\"}</script></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p><script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — BlogPosting on the page covers a proposed Article (SCHEMA_COVERS), so nothing is injected and no manifest schema entry is written."
+}

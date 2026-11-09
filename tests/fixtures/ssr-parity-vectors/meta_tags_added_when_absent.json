@@ -1,5 +1,6 @@
 {
   "name": "meta_tags_added_when_absent",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>Body content long enough to comfortably survive the fail-open length-ratio check here.</p></body></html>",
   "payload": {
     "suggestions": [],

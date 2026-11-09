@@ -1,0 +1,35 @@
+{
+  "name": "server_schema_array",
+  "origin": "generated: real server payload from ssr-payloads, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": null,
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "og_title": "",
+    "og_description": "",
+    "og_image": "",
+    "structured_data": "[{\"@type\": \"Article\", \"author\": {\"name\": \"Ada Lovelace\", \"@type\": \"Person\"}, \"@context\": \"https://schema.org\", \"headline\": \"Complete SEO Guide\", \"datePublished\": \"2026-10-01\"}, {\"@type\": \"FAQPage\", \"@context\": \"https://schema.org\", \"mainEntity\": [{\"name\": \"What is SEO?\", \"@type\": \"Question\", \"acceptedAnswer\": {\"text\": \"Search engine optimisation.\", \"@type\": \"Answer\"}}]}]",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://schema-array.example/guide/",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {
+      "enabled": true,
+      "language": "en"
+    },
+    "h1": ""
+  },
+  "expected_html": "<html><head><script type=\"application/ld+json\" data-seojuice=\"schema\">[{\"@type\":\"Article\",\"author\":{\"name\":\"Ada Lovelace\",\"@type\":\"Person\"},\"@context\":\"https://schema.org\",\"headline\":\"Complete SEO Guide\",\"datePublished\":\"2026-10-01\"},{\"@type\":\"FAQPage\",\"@context\":\"https://schema.org\",\"mainEntity\":[{\"name\":\"What is SEO?\",\"@type\":\"Question\",\"acceptedAnswer\":{\"text\":\"Search engine optimisation.\",\"@type\":\"Answer\"}}]}]</script>\n</head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p><!-- seojuice: schema=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "Real server payload (ssr-payloads/schema_array): structured_data is an array of two nodes; both are injected in one script."
+}

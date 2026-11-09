@@ -1,0 +1,110 @@
+{
+  "operation": "get_cluster",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/clusters/{cluster_id}/",
+    "path_params": {
+      "cluster_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "id": 1,
+      "name": "Roof repair",
+      "slug": "roof-repair",
+      "page_count": 3,
+      "clicks": 0,
+      "impressions": 0,
+      "ctr": null,
+      "avg_position": null,
+      "clicks_change_pct": null,
+      "trend": "steady",
+      "pillar": null,
+      "cohesion": null,
+      "issues": {
+        "competing_queries": 0,
+        "pages_without_cluster_link": 3,
+        "close_to_page_1": 0,
+        "open_action_items": 0
+      },
+      "is_active": true,
+      "time_series": [
+        {
+          "week_start": "2026-08-10",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-08-17",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-08-24",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-08-31",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-09-07",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-09-14",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-09-21",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-09-28",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-10-05",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-10-12",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-10-19",
+          "clicks": 0,
+          "impressions": 0
+        },
+        {
+          "week_start": "2026-10-26",
+          "clicks": 0,
+          "impressions": 0
+        }
+      ],
+      "top_queries": [],
+      "quality_history": {
+        "dates": [],
+        "seo_scores": [],
+        "performance_scores": [],
+        "accessibility_scores": [],
+        "best_practices_scores": []
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "server_internal_links",
+  "origin": "generated: real server payload from ssr-payloads, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>Run a seo audit today. Then try link building and the legacy tool.</p></body></html>",
+  "payload": {
+    "suggestions": [
+      {
+        "url": "https://internal-links.example/links/",
+        "keyword": "link building",
+        "id": 1,
+        "context": "Run a link building today"
+      },
+      {
+        "url": "https://internal-links.example/audit/",
+        "keyword": "seo audit",
+        "id": 2,
+        "context": "Run a seo audit today"
+      },
+      {
+        "url": "https://internal-links.example/legacy/",
+        "keyword": "legacy",
+        "id": null,
+        "context": ""
+      }
+    ],
+    "images": [],
+    "custom_link_class": "brand-link",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "og_title": "",
+    "og_description": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://internal-links.example/guide/",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {
+      "enabled": true,
+      "language": "en"
+    },
+    "h1": ""
+  },
+  "expected_html": "<html><head></head><body><p>Run a <a href=\"https://internal-links.example/audit/\" class=\"seojuice-link brand-link\" data-seojuice-cs=\"2\">seo audit</a> today. Then try <a href=\"https://internal-links.example/links/\" class=\"seojuice-link brand-link\" data-seojuice-cs=\"1\">link building</a> and the <a href=\"https://internal-links.example/legacy/\" class=\"seojuice-link brand-link\">legacy</a> tool.</p><!-- seojuice: cs=[1,2] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "Real server payload (ssr-payloads/internal_links): two ChangeSet-backed links (numeric id) and one legacy link (id null). The server sorts longer keywords first."
+}

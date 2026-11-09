@@ -1,0 +1,23 @@
+{
+  "operation": "approve_heading_without_confirmation",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/changes/{change_id}/approve/",
+    "path_params": {
+      "change_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {},
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "confirm_heading_required",
+      "message": "Approving a page heading needs confirm_heading=true."
+    }
+  }
+}

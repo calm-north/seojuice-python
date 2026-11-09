@@ -1,0 +1,23 @@
+{
+  "operation": "create_report_invalid_type",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/reports/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "type": "yearly"
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "invalid_type",
+      "message": "Type must be one of: this_month, last_month, this_week, last_week"
+    }
+  }
+}

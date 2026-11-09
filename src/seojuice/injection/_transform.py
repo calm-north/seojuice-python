@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import parse_qs, urljoin, urlsplit
 
 
@@ -75,6 +75,103 @@ CLOSE_TAG_RE = re.compile(r"^</(a|script|style|title|h[1-6])>", re.IGNORECASE)
 _HEAD_CLOSE_RE = re.compile(r"</head>", re.IGNORECASE)
 
 
+_LD_JSON_BLOCK_RE = re.compile(
+    r'<script([^>]*type=["\']application/ld\+json["\'][^>]*)>([\s\S]*?)</script>',
+    re.IGNORECASE,
+)
+_OWN_ATTR_RE = re.compile(r"\sdata-seojuice(?=[\s=>/]|$)", re.IGNORECASE)
+
+# Mirrors SCHEMA_COVERS in seojuice-ssr.js: a proposed type is redundant when
+# any covering type is already on the page.
+_SCHEMA_COVERS: Dict[str, List[str]] = {
+    "Article": ["Article", "BlogPosting", "NewsArticle", "TechArticle", "ScholarlyArticle", "Report"],
+    "WebPage": [
+        "WebPage", "CollectionPage", "AboutPage", "ContactPage", "ItemPage", "ProfilePage", "FAQPage",
+        "QAPage", "SearchResultsPage", "CheckoutPage", "MedicalWebPage", "RealEstateListing",
+    ],
+    "Organization": [
+        "Organization", "Corporation", "NGO", "EducationalOrganization", "School", "CollegeOrUniversity",
+        "ElementarySchool", "HighSchool", "MiddleSchool", "Preschool", "GovernmentOrganization",
+        "NewsMediaOrganization", "MedicalOrganization", "ResearchOrganization", "SportsOrganization",
+        "SportsTeam", "PerformingGroup", "OnlineBusiness", "OnlineStore", "Airline", "Consortium",
+        "LibrarySystem", "WorkersUnion", "LocalBusiness", "AccountingService", "AutomotiveBusiness",
+        "AutoDealer", "AutoRepair", "Dentist", "EmergencyService", "EntertainmentBusiness",
+        "FinancialService", "FoodEstablishment", "Bakery", "BarOrPub", "CafeOrCoffeeShop", "Restaurant",
+        "GovernmentOffice", "HealthAndBeautyBusiness", "BeautySalon", "DaySpa", "HairSalon",
+        "HomeAndConstructionBusiness", "Electrician", "GeneralContractor", "Plumber", "InternetCafe",
+        "LegalService", "Attorney", "Notary", "LodgingBusiness", "Hotel", "Hostel", "Motel",
+        "MedicalBusiness", "Pharmacy", "Physician", "ProfessionalService", "RealEstateAgent",
+        "RecyclingCenter", "SelfStorage", "ShoppingCenter", "SportsActivityLocation", "Store",
+        "TouristInformationCenter", "TravelAgency", "Person",
+    ],
+}
+
+
+def _strip_own_ld_json(html: str) -> str:
+    def repl(m: "re.Match[str]") -> str:
+        return "" if _OWN_ATTR_RE.search(m.group(1)) else m.group(0)
+
+    return re.sub(
+        r'<script([^>]*type=["\']application/ld\+json["\'][^>]*)>[\s\S]*?</script>\n?',
+        lambda m: repl(m),
+        html,
+        flags=re.IGNORECASE,
+    )
+
+
+def _collect_ld_json_types(node: Any, types: set) -> None:  # type: ignore[type-arg]
+    if isinstance(node, list):
+        for item in node:
+            _collect_ld_json_types(item, types)
+        return
+    if not isinstance(node, dict):
+        return
+    graph = node.get("@graph")
+    if isinstance(graph, list):
+        for item in graph:
+            _collect_ld_json_types(item, types)
+    t = node.get("@type")
+    if isinstance(t, str):
+        types.add(t)
+    elif isinstance(t, list):
+        types.update(x for x in t if isinstance(x, str))
+
+
+def _collect_present_ld_json_types(html: str) -> set:  # type: ignore[type-arg]
+    types: set = set()  # type: ignore[type-arg]
+    for m in _LD_JSON_BLOCK_RE.finditer(html):
+        if _OWN_ATTR_RE.search(m.group(1)):
+            continue
+        try:
+            _collect_ld_json_types(json.loads(m.group(2)), types)
+        except ValueError:
+            continue
+    return types
+
+
+def _is_type_covered(proposed: str, present: set) -> bool:  # type: ignore[type-arg]
+    return any(t in present for t in _SCHEMA_COVERS.get(proposed, [proposed]))
+
+
+def _ld_json_node_already_present(node: Any, present: set) -> bool:  # type: ignore[type-arg]
+    if not isinstance(node, dict):
+        return False
+    t = node.get("@type")
+    if isinstance(t, str):
+        return _is_type_covered(t, present)
+    if isinstance(t, list) and t:
+        return all(isinstance(x, str) and _is_type_covered(x, present) for x in t)
+    return False
+
+
+def _normalize_schema_nodes(obj: Any) -> List[Any]:
+    if isinstance(obj, list):
+        return obj
+    if isinstance(obj, dict) and isinstance(obj.get("@graph"), list):
+        return obj["@graph"]
+    return [obj]
+
+
 def replace_meta_tags(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
     title = data.get("title")
     if title and not re.search(r"<title[\s>]", html, re.IGNORECASE):
@@ -121,26 +218,29 @@ def replace_meta_tags(html: str, data: Dict[str, Any], manifest: Manifest) -> st
     raw = data.get("structured_data")
     if raw and raw != "null":
         try:
-            # M1 — defensive single-or-double decode: the real /suggestions payload
-            # (build_page_suggestions_payload) serializes structured_data as a SINGLE
-            # json.dumps(dict) — a JSON string of the object. A legacy caller may
-            # still send it double-encoded (a JSON string containing an inner JSON
-            # string). Parse once; if the result is still a string, parse again.
-            # Either shape must produce byte-identical injected JSON-LD.
+            # Mirror seojuice-ssr.js replaceMetaTags: the payload is a single
+            # json.dumps(); a legacy caller may double-encode, so parse again
+            # when the first parse yields a string.
             obj = json.loads(raw)
             if isinstance(obj, str):
                 obj = json.loads(obj)
-            if not re.search(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>', html, re.IGNORECASE):
-                tag = (
-                    '<script type="application/ld+json" data-seojuice="schema">'
-                    f"{json.dumps(obj, separators=(',', ':'), ensure_ascii=False)}</script>"
-                )
-                html = re.sub(
-                    r"</head>", lambda m, tag=tag: tag + "\n" + m.group(0), html, count=1, flags=re.IGNORECASE
-                )
-                manifest.schema = 1
         except (ValueError, TypeError):
-            pass
+            return html
+        nodes = _normalize_schema_nodes(obj)
+        html = _strip_own_ld_json(html)
+        present = _collect_present_ld_json_types(html)
+        missing = [n for n in nodes if not _ld_json_node_already_present(n, present)]
+        if missing:
+            payload = json.dumps(missing, separators=(",", ":"), ensure_ascii=False)
+            payload = payload.replace("<", "\\u003c")
+            tag = (
+                '<script type="application/ld+json" data-seojuice="schema">'
+                f"{payload}</script>"
+            )
+            html = _HEAD_CLOSE_RE.sub(
+                lambda m, tag=tag: tag + "\n" + m.group(0), html, count=1
+            )
+            manifest.schema = 1
 
     return html
 
@@ -162,33 +262,123 @@ def replace_h1(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
 
 
 _IMG_RE = re.compile(r"<img([^>]+)>", re.IGNORECASE)
-_IMG_SRC_RE = re.compile(r'(?:src|data-src)=["\']([^"\']+)["\']')
 _IMG_ALT_RE = re.compile(r'alt=["\']([^"\']*)["\']')
+
+_IMAGE_ATTRS = ("src", "data-src", "data-lazy-src", "data-lazy", "data-original")
+_IMAGE_SRCSET_ATTRS = ("srcset", "data-srcset")
+# decodeURI leaves these escapes in place (reserved characters).
+_DECODE_URI_KEEP = ";/?:@&=+$,#"
+
+
+def _read_attr(attributes: str, name: str) -> Optional[str]:
+    m = re.search(
+        r"(?:^|\s)" + re.escape(name) + r"\s*=\s*(?:\"([^\"]*)\"|'([^']*)')",
+        attributes,
+        re.IGNORECASE,
+    )
+    if not m:
+        return None
+    return m.group(1) if m.group(1) is not None else m.group(2)
+
+
+def _image_candidates(attributes: str) -> List[str]:
+    out: List[str] = []
+    for name in _IMAGE_ATTRS:
+        v = _read_attr(attributes, name)
+        if v:
+            out.append(v)
+    for name in _IMAGE_SRCSET_ATTRS:
+        v = _read_attr(attributes, name)
+        if v:
+            for part in v.split(","):
+                pieces = part.strip().split()
+                if pieces:
+                    out.append(pieces[0])
+    return out
+
+
+def _strip_scheme_and_query(url: str) -> str:
+    if not url:
+        return ""
+    url = url.split("?")[0]
+    if url.startswith("https:"):
+        return url[6:]
+    if url.startswith("http:"):
+        return url[5:]
+    return url
+
+
+def _decode_uri(path: str) -> str:
+    return re.sub(r"(?:%[0-9A-Fa-f]{2})+", lambda m: _decode_run(m.group(0)), path)
+
+
+def _decode_run(run: str) -> str:
+    raw = bytes(int(run[i + 1 : i + 3], 16) for i in range(0, len(run), 3))
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return run
+    # Keep reserved characters escaped, as decodeURI does.
+    out = []
+    for ch in text:
+        if ch in _DECODE_URI_KEEP:
+            out.append("%%%02X" % ord(ch))
+        else:
+            out.append(ch)
+    return "".join(out)
+
+
+def _match_key(candidate: str, base: Optional[str], unwrapped: bool = False) -> Optional[str]:
+    """Port of matchKey in seojuice-ssr.js: resolve against ``base``, unwrap a
+    Next.js optimizer URL once, decode the path, drop scheme and query."""
+    if not candidate:
+        return None
+    try:
+        resolved = urljoin(base or "", candidate)
+        parts = urlsplit(resolved)
+        if not parts.scheme:
+            raise ValueError("relative url without base")
+    except ValueError:
+        if re.match(r"^(data|blob):", candidate, re.IGNORECASE):
+            return None
+        return _strip_scheme_and_query(candidate)
+    if parts.scheme in ("data", "blob"):
+        return None
+    if not unwrapped and parts.path == "/_next/image":
+        values = parse_qs(parts.query).get("url")
+        if values and values[0]:
+            return _match_key(values[0], resolved, True)
+    host = parts.netloc.rsplit("@", 1)[-1].lower()
+    return _strip_scheme_and_query(f"{parts.scheme}://{host}{_decode_uri(parts.path)}")
 
 
 def replace_images(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
     images = data.get("images")
     if not isinstance(images, list):
         return html
+    base = data.get("base") or None
 
     image_map: Dict[str, str] = {}
     for img in images:
         url = img.get("url")
         alt_text = img.get("alt_text")
         if url and alt_text:
-            image_map[normalize_image_url(url)] = alt_text
+            key = _match_key(url, base)
+            if key is not None:
+                image_map[key] = alt_text
 
     if not image_map:
         return html
 
     def _repl(m: "re.Match[str]") -> str:
         match, attributes = m.group(0), m.group(1)
-        src_match = _IMG_SRC_RE.search(attributes)
-        if not src_match:
-            return match
-
-        normalized_src = normalize_image_url(src_match.group(1))
-        if normalized_src not in image_map:
+        matched_alt = None
+        for candidate in _image_candidates(attributes):
+            key = _match_key(candidate, base)
+            if key is not None and key in image_map:
+                matched_alt = image_map[key]
+                break
+        if matched_alt is None:
             return match
 
         alt_match = _IMG_ALT_RE.search(match)
@@ -196,7 +386,7 @@ def replace_images(html: str, data: Dict[str, Any], manifest: Manifest) -> str:
         if existing_alt and len(existing_alt) >= 5:
             return match
 
-        alt_text = escape_html(image_map[normalized_src])
+        alt_text = escape_html(matched_alt)
         manifest.img += 1
 
         if alt_match:
@@ -290,7 +480,7 @@ def inject_internal_links(html: str, data: Dict[str, Any], manifest: Manifest) -
                     cs_attr = f' data-seojuice-cs="{link["id"]}"' if link["id"] is not None else ""
                     anchor = (
                         f'<a href="{escape_html(link["url"])}"{class_attr}{cs_attr}>'
-                        f'{escape_html(link["keyword"])}</a>'
+                        f'{escape_html(m.group(0)[len(prefix):])}</a>'
                     )
                     return prefix + anchor
 
@@ -432,6 +622,11 @@ def validate_api_response(data: object) -> bool:
         or data.get("images")
         or data.get("structured_data")
         or data.get("og_title")
+        or data.get("og_description")
+        or data.get("og_image")
+        or data.get("og_url")
+        or data.get("meta_keywords")
+        or data.get("h1")
         or (isinstance(data.get("diffs"), list) and data.get("diffs"))
         or (isinstance(data.get("broken_link_fixes"), list) and data.get("broken_link_fixes"))
     )

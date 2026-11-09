@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
@@ -28,6 +29,7 @@ from seojuice._types import (
     IntelligenceSummary,
     PageContentResponse,
     PageDetail,
+    PageStatus,
     PageSpeedResponse,
     PaginationMeta,
     ReportCreated,
@@ -35,6 +37,7 @@ from seojuice._types import (
     ReportSummary,
     SERPLandscapeResponse,
     SimilarPagesResponse,
+    SubmitUrlsResponse,
     TopologyResponse,
     WebsiteDetail,
     WebsiteListResponse,
@@ -52,6 +55,85 @@ def _clean_params(params: Dict[str, Any]) -> Dict[str, Any]:
         else:
             cleaned[key] = value
     return cleaned
+
+
+# The changes filter takes the legacy vocabulary (partners/views.py
+# WebsiteChangesView); responses carry lifecycle names. Accept both.
+_STATUS_FILTER = {
+    "proposed": "pending",
+    "live": "applied",
+    "rolled_back": "reverted",
+}
+
+_ACTION_ITEM_ACTIONS = ("done", "in_progress", "dismiss", "reopen")
+
+
+def _status_filter(status: Optional[str]) -> Optional[str]:
+    return _STATUS_FILTER.get(status, status) if status else status
+
+
+def _changes_params(
+    status: Optional[str],
+    change_type: Optional[str],
+    risk_level: Optional[str],
+    url: Optional[str],
+    batch_id: Optional[str],
+    page: int,
+    page_size: int,
+) -> Dict[str, Any]:
+    if risk_level is not None:
+        warnings.warn(
+            "risk_level is ignored by the server and is no longer sent",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+    return {
+        "status": _status_filter(status),
+        "change_type": change_type,
+        "url": url,
+        "batch_id": batch_id,
+        "page": page,
+        "page_size": page_size,
+    }
+
+
+def _reject_body(reason: Optional[str]) -> Dict[str, Any]:
+    if not reason or not reason.strip():
+        raise ValueError("reason is required when rejecting a change")
+    return {"reason": reason}
+
+
+def _approve_body(confirm_heading: bool) -> Optional[Dict[str, Any]]:
+    return {"confirm_heading": True} if confirm_heading else None
+
+
+def _bulk_body(
+    action: str,
+    ids: Optional[List[int]],
+    batch_id: Optional[str],
+    reason: Optional[str],
+    integration: Optional[str],
+) -> Dict[str, Any]:
+    if not ids and not batch_id:
+        raise ValueError("ids or batch_id is required")
+    body: Dict[str, Any] = {"action": action}
+    if ids:
+        body["ids"] = ids
+    if batch_id:
+        body["batch_id"] = batch_id
+    if reason:
+        body["reason"] = reason
+    if integration:
+        body["integration"] = integration
+    return body
+
+
+def _action_item_body(action: str) -> Dict[str, Any]:
+    if action not in _ACTION_ITEM_ACTIONS:
+        raise ValueError(
+            f"action must be one of: {', '.join(_ACTION_ITEM_ACTIONS)}"
+        )
+    return {"action": action}
 
 
 class _BaseClient(ABC):
@@ -128,12 +210,13 @@ class _BaseClient(ABC):
         self,
         domain: str,
         *,
+        url: Optional[str] = None,
         page: int = 1,
         page_size: int = 10,
     ) -> PagedResult[PageDetail]:
         return self._paginate(
             f"/websites/{domain}/pages/",
-            {"page": page, "page_size": page_size},
+            {"url": url, "page": page, "page_size": page_size},
         )
 
     def get_page(self, domain: str, page_id: int) -> PageDetail:
@@ -346,12 +429,18 @@ class _BaseClient(ABC):
         domain: str,
         *,
         category: Optional[str] = None,
+        include_serp: Optional[bool] = None,
         page: int = 1,
         page_size: int = 20,
     ) -> PagedResult[Any]:
         return self._paginate(
             f"/websites/{domain}/keywords/",
-            {"category": category, "page": page, "page_size": page_size},
+            {
+                "category": category,
+                "include_serp": include_serp,
+                "page": page,
+                "page_size": page_size,
+            },
         )
 
     def list_page_keywords(
@@ -470,18 +559,16 @@ class _BaseClient(ABC):
         status: Optional[str] = None,
         change_type: Optional[str] = None,
         risk_level: Optional[str] = None,
+        url: Optional[str] = None,
+        batch_id: Optional[str] = None,
         page: int = 1,
         page_size: int = 20,
     ) -> PagedResult[Any]:
         return self._paginate(
             f"/websites/{domain}/changes/",
-            {
-                "status": status,
-                "change_type": change_type,
-                "risk_level": risk_level,
-                "page": page,
-                "page_size": page_size,
-            },
+            _changes_params(
+                status, change_type, risk_level, url, batch_id, page, page_size
+            ),
         )
 
     def get_change(self, domain: str, change_id: int) -> ChangeRecord:
@@ -500,19 +587,28 @@ class _BaseClient(ABC):
     ) -> ChangeSettings:
         return self._patch(f"/websites/{domain}/changes/settings/", settings)
 
-    def approve_change(self, domain: str, change_id: int) -> ChangeRecord:
-        return self._post(f"/websites/{domain}/changes/{change_id}/approve/")
+    def approve_change(
+        self,
+        domain: str,
+        change_id: int,
+        *,
+        confirm_heading: bool = False,
+    ) -> ChangeRecord:
+        return self._post(
+            f"/websites/{domain}/changes/{change_id}/approve/",
+            _approve_body(confirm_heading),
+        )
 
     def reject_change(
         self,
         domain: str,
         change_id: int,
         *,
-        reason: Optional[str] = None,
+        reason: str,
     ) -> ChangeRecord:
-        body = {"reason": reason} if reason else None
         return self._post(
-            f"/websites/{domain}/changes/{change_id}/reject/", body
+            f"/websites/{domain}/changes/{change_id}/reject/",
+            _reject_body(reason),
         )
 
     def revert_change(
@@ -556,16 +652,15 @@ class _BaseClient(ABC):
         domain: str,
         *,
         action: str,
-        ids: List[int],
+        ids: Optional[List[int]] = None,
+        batch_id: Optional[str] = None,
         reason: Optional[str] = None,
         integration: Optional[str] = None,
     ) -> BulkActionResult:
-        body: Dict[str, Any] = {"action": action, "ids": ids}
-        if reason:
-            body["reason"] = reason
-        if integration:
-            body["integration"] = integration
-        return self._post(f"/websites/{domain}/changes/bulk/", body)
+        return self._post(
+            f"/websites/{domain}/changes/bulk/",
+            _bulk_body(action, ids, batch_id, reason, integration),
+        )
 
     # ------------------------------------------------------------------
     # Content Decay
@@ -693,13 +788,10 @@ class _BaseClient(ABC):
         item_id: int,
         *,
         action: str,
-        snooze_days: Optional[int] = None,
     ) -> ActionItem:
-        body: Dict[str, Any] = {"action": action}
-        if snooze_days is not None:
-            body["snooze_days"] = snooze_days
         return self._patch(
-            f"/websites/{domain}/action-items/{item_id}/", body
+            f"/websites/{domain}/action-items/{item_id}/",
+            _action_item_body(action),
         )
 
     def get_action_item_groups(
@@ -806,8 +898,8 @@ class _BaseClient(ABC):
         self,
         domain: str,
         *,
-        urls: List[Dict[str, Any]],
-    ) -> Dict[str, Any]:
+        urls: List[Union[str, Dict[str, Any]]],
+    ) -> SubmitUrlsResponse:
         return self._post(f"/websites/{domain}/urls/", {"urls": urls})
 
     def get_url_status(
@@ -815,5 +907,5 @@ class _BaseClient(ABC):
         domain: str,
         *,
         url: str,
-    ) -> Dict[str, Any]:
+    ) -> PageStatus:
         return self._get(f"/websites/{domain}/urls/status/", {"url": url})

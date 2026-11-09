@@ -1,0 +1,14 @@
+{
+  "name": "failopen_page_missing_error_payload",
+  "origin": "generated: real server payload from ssr-payloads, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "errors": [
+      "Page doesn't exist"
+    ],
+    "base": null
+  },
+  "expected_html": "<html><head></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "notes": "Server miss payload (views.py _page_missing_payload) — all other keys absent. Nothing is applied: origin returned untouched (no SSR flag). Route through the SDK full inject path."
+}

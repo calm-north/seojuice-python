@@ -1,0 +1,117 @@
+{
+  "operation": "list_links",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/links/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 10,
+        "total_count": 15,
+        "total_pages": 2
+      },
+      "results": [
+        {
+          "page_from": "https://fixtures.example/guide/",
+          "page_to": "https://fixtures.example/pricing/",
+          "keyword": "pricing",
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "impressions": 0,
+          "clicks": 0,
+          "ctr": null
+        },
+        {
+          "page_from": "https://fixtures.example/blog/",
+          "page_to": "https://fixtures.example/guide/",
+          "keyword": "seo guide",
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "impressions": 0,
+          "clicks": 0,
+          "ctr": null
+        },
+        {
+          "page_from": "https://fixtures.example/pricing/",
+          "page_to": "https://fixtures.example/guide/",
+          "keyword": "guide",
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "impressions": 0,
+          "clicks": 0,
+          "ctr": null
+        },
+        {
+          "page_from": "https://fixtures.example/guide/",
+          "page_to": "https://fixtures.example/roof-repair-0/",
+          "keyword": "Roof repair 0 0",
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "impressions": 0,
+          "clicks": 0,
+          "ctr": null
+        },
+        {
+          "page_from": "https://fixtures.example/pricing/",
+          "page_to": "https://fixtures.example/roof-repair-0/",
+          "keyword": "Roof repair 0 1",
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "impressions": 0,
+          "clicks": 0,
+          "ctr": null
+        },
+        {
+          "page_from": "https://fixtures.example/blog/",
+          "page_to": "https://fixtures.example/roof-repair-0/",
+          "keyword": "Roof repair 0 2",
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "impressions": 0,
+          "clicks": 0,
+          "ctr": null
+        },
+        {
+          "page_from": "https://fixtures.example/guide/",
+          "page_to": "https://fixtures.example/roof-repair-0/",
+          "keyword": "Roof repair 0 3",
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "impressions": 0,
+          "clicks": 0,
+          "ctr": null
+        },
+        {
+          "page_from": "https://fixtures.example/pricing/",
+          "page_to": "https://fixtures.example/roof-repair-0/",
+          "keyword": "Roof repair 0 4",
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "impressions": 0,
+          "clicks": 0,
+          "ctr": null
+        },
+        {
+          "page_from": "https://fixtures.example/guide/",
+          "page_to": "https://fixtures.example/roof-repair-1/",
+          "keyword": "Roof repair 1 0",
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "impressions": 0,
+          "clicks": 0,
+          "ctr": null
+        },
+        {
+          "page_from": "https://fixtures.example/pricing/",
+          "page_to": "https://fixtures.example/roof-repair-1/",
+          "keyword": "Roof repair 1 1",
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "impressions": 0,
+          "clicks": 0,
+          "ctr": null
+        }
+      ]
+    }
+  }
+}

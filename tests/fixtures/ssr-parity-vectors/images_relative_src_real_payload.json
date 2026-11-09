@@ -1,0 +1,61 @@
+{
+  "name": "images_relative_src_real_payload",
+  "origin": "generated: real captured payload (sdk-node real_fundsageai.json), expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>text</p><img src=\"/media/chart.png?v=3\"></body></html>",
+  "payload": {
+    "suggestions": [
+      {
+        "url": "https://www.fundsageai.com/blog/systematic-withdrawal-plan-swp-retirement-india",
+        "keyword": "monthly income from mutual funds",
+        "id": 253679
+      },
+      {
+        "url": "https://www.fundsageai.com/blog/systematic-withdrawal-plan-swp-retirement-india",
+        "keyword": "Systematic Withdrawal Plan",
+        "id": 253664
+      },
+      {
+        "url": "https://www.fundsageai.com/blog/systematic-withdrawal-plan-swp-retirement-india",
+        "keyword": "annual withdrawal rate",
+        "id": 253680
+      },
+      {
+        "url": "https://www.fundsageai.com/calculators",
+        "keyword": "SWP calculator",
+        "id": 253678
+      }
+    ],
+    "images": [
+      {
+        "url": "https://www.fundsageai.com/media/chart.png",
+        "alt_text": "SWP withdrawal chart"
+      }
+    ],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "SWP Calculator for Mutual Funds: Sustainable Withdrawals",
+    "h1": "",
+    "og_title": "SWP Calculator for Mutual Funds India | FundSageAI",
+    "og_description": "Plan a sustainable monthly income from mutual funds with the SWP calculator. See how long your corpus lasts, inflation-adjusted withdrawals, and end balance. Get your results today",
+    "og_image": "https://seojuiced.b-cdn.net/seojuice/media/9557efd8-b7f6-4c92-a738-19c82b374318.png",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://www.fundsageai.com/calculators/swp-calculator",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {
+      "enabled": true,
+      "language": "en"
+    }
+  },
+  "expected_html": "<html><head><title data-seojuice=\"title\">SWP Calculator for Mutual Funds: Sustainable Withdrawals</title>\n<meta property=\"og:title\" content=\"SWP Calculator for Mutual Funds India | FundSageAI\" data-seojuice=\"og-title\">\n<meta property=\"og:description\" content=\"Plan a sustainable monthly income from mutual funds with the SWP calculator. See how long your corpus lasts, inflation-adjusted withdrawals, and end balance. Get your results today\" data-seojuice=\"og-description\">\n<meta property=\"og:image\" content=\"https://seojuiced.b-cdn.net/seojuice/media/9557efd8-b7f6-4c92-a738-19c82b374318.png\">\n</head><body><p>text</p><img alt=\"SWP withdrawal chart\" data-seojuice=\"alt\" src=\"/media/chart.png?v=3\"><!-- seojuice: meta=[title,og-title,og-description] img=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "REAL payload base (https://www.fundsageai.com/calculators/swp-calculator) with an absolute stored image URL; the page uses a root-relative src. Resolved against payload base, so the alt is applied."
+}

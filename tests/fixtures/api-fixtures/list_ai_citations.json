@@ -1,0 +1,42 @@
+{
+  "operation": "list_ai_citations",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/ai/citations/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "results": [
+        {
+          "citation_domain": "fixtures.example",
+          "citation_url": "https://fixtures.example/guide/",
+          "is_us": true,
+          "matched_page_id": null,
+          "matched_page_url": null,
+          "times_cited": 1,
+          "prompts_cited_for": 1,
+          "share_of_citations": 0.5,
+          "framing_tone_mix": {
+            "recommendation": 0,
+            "comparison": 0,
+            "cautionary": 0,
+            "promotional": 0,
+            "educational": 0,
+            "incidental": 0,
+            "unclassified": 1
+          },
+          "last_cited_at": "2026-11-01T12:00:00+00:00"
+        }
+      ],
+      "total_count": 1
+    }
+  }
+}

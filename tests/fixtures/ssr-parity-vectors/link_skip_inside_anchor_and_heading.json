@@ -1,5 +1,6 @@
 {
   "name": "link_skip_inside_anchor_and_heading",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><h1>SWP calculator guide</h1><p>See <a href=\"/other\">SWP calculator</a> link and read about SWP calculator basics.</p></body></html>",
   "payload": {
     "suggestions": [

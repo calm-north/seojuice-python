@@ -1,0 +1,32 @@
+{
+  "operation": "get_intelligence",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/intelligence/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "domain": "fixtures.example",
+      "seo_score": 0,
+      "aiso_score": 45.0,
+      "domain_health_score": null,
+      "avg_content_quality_score": null,
+      "avg_geo_readiness_score": null,
+      "total_pages": 6,
+      "total_clusters": 1,
+      "total_internal_links": 15,
+      "total_seojuice_links": 15,
+      "orphan_pages": 0,
+      "content_gaps": 1,
+      "last_crawled_at": null
+    }
+  }
+}

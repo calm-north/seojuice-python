@@ -1,0 +1,23 @@
+{
+  "operation": "get_link_analytics_stats",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/link-analytics/stats/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "total_clicks_30d": 0,
+      "total_impressions_30d": 0,
+      "avg_ctr": 0.0,
+      "underperforming_count": 0
+    }
+  }
+}

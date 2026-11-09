@@ -1,0 +1,33 @@
+{
+  "name": "schema_dedupe_broader_type_does_not_cover_faq",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
+  "input_html": "<html><head><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebPage\",\"name\":\"Page\"}</script></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"What?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"That.\"}}]}",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"WebPage\",\"name\":\"Page\"}</script><script type=\"application/ld+json\" data-seojuice=\"schema\">[{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"What?\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"That.\"}}]}]</script>\n</head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p><!-- seojuice: schema=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — cover lists are keyed on the PROPOSED type: a present WebPage does not cover a proposed FAQPage, so the FAQPage is injected."
+}

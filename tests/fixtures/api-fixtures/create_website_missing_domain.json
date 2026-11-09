@@ -1,0 +1,21 @@
+{
+  "operation": "create_website_missing_domain",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {},
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "missing_field",
+      "message": "domain is required"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 {
   "name": "diff_skip_drifted",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>present content unchanged</p></body></html>",
   "payload": {
     "suggestions": [],

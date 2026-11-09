@@ -1,0 +1,23 @@
+{
+  "operation": "reply_to_gbp_review_missing_text",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/gbp/reviews/{review_id}/reply/",
+    "path_params": {
+      "review_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {},
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "missing_field",
+      "message": "reply_text is required"
+    }
+  }
+}

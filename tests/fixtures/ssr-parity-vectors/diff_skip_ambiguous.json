@@ -1,5 +1,6 @@
 {
   "name": "diff_skip_ambiguous",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>dup text block</p><p>dup text block</p></body></html>",
   "payload": {
     "suggestions": [],

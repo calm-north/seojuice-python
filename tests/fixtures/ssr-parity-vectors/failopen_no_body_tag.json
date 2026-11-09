@@ -1,5 +1,6 @@
 {
   "name": "failopen_no_body_tag",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><p>No body wrapper here at all</p></html>",
   "payload": {
     "suggestions": [],

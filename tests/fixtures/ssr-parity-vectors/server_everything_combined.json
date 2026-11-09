@@ -1,0 +1,134 @@
+{
+  "name": "server_everything_combined",
+  "origin": "generated: real server payload from ssr-payloads, expected_html from the Worker",
+  "input_html": "<html><head></head><body><h1>Old heading</h1><p>Run a seo audit today. Then try link building and the legacy tool.</p><div><p>Solo old</p></div><p>See the <a href=\"https://example.com/old\">old guide</a> here.</p></body></html>",
+  "payload": {
+    "suggestions": [
+      {
+        "url": "https://everything.example/links/",
+        "keyword": "link building",
+        "id": 1,
+        "context": "Run a link building today"
+      },
+      {
+        "url": "https://everything.example/audit/",
+        "keyword": "seo audit",
+        "id": 2,
+        "context": "Run a seo audit today"
+      },
+      {
+        "url": "https://everything.example/legacy/",
+        "keyword": "legacy",
+        "id": null,
+        "context": ""
+      }
+    ],
+    "images": [],
+    "custom_link_class": "brand-link",
+    "accessibility": [],
+    "broken_link_fixes": [
+      {
+        "broken_url": "https://example.com/old",
+        "action": "replace",
+        "replacement_url": "https://example.com/new",
+        "anchor_text": "old guide",
+        "attr": "href",
+        "tag": "a",
+        "new_url": "https://example.com/new"
+      },
+      {
+        "broken_url": "https://example.com/gone",
+        "action": "unlink",
+        "replacement_url": "",
+        "anchor_text": "dead page",
+        "attr": "href",
+        "tag": "a",
+        "new_url": ""
+      }
+    ],
+    "diffs": [
+      {
+        "id": 3,
+        "selector": "p",
+        "semantic": "",
+        "operation": "replace",
+        "original_text": "<p>Solo old</p>",
+        "replacement_html": "<p>Unbatched</p>",
+        "order": 0,
+        "batch_id": ""
+      },
+      {
+        "id": 4,
+        "selector": "p",
+        "semantic": "",
+        "operation": "replace",
+        "original_text": "<p>First old</p>",
+        "replacement_html": "<p>First rewritten paragraph</p>",
+        "order": 1,
+        "batch_id": "batch-a"
+      },
+      {
+        "id": 5,
+        "selector": "p",
+        "semantic": "",
+        "operation": "replace",
+        "original_text": "<p>Second old</p>",
+        "replacement_html": "<p>Second rewritten paragraph</p>",
+        "order": 2,
+        "batch_id": "batch-a"
+      },
+      {
+        "id": 6,
+        "selector": "p",
+        "semantic": "",
+        "operation": "insert_after",
+        "original_text": "<p>Anchor</p>",
+        "replacement_html": "<p>Inserted after</p>",
+        "order": 3,
+        "batch_id": "batch-a"
+      },
+      {
+        "id": 7,
+        "selector": "p",
+        "semantic": "",
+        "operation": "delete",
+        "original_text": "<p>Remove me</p>",
+        "replacement_html": "",
+        "order": 4,
+        "batch_id": "batch-a"
+      },
+      {
+        "id": 8,
+        "selector": "p",
+        "semantic": "",
+        "operation": "replace",
+        "original_text": "<p>Needs sanitising</p>",
+        "replacement_html": "<p>Safe text</p>alert(1)",
+        "order": 1,
+        "batch_id": "batch-b"
+      }
+    ],
+    "errors": [],
+    "title": "Complete SEO Guide | Fixture Co",
+    "og_title": "Complete SEO Guide",
+    "og_description": "Everything about SEO.",
+    "og_image": "",
+    "structured_data": "{\"@type\": \"Article\", \"author\": {\"name\": \"Ada Lovelace\", \"@type\": \"Person\"}, \"@context\": \"https://schema.org\", \"headline\": \"Complete SEO Guide\", \"datePublished\": \"2026-10-01\"}",
+    "meta_description": "Everything about SEO in one guide.",
+    "meta_keywords": "seo, audit, guide",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://everything.example/guide/",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {
+      "enabled": true,
+      "language": "en"
+    },
+    "h1": "The Complete SEO Guide"
+  },
+  "expected_html": "<html><head><title data-seojuice=\"title\">Complete SEO Guide | Fixture Co</title>\n<meta name=\"description\" content=\"Everything about SEO in one guide.\" data-seojuice=\"meta-description\">\n<meta name=\"keywords\" content=\"seo, audit, guide\" data-seojuice=\"meta-keywords\">\n<meta property=\"og:title\" content=\"Complete SEO Guide\" data-seojuice=\"og-title\">\n<meta property=\"og:description\" content=\"Everything about SEO.\" data-seojuice=\"og-description\">\n<script type=\"application/ld+json\" data-seojuice=\"schema\">[{\"@type\":\"Article\",\"author\":{\"name\":\"Ada Lovelace\",\"@type\":\"Person\"},\"@context\":\"https://schema.org\",\"headline\":\"Complete SEO Guide\",\"datePublished\":\"2026-10-01\"}]</script>\n</head><body><h1 data-seojuice=\"h1\">The Complete SEO Guide</h1><p>Run a <a href=\"https://everything.example/audit/\" class=\"seojuice-link brand-link\" data-seojuice-cs=\"2\">seo audit</a> today. Then try <a href=\"https://everything.example/links/\" class=\"seojuice-link brand-link\" data-seojuice-cs=\"1\">link building</a> and the <a href=\"https://everything.example/legacy/\" class=\"seojuice-link brand-link\">legacy</a> tool.</p><div><p data-seojuice-cs=\"3\">Unbatched</p></div><p>See the <a href=\"https://example.com/new\">old guide</a> here.</p><!-- seojuice: cs=[1,2,3] meta=[title,meta-description,meta-keywords,og-title,og-description] schema=1 h1=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "Real server payload (ssr-payloads/everything): links, meta, h1, schema, broken links and diffs together."
+}

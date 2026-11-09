@@ -1,0 +1,96 @@
+{
+  "name": "server_content_patches_all_operations",
+  "origin": "generated: real server payload from ssr-payloads, expected_html from the Worker",
+  "input_html": "<html><head></head><body><div><p>Solo old</p><p>First old</p><p>Second old</p><p>Anchor</p><p>Remove me</p><p>Needs sanitising</p></div></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": null,
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [
+      {
+        "id": 1,
+        "selector": "p",
+        "semantic": "",
+        "operation": "replace",
+        "original_text": "<p>Solo old</p>",
+        "replacement_html": "<p>Unbatched</p>",
+        "order": 0,
+        "batch_id": ""
+      },
+      {
+        "id": 2,
+        "selector": "p",
+        "semantic": "",
+        "operation": "replace",
+        "original_text": "<p>First old</p>",
+        "replacement_html": "<p>First rewritten paragraph</p>",
+        "order": 1,
+        "batch_id": "batch-a"
+      },
+      {
+        "id": 3,
+        "selector": "p",
+        "semantic": "",
+        "operation": "replace",
+        "original_text": "<p>Second old</p>",
+        "replacement_html": "<p>Second rewritten paragraph</p>",
+        "order": 2,
+        "batch_id": "batch-a"
+      },
+      {
+        "id": 4,
+        "selector": "p",
+        "semantic": "",
+        "operation": "insert_after",
+        "original_text": "<p>Anchor</p>",
+        "replacement_html": "<p>Inserted after</p>",
+        "order": 3,
+        "batch_id": "batch-a"
+      },
+      {
+        "id": 5,
+        "selector": "p",
+        "semantic": "",
+        "operation": "delete",
+        "original_text": "<p>Remove me</p>",
+        "replacement_html": "",
+        "order": 4,
+        "batch_id": "batch-a"
+      },
+      {
+        "id": 6,
+        "selector": "p",
+        "semantic": "",
+        "operation": "replace",
+        "original_text": "<p>Needs sanitising</p>",
+        "replacement_html": "<p>Safe text</p>alert(1)",
+        "order": 1,
+        "batch_id": "batch-b"
+      }
+    ],
+    "errors": [],
+    "title": "",
+    "og_title": "",
+    "og_description": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://content-patches.example/guide/",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {
+      "enabled": true,
+      "language": "en"
+    },
+    "h1": ""
+  },
+  "expected_html": "<html><head></head><body><div><p data-seojuice-cs=\"1\">Unbatched</p><p data-seojuice-cs=\"2\">First rewritten paragraph</p><p data-seojuice-cs=\"3\">Second rewritten paragraph</p><p data-seojuice-cs=\"4\">Inserted after</p><p>Remove me</p><p data-seojuice-cs=\"6\">Safe text</p>alert(1)</div><!-- seojuice: cs=[1,2,3,4,6] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "Real server payload (ssr-payloads/content_patches), in the server's (batch_id, order) order: replace x4, insert_after, delete. The Worker ignores `operation`: insert_after REPLACES the anchor text, and delete (empty replacement_html) is skipped. The server sanitiser strips <script> tags but keeps their text."
+}

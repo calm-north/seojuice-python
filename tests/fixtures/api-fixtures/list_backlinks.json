@@ -1,0 +1,57 @@
+{
+  "operation": "list_backlinks",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/backlinks/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 2,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "id": 1,
+          "source_url": "https://blog.partner.example/post",
+          "target_url": "https://fixtures.example/",
+          "anchor_text": null,
+          "dofollow": true,
+          "nofollow": false,
+          "status": "Active",
+          "link_type": "Anchor",
+          "page_from_rank": null,
+          "is_new": false,
+          "is_lost": false,
+          "first_discovered_at": null,
+          "last_crawled_at": null
+        },
+        {
+          "id": 2,
+          "source_url": "https://news.partner.example/post",
+          "target_url": "https://fixtures.example/",
+          "anchor_text": null,
+          "dofollow": true,
+          "nofollow": false,
+          "status": "Removed",
+          "link_type": "Anchor",
+          "page_from_rank": null,
+          "is_new": false,
+          "is_lost": true,
+          "first_discovered_at": null,
+          "last_crawled_at": null
+        }
+      ]
+    }
+  }
+}

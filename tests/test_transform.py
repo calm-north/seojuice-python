@@ -83,7 +83,7 @@ def test_structured_data_double_decoded():
     inner = {"@context": "https://schema.org", "@type": "Article"}
     out = replace_meta_tags("<head></head>", _data(structured_data=json.dumps(json.dumps(inner))), Manifest())
     assert (
-        '<script type="application/ld+json" data-seojuice="schema">{"@context":"https://schema.org","@type":"Article"}</script>'
+        '<script type="application/ld+json" data-seojuice="schema">[{"@context":"https://schema.org","@type":"Article"}]</script>'
         in out
     )
 
@@ -95,7 +95,7 @@ def test_structured_data_single_decoded():
     inner = {"@context": "https://schema.org", "@type": "Article"}
     out = replace_meta_tags("<head></head>", _data(structured_data=json.dumps(inner)), Manifest())
     assert (
-        '<script type="application/ld+json" data-seojuice="schema">{"@context":"https://schema.org","@type":"Article"}</script>'
+        '<script type="application/ld+json" data-seojuice="schema">[{"@context":"https://schema.org","@type":"Article"}]</script>'
         in out
     )
 
@@ -123,7 +123,7 @@ def test_structured_data_with_cjk_and_accents_is_injected_not_reverted():
     assert out != html
     match = re.search(r'<script type="application/ld\+json" data-seojuice="schema">(.*?)</script>', out)
     assert match is not None
-    assert json.loads(match.group(1)) == inner
+    assert json.loads(match.group(1)) == [inner]
 
 
 def test_title_with_literal_backslash_injected_verbatim():
@@ -375,3 +375,38 @@ def test_manifest_comment_lists_parts_before_body_close():
 
 def test_manifest_comment_noop_when_empty():
     assert add_manifest_comment("<body></body>", Manifest()) == "<body></body>"
+
+
+# --- fix round: behaviours taken from seojuice-ssr.js ---------------------
+
+
+def test_existing_top_level_array_ld_json_type_is_not_injected_again():
+    # Worker collectLdJsonTypes walks arrays (seojuice-ssr.js:181-184).
+    html = (
+        '<html><head><script type="application/ld+json">[{"@type":"Organization","name":"A"}]'
+        "</script></head><body>x</body></html>"
+    )
+    sd = json.dumps([{"@type": "Organization", "name": "B"}])
+    out = replace_meta_tags(html, _data(structured_data=sd), Manifest())
+    assert 'data-seojuice="schema"' not in out
+
+
+def test_injected_link_anchor_uses_the_text_matched_on_the_page():
+    # Worker uses escapeHtml(match) (seojuice-ssr.js:553), not the keyword casing.
+    from seojuice.injection._transform import inject_internal_links
+
+    out = inject_internal_links(
+        "<body><p>Learn about technical seo today and more text here.</p></body>",
+        {"suggestions": [{"keyword": "Technical SEO", "url": "/t", "id": 1}]},
+        Manifest(),
+    )
+    assert ">technical seo</a>" in out
+    assert "Technical SEO" not in out
+
+
+def test_payload_with_errors_returns_origin_html_untouched():
+    # Worker (seojuice-ssr.js:63-70): no manifest comment, no seojuiceSSR flag.
+    from seojuice.injection._fetcher import apply_suggestions
+
+    html = "<html><head></head><body><p>hello world body text</p></body></html>"
+    assert apply_suggestions(html, {"errors": ["boom"], "title": "T"}) == html

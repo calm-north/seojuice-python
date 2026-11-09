@@ -125,7 +125,9 @@ def apply_suggestions(html: str, data: Dict[str, Any]) -> str:
     """
     if not data:
         return html
-
+    # Worker (seojuice-ssr.js:63-70): a payload with errors leaves the origin HTML untouched.
+    if isinstance(data, dict) and data.get("errors"):
+        return html
     original = html
     out = html
     manifest = Manifest()

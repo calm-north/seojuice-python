@@ -45,35 +45,6 @@ class AsyncSEOJuice(_BaseClient):
             self._owns_client = True
 
     # ------------------------------------------------------------------
-    # Sync abstract methods raise — callers must use async variants
-    # ------------------------------------------------------------------
-
-    def _request(
-        self,
-        method: str,
-        path: str,
-        *,
-        params: Optional[Dict[str, Any]] = None,
-        json: Optional[Dict[str, Any]] = None,
-    ) -> Any:
-        raise RuntimeError(
-            "Use await with AsyncSEOJuice. "
-            "Call async methods or use SEOJuice for sync usage."
-        )
-
-    def _request_bytes(
-        self,
-        method: str,
-        path: str,
-        *,
-        params: Optional[Dict[str, Any]] = None,
-    ) -> bytes:
-        raise RuntimeError(
-            "Use await with AsyncSEOJuice. "
-            "Call async methods or use SEOJuice for sync usage."
-        )
-
-    # ------------------------------------------------------------------
     # Async request implementations
     # ------------------------------------------------------------------
 
@@ -113,7 +84,12 @@ class AsyncSEOJuice(_BaseClient):
         *,
         params: Optional[Dict[str, Any]] = None,
     ) -> bytes:
-        response = await self._client.request(method, path, params=params)
+        try:
+            response = await self._client.request(method, path, params=params)
+        except httpx.TimeoutException as exc:
+            raise APITimeoutError(str(exc)) from exc
+        except httpx.TransportError as exc:
+            raise APIConnectionError(str(exc)) from exc
         if response.status_code >= 400:
             try:
                 body = response.json()
@@ -153,6 +129,16 @@ class AsyncSEOJuice(_BaseClient):
             },
         )
         return PagedResult(results=data.get("results", []), pagination=pagination)
+
+    # ------------------------------------------------------------------
+    # The shared endpoint methods in _BaseClient build a request through
+    # _request/_paginate. Here those return coroutines, so every inherited
+    # method (``list_pages``, ``get_change`` ...) is awaitable.
+    # ------------------------------------------------------------------
+
+    _request = _arequest  # type: ignore[assignment]
+    _request_bytes = _arequest_bytes  # type: ignore[assignment]
+    _paginate = _apaginate  # type: ignore[assignment]
 
     # ------------------------------------------------------------------
     # Domain-scoped resource proxy

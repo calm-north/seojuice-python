@@ -1,0 +1,23 @@
+{
+  "operation": "get_similar_pages",
+  "case": "page has no embeddings, so the server answers no_embeddings",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/similar/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": {
+      "url": "https://fixtures.example/guide/"
+    },
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "no_embeddings",
+      "message": "Source page has no embeddings for similarity search"
+    }
+  }
+}

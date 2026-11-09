@@ -1,0 +1,41 @@
+{
+  "operation": "get_aiso",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/aiso/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "aiso_score": 45.0,
+      "sub_scores": {
+        "visibility": 0.0,
+        "sentiment": 0.0,
+        "position": 100.0,
+        "coverage": 100.0,
+        "competitive": 50.0
+      },
+      "total_mentions": 2,
+      "your_mentions": 1,
+      "avg_position": 1.0,
+      "positive_rate": 0.0,
+      "providers": {
+        "chatgpt": {
+          "runs": 1,
+          "last_run_at": "2026-11-01T12:00:00+00:00",
+          "total_mentions": 2,
+          "your_mentions": 1,
+          "avg_position": 1.0,
+          "positive_rate": 0.0
+        }
+      }
+    }
+  }
+}

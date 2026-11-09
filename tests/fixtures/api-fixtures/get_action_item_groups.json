@@ -1,0 +1,39 @@
+{
+  "operation": "get_action_item_groups",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/action-items/groups/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 50,
+        "total_count": 1,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "id": 1,
+          "title": "Fix missing alt text",
+          "category": "seo",
+          "item_type": "test_type_0",
+          "priority": "medium",
+          "source_type": "seo_check",
+          "total_items": 0,
+          "open_items": 0,
+          "done_items": 0,
+          "status": "open"
+        }
+      ]
+    }
+  }
+}

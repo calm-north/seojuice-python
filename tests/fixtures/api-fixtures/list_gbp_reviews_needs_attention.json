@@ -1,0 +1,44 @@
+{
+  "operation": "list_gbp_reviews_needs_attention",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/gbp/reviews/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": {
+      "needs_attention": "true"
+    },
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "results": [
+        {
+          "id": 1,
+          "review_id": "rv-1",
+          "location_name": "Main Street Clinic",
+          "author_name": "Katherine Moore",
+          "rating": 1,
+          "comment": "Food address rule past production. Father drug investment body. Hour hospital have eight girl score.",
+          "reply": "",
+          "reply_suggestion": "",
+          "sentiment": "negative",
+          "needs_attention": true,
+          "auto_replied": false,
+          "published_at": "2026-11-01T08:20:58.604715+00:00",
+          "reply_posted_at": null
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 1,
+        "total_pages": 1
+      }
+    }
+  }
+}

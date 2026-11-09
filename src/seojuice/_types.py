@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from typing_extensions import NotRequired, TypedDict
 
@@ -41,8 +41,12 @@ class WebsiteDetail(TypedDict):
     industry: Optional[str]
     scores: Dict[str, Any]
     seo_score: Optional[float]
+    domain_health_score: Optional[float]
+    domain_health_breakdown: Optional[Dict[str, Any]]
     report: Optional[Dict[str, Any]]
     kpis: WebsiteKPIs
+    avg_content_quality_score: Optional[float]
+    avg_geo_readiness_score: Optional[float]
 
 
 class WebsiteListResponse(TypedDict):
@@ -55,11 +59,13 @@ class WebsiteListResponse(TypedDict):
 
 
 class LinkItem(TypedDict):
-    page_from: str
-    page_to: str
+    page_from: Optional[str]
+    page_to: Optional[str]
     keyword: Optional[str]
     created_at: Optional[str]
-    impressions: int
+    impressions: Optional[int]
+    clicks: Optional[int]
+    ctr: Optional[float]
 
 
 # ---------------------------------------------------------------------------
@@ -81,14 +87,15 @@ class PageSummary(TypedDict):
     page_type: Optional[str]
     seo_score: Optional[float]
     accessibility_score: Optional[float]
+    content_quality_score: Optional[float]
+    geo_readiness_score: Optional[float]
     meta_description: Optional[str]
     language_code: Optional[str]
     created_at: Optional[str]
     last_processed_at: Optional[str]
     readability: ReadabilityScores
-
-
-class PageDetail(PageSummary):
+    excluded: bool
+    is_key_page: bool
     onpage_score: Optional[float]
     conversion_score: Optional[float]
     structured_data: Optional[Dict[str, Any]]
@@ -97,6 +104,12 @@ class PageDetail(PageSummary):
     og_description: Optional[str]
     og_image: Optional[str]
     links: List[LinkItem]
+    content_quality_breakdown: Optional[Dict[str, Any]]
+    geo_readiness_breakdown: Optional[Dict[str, Any]]
+
+
+class PageDetail(PageSummary):
+    pass
 
 
 # ---------------------------------------------------------------------------
@@ -122,9 +135,13 @@ class IntelligenceSummary(TypedDict):
     domain: str
     seo_score: float
     aiso_score: float
+    domain_health_score: Optional[float]
+    avg_content_quality_score: Optional[float]
+    avg_geo_readiness_score: Optional[float]
     total_pages: int
     total_clusters: int
     total_internal_links: int
+    total_seojuice_links: int
     orphan_pages: int
     content_gaps: int
     last_crawled_at: Optional[str]
@@ -170,6 +187,8 @@ class CoreWebVitals(TypedDict):
     inp: Optional[float]
     fcp: Optional[float]
     ttfb: Optional[float]
+    tbt: Optional[float]
+    speed_index: Optional[float]
 
 
 class PageSpeedScores(TypedDict):
@@ -200,13 +219,36 @@ class PageSpeedResponse(TypedDict):
 # ---------------------------------------------------------------------------
 
 
+class ClusterIssues(TypedDict):
+    competing_queries: int
+    pages_without_cluster_link: int
+    close_to_page_1: int
+    open_action_items: int
+
+
+class ClusterQualityHistory(TypedDict):
+    dates: List[str]
+    seo_scores: List[float]
+    performance_scores: List[float]
+    accessibility_scores: List[float]
+    best_practices_scores: List[float]
+
+
 class ClusterSummary(TypedDict):
     id: int
     name: str
     slug: str
     page_count: int
-    total_clicks: int
-    avg_position: float
+    clicks: int
+    impressions: int
+    ctr: Optional[float]
+    avg_position: Optional[float]
+    clicks_change_pct: Optional[float]
+    trend: str
+    pillar: Optional[Dict[str, Any]]
+    cohesion: Optional[float]
+    issues: ClusterIssues
+    is_active: bool
 
 
 class ClusterKeyword(TypedDict):
@@ -215,15 +257,15 @@ class ClusterKeyword(TypedDict):
 
 
 class ClusterTimeSeries(TypedDict):
-    dates: List[str]
-    clicks: List[int]
-    impressions: List[int]
-    positions: List[float]
+    week_start: str
+    clicks: int
+    impressions: int
 
 
 class ClusterDetail(ClusterSummary):
-    top_keywords: List[ClusterKeyword]
-    time_series: ClusterTimeSeries
+    time_series: List[ClusterTimeSeries]
+    top_queries: List[Any]
+    quality_history: ClusterQualityHistory
 
 
 # ---------------------------------------------------------------------------
@@ -233,8 +275,9 @@ class ClusterDetail(ClusterSummary):
 
 class ContentGapKeyword(TypedDict):
     keyword: str
-    rank_potential: int
-    color: str
+    search_volume: Optional[int]
+    keyword_difficulty: Optional[float]
+    rank_potential: Optional[int]
 
 
 class ContentGap(TypedDict):
@@ -243,11 +286,15 @@ class ContentGap(TypedDict):
     category: str
     intent: str
     seo_potential: float
+    relevance: Optional[float]
     total_search_volume: int
+    estimated_traffic_potential: Optional[int]
     keywords: List[ContentGapKeyword]
     aiso_driven: bool
+    is_dismissed: bool
     is_generated: bool
     has_potential_candidate: bool
+    created_at: Optional[str]
 
 
 # ---------------------------------------------------------------------------
@@ -272,10 +319,10 @@ class Competitor(TypedDict):
     id: int
     domain: str
     score: float
-    intersections: int
-    estimated_traffic: int
+    intersections: Optional[int]
+    estimated_traffic: Optional[int]
     content_gaps_count: int
-    avg_position: float
+    avg_position: Optional[float]
     top_keywords: List[CompetitorKeyword]
     trends: NotRequired[CompetitorTrends]
 
@@ -345,6 +392,13 @@ class AnalysisResult(TypedDict):
     analysis_id: str
     status: str
     url: str
+    cluster: NotRequired[Optional[str]]
+    page_id: NotRequired[Optional[int]]
+    is_orphan: NotRequired[bool]
+    seo_score: NotRequired[Optional[float]]
+    depth_from_homepage: NotRequired[Optional[int]]
+    completed_at: NotRequired[Optional[str]]
+    error_message: NotRequired[str]
 
 
 # ---------------------------------------------------------------------------
@@ -352,11 +406,15 @@ class AnalysisResult(TypedDict):
 # ---------------------------------------------------------------------------
 
 
+# Values the server sends in ``ReportSummary.status``.
+ReportStatus = Literal["not_set", "in_progress", "finished", "error"]
+
+
 class ReportSummary(TypedDict):
     id: int
     type: str
     type_display: str
-    status: str
+    status: ReportStatus
     date: Optional[str]
     end_date: Optional[str]
     created_at: Optional[str]
@@ -364,7 +422,7 @@ class ReportSummary(TypedDict):
 
 
 class ReportDetail(ReportSummary):
-    summary: Optional[Dict[str, Any]]
+    summary: Optional[str]
     data: Optional[Dict[str, Any]]
     updated_at: Optional[str]
     pdf_url: Optional[str]
@@ -400,6 +458,7 @@ class PageKeywordStats(TypedDict):
     impressions: Optional[int]
     ctr: Optional[float]
     rank: Optional[float]
+    created_at: Optional[str]
 
 
 class PageKeyword(TypedDict):
@@ -441,6 +500,9 @@ class MetricsSnapshot(TypedDict):
     cwv_inp: Optional[float]
     cwv_fcp: Optional[float]
     cwv_ttfb: Optional[float]
+    cwv_performance_score: Optional[float]
+    content_quality_score: Optional[float]
+    geo_readiness_score: Optional[float]
 
 
 # ---------------------------------------------------------------------------
@@ -498,10 +560,44 @@ class AccessibilityIssue(TypedDict):
 # ---------------------------------------------------------------------------
 
 
+# Values the server sends in ``ChangeRecord.status`` (ChangeSet lifecycle).
+ChangeStatus = Literal[
+    "proposed",
+    "approved",
+    "live",
+    "rolled_back",
+    "rejected",
+    "superseded",
+    "stale",
+    "expired",
+]
+
+# Values the server sends in ``ChangeRecord.change_type``.
+ChangeType = Literal[
+    "title_tag",
+    "h1_tag",
+    "meta_description",
+    "meta_keywords",
+    "og_title",
+    "og_description",
+    "og_image",
+    "internal_link",
+    "local_schema",
+    "nap_fix",
+    "structured_data",
+    "image_alt",
+    "accessibility",
+    "broken_link_fix",
+    "content_patch",
+]
+
+ActionItemAction = Literal["done", "in_progress", "dismiss", "reopen"]
+
+
 class ChangeRecord(TypedDict):
     id: int
-    change_type: str
-    status: str
+    change_type: ChangeType
+    status: ChangeStatus
     risk_level: Optional[str]
     page_url: Optional[str]
     proposed_value: Optional[str]
@@ -527,6 +623,10 @@ class ChangeRecord(TypedDict):
     batch_id: Optional[str]
     batch_label: Optional[str]
     edited_manually: bool
+    mutation_type: str
+    verification_state: str
+    outcome_state: str
+    apply: Optional[Dict[str, Any]]
 
 
 class ChangeStats(TypedDict):
@@ -578,7 +678,12 @@ class ChangeWebhookPayload(TypedDict):
 class ContentDecayAlert(TypedDict):
     id: int
     page_url: Optional[str]
+    signal_type: str
     severity: str
+    is_active: bool
+    detected_at: str
+    resolved_at: Optional[str]
+    metrics: Dict[str, Any]
     decay_type: str
     clicks_baseline: Optional[int]
     clicks_current: Optional[int]
@@ -588,11 +693,7 @@ class ContentDecayAlert(TypedDict):
     impressions_change_pct: Optional[float]
     position_baseline: Optional[float]
     position_current: Optional[float]
-    position_change_pct: Optional[float]
-    is_active: bool
-    detected_at: str
-    resolved_at: Optional[str]
-    suggestions: List[Any]
+    position_change: Optional[float]
 
 
 # ---------------------------------------------------------------------------
@@ -649,21 +750,29 @@ class ActionItem(TypedDict):
     guidance: Optional[str]
     category: Optional[str]
     priority: Optional[str]
+    item_type: Optional[str]
     status: str
-    estimated_effort: Optional[str]
+    source_type: Optional[str]
+    source_id: Optional[int]
+    auto_fixable: bool
     auto_fixed: bool
+    auto_fixed_at: Optional[str]
+    estimated_effort: Optional[str]
+    page_url: Optional[str]
+    page_id: Optional[int]
+    group_id: Optional[int]
     created_at: Optional[str]
+    updated_at: Optional[str]
     completed_at: Optional[str]
-    affected_pages: List[Any]
-    page: Optional[Dict[str, Any]]
 
 
 class ActionItemSummary(TypedDict):
     total: int
     open: int
     done: int
-    snoozed: int
     dismissed: int
+    resolved: int
+    retired: int
     auto_fixed: int
     done_this_month: int
     completion_rate: float
@@ -672,9 +781,16 @@ class ActionItemSummary(TypedDict):
 
 
 class ActionItemGroup(TypedDict):
-    category: str
-    count: int
-    priority_distribution: Dict[str, int]
+    id: int
+    title: str
+    category: Optional[str]
+    item_type: Optional[str]
+    priority: Optional[str]
+    source_type: Optional[str]
+    total_items: int
+    open_items: int
+    done_items: int
+    status: str
 
 
 # ---------------------------------------------------------------------------
@@ -684,40 +800,88 @@ class ActionItemGroup(TypedDict):
 
 class DomainHealthResponse(TypedDict):
     domain: str
-    score: float
-    breakdown: Dict[str, Any]
+    domain_health_score: Optional[float]
+    breakdown: Optional[Dict[str, Any]]
+    citation_not_measured: List[Any]
+    insights: List[Any]
+    veto_applied: Optional[Any]
     recommendations: List[Any]
 
 
 class SERPLandscapeResponse(TypedDict):
-    domain: str
-    features: Dict[str, Any]
+    feature_counts: Dict[str, int]
+    total_with_snapshots: int
+    keywords_data: List[Any]
+    user_position_distribution: Dict[str, int]
+    snippet_opportunities: List[Any]
 
 
 class BenchmarkResponse(TypedDict):
     domain: str
+    industry: Optional[str]
     benchmarks: Dict[str, Any]
 
 
 class ContentQualityResponse(TypedDict):
-    url: str
-    score: float
-    details: Dict[str, Any]
+    page_id: int
+    page_url: str
+    page_type: Optional[str]
+    content_quality_score: Optional[float]
+    breakdown: Dict[str, Any]
+    issues: List[Any]
+    veto_applied: Optional[Any]
+    top_improvements: List[Any]
+    geo_readiness_score: Optional[float]
+    geo_readiness_breakdown: Optional[Dict[str, Any]]
 
 
 class GeoReadinessResponse(TypedDict):
-    url: str
-    score: float
-    details: Dict[str, Any]
+    page_id: int
+    page_url: str
+    page_type: Optional[str]
+    geo_readiness_score: Optional[float]
+    breakdown: Dict[str, Any]
+    recommendations: List[Any]
+    quotable_patterns_found: bool
+    ai_engine_tips: List[Any]
+    content_quality_score: Optional[float]
 
 
 class PageContentResponse(TypedDict):
+    id: int
     url: str
     title: Optional[str]
     meta_description: Optional[str]
     content: Optional[str]
-    raw_html: Optional[str]
-    structured_data: Optional[Dict[str, Any]]
+    word_count: int
+    headings: List[Dict[str, Any]]
+    structured_data: Optional[Any]
+    has_structured_data: bool
     language_code: Optional[str]
     page_type: Optional[str]
-    images: List[Any]
+    images: List[Dict[str, Any]]
+
+
+class PageStatus(TypedDict):
+    id: int
+    url: str
+    title: Optional[str]
+    page_type: Optional[str]
+    is_content: bool
+    seo_score: Optional[float]
+    content_quality_score: Optional[float]
+    geo_readiness_score: Optional[float]
+    accessibility_score: Optional[float]
+    meta_description: Optional[str]
+    language_code: Optional[str]
+    indexed_at: Optional[str]
+    processed_at: Optional[str]
+    vectorized_at: Optional[str]
+    links_generated_at: Optional[str]
+    scores_generated_at: Optional[str]
+    seo_score_generated_at: Optional[str]
+    created_at: Optional[str]
+
+
+class SubmitUrlsResponse(TypedDict):
+    pages: List[PageStatus]

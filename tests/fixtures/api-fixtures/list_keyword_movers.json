@@ -1,0 +1,31 @@
+{
+  "operation": "list_keyword_movers",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/keyword-movers/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "period": {
+        "from": "2026-10-04",
+        "to": "2026-10-31",
+        "label": "28d"
+      },
+      "previous_period": {
+        "from": "2026-09-06",
+        "to": "2026-10-03"
+      },
+      "direction": "losers",
+      "results": [],
+      "total_count": 0
+    }
+  }
+}

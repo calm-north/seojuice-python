@@ -1,0 +1,33 @@
+{
+  "name": "h1_without_h1_in_page_is_noop",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "New heading",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p><script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — payload h1 only replaces an existing <h1>; a page without one is unchanged and h1 is not in the manifest."
+}

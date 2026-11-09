@@ -1,0 +1,26 @@
+{
+  "operation": "get_domain_health",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/domain-health/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "domain": "fixtures.example",
+      "domain_health_score": null,
+      "breakdown": null,
+      "citation_not_measured": [],
+      "insights": [],
+      "veto_applied": null,
+      "recommendations": []
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "operation": "error_402_website_locked",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 402,
+    "content_type": "application/json",
+    "body": {
+      "error": "website_locked",
+      "message": "locked.example is not part of your plan. Unlock it to use SEOJuice on it: https://seojuice.com/dashboard/locked.example/unlock",
+      "checkout_url": "https://seojuice.com/dashboard/locked.example/unlock",
+      "lock_state": "website_locked"
+    }
+  }
+}

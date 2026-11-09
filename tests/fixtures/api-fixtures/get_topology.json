@@ -1,0 +1,57 @@
+{
+  "operation": "get_topology",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/topology/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "total_pages": 6,
+      "total_internal_links": 15,
+      "orphan_pages_count": 0,
+      "orphan_pages": [],
+      "link_depth_distribution": {},
+      "avg_links_per_page": 2.5,
+      "most_linked_pages": [
+        {
+          "url": "https://fixtures.example/roof-repair-0/",
+          "title": "Roof repair 0",
+          "incoming_links": 5
+        },
+        {
+          "url": "https://fixtures.example/roof-repair-1/",
+          "title": "Roof repair 1",
+          "incoming_links": 4
+        },
+        {
+          "url": "https://fixtures.example/roof-repair-2/",
+          "title": "Roof repair 2",
+          "incoming_links": 3
+        },
+        {
+          "url": "https://fixtures.example/guide/",
+          "title": "Complete SEO Guide",
+          "incoming_links": 2
+        },
+        {
+          "url": "https://fixtures.example/pricing/",
+          "title": "Pricing",
+          "incoming_links": 1
+        },
+        {
+          "url": "https://fixtures.example/blog/",
+          "title": "Blog",
+          "incoming_links": 0
+        }
+      ]
+    }
+  }
+}

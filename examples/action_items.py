@@ -20,7 +20,6 @@ def show_summary():
     print(f"  Total: {summary['total']}")
     print(f"  Open: {summary['open']}")
     print(f"  Done: {summary['done']}")
-    print(f"  Snoozed: {summary['snoozed']}")
     print(f"  Dismissed: {summary['dismissed']}")
     print(f"  Auto-fixed: {summary['auto_fixed']}")
     print(f"  Done this month: {summary['done_this_month']}")
@@ -54,8 +53,8 @@ def show_groups():
 
     result = client.get_action_item_groups(DOMAIN)
     for group in result.results:
-        print(f"  {group['category']}: {group['count']} items")
-        print(f"    Priority distribution: {group['priority_distribution']}")
+        print(f"  {group['category']}: {group['total_items']} items")
+        print(f"    Open: {group['open_items']}, done: {group['done_items']}")
 
 
 def create_custom_item():
@@ -66,7 +65,7 @@ def create_custom_item():
         description="Our top 5 cornerstone pages haven't been refreshed in 6 months",
         category="content",
         priority="high",
-        estimated_effort="4h",
+        estimated_effort="medium",
     )
     print(f"\nCreated action item #{item['id']}: {item['title']}")
     return item
@@ -76,14 +75,6 @@ def complete_item(item_id):
     """Mark an action item as done."""
     updated = client.update_action_item(DOMAIN, item_id, action="done")
     print(f"Completed #{updated['id']}: {updated['title']}")
-
-
-def snooze_item(item_id, days=7):
-    """Snooze an action item for a number of days."""
-    updated = client.update_action_item(
-        DOMAIN, item_id, action="snooze", snooze_days=days
-    )
-    print(f"Snoozed #{updated['id']} for {days} days")
 
 
 def dismiss_item(item_id):
@@ -108,5 +99,3 @@ if __name__ == "__main__":
     # 5. Mark it done
     # complete_item(item["id"])
 
-    # 6. Or snooze it
-    # snooze_item(item["id"], days=14)

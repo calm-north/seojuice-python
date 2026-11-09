@@ -1,0 +1,48 @@
+{
+  "operation": "list_clusters",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/clusters/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 1,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "id": 1,
+          "name": "Roof repair",
+          "slug": "roof-repair",
+          "page_count": 3,
+          "clicks": 0,
+          "impressions": 0,
+          "ctr": null,
+          "avg_position": null,
+          "clicks_change_pct": null,
+          "trend": "steady",
+          "pillar": null,
+          "cohesion": null,
+          "issues": {
+            "competing_queries": 0,
+            "pages_without_cluster_link": 3,
+            "close_to_page_1": 0,
+            "open_action_items": 0
+          },
+          "is_active": true
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "operation": "approve_change_not_proposed",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/changes/{change_id}/approve/",
+    "path_params": {
+      "change_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {},
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "invalid_status",
+      "message": "Cannot approve change in status 'live'"
+    }
+  }
+}

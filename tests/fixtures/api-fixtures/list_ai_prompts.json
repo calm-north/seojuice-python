@@ -1,0 +1,53 @@
+{
+  "operation": "list_ai_prompts",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/ai/prompts/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "results": [
+        {
+          "prompt_id": 1,
+          "prompt": "Best SEO audit tool?",
+          "category": "other",
+          "is_active": true,
+          "estimated_volume_band": "",
+          "fit_score": null,
+          "runs_checked": 1,
+          "mention_rate": 1.0,
+          "best_position": 1,
+          "competitors_cited": [
+            {
+              "domain": "rival.example",
+              "times_cited": 1
+            }
+          ],
+          "last_monitored_at": null
+        },
+        {
+          "prompt_id": 2,
+          "prompt": "SEO checklist for shops",
+          "category": "other",
+          "is_active": true,
+          "estimated_volume_band": "",
+          "fit_score": null,
+          "runs_checked": 0,
+          "mention_rate": 0.0,
+          "best_position": null,
+          "competitors_cited": [],
+          "last_monitored_at": null
+        }
+      ],
+      "total_count": 2
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "failopen_errors_payload_with_other_fields_set",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [
+      "Your SEOJuice plan has ended. Restart it at https://seojuice.com/pricing"
+    ],
+    "title": "Must Not Appear",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "Must not appear",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "notes": "synthetic — non-empty errors with otherwise applicable fields. The Worker fetch handler (seojuice-ssr.js:63-70) returns the origin HTML untouched on errors: no meta, no manifest comment, no window.seojuiceSSR. NOTE: transformHTML itself does not check errors, so a harness must route this vector through the SDK's full inject entry point (apply_suggestions / injectSEO / SeoInjector::inject), not a lower-level transform."
+}

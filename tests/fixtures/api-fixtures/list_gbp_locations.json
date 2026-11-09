@@ -1,0 +1,31 @@
+{
+  "operation": "list_gbp_locations",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/gbp/locations/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "results": [
+        {
+          "id": 1,
+          "location_id": "locations/456",
+          "name": "Main Street Clinic",
+          "address": "80382 Nicholas Ports\nHillport, PW 31105",
+          "phone": "446-719-6383",
+          "average_rating": null,
+          "total_reviews": 0,
+          "last_fetched_at": null
+        }
+      ]
+    }
+  }
+}

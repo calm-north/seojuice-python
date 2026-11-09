@@ -1,0 +1,26 @@
+{
+  "operation": "reply_to_gbp_review",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/gbp/reviews/{review_id}/reply/",
+    "path_params": {
+      "review_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "reply_text": "Sorry about that. Please call us."
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "success": true,
+      "review_id": 1,
+      "reply": "Sorry about that. Please call us."
+    }
+  }
+}

@@ -1,5 +1,6 @@
 {
   "name": "brokenlink_replace_new_url_edge",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>See our <a href=\"/dead-page\">guide</a> for more.</p></body></html>",
   "payload": {
     "suggestions": [],

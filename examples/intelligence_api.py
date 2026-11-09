@@ -59,7 +59,7 @@ def get_related_posts(domain: str, url: str) -> None:
         result = site.similar_pages(url, limit=5)
         print(f"\nPages similar to {url}:")
         for page in result["similar_pages"]:
-            print(f"  {page['url']} — score: {page.get('similarity_score', 'N/A')}")
+            print(f"  {page['url']} — score: {page.get('similarity', 'N/A')}")
 
 
 def check_pagespeed(domain: str, url: str) -> None:

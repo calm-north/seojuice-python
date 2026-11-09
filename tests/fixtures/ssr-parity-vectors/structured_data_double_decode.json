@@ -1,5 +1,6 @@
 {
   "name": "structured_data_double_decode",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>content</p></body></html>",
   "payload": {
     "suggestions": [],
@@ -27,6 +28,6 @@
     "overwrite_existing_alt_text": false,
     "accessibility_config": {}
   },
-  "expected_html": "<html><head><script type=\"application/ld+json\" data-seojuice=\"schema\">{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Test\"}</script>\n</head><body><p>content</p><!-- seojuice: schema=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
-  "notes": "defensive tolerance — SDK accepts legacy double-JSON-encoded structured_data; the real /suggestions payload is single-encoded (see structured_data_single_decode)."
+  "expected_html": "<html><head><script type=\"application/ld+json\" data-seojuice=\"schema\">[{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"headline\":\"Test\"}]</script>\n</head><body><p>content</p><!-- seojuice: schema=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — structured_data is stored double-JSON-encoded (json.dumps(json.dumps(obj)) upstream); the Worker double-decodes it (JSON.parse twice) into a valid application/ld+json script tag."
 }

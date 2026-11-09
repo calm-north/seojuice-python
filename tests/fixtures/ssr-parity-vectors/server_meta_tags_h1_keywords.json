@@ -1,0 +1,35 @@
+{
+  "name": "server_meta_tags_h1_keywords",
+  "origin": "generated: real server payload from ssr-payloads, expected_html from the Worker",
+  "input_html": "<html><head></head><body><h1>Old heading</h1><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": null,
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "Complete SEO Guide | Fixture Co",
+    "og_title": "Complete SEO Guide",
+    "og_description": "Everything about SEO.",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "Everything about SEO in one guide.",
+    "meta_keywords": "seo, audit, guide",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://meta-tags-and-h1.example/guide/",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {
+      "enabled": true,
+      "language": "en"
+    },
+    "h1": "The Complete SEO Guide"
+  },
+  "expected_html": "<html><head><title data-seojuice=\"title\">Complete SEO Guide | Fixture Co</title>\n<meta name=\"description\" content=\"Everything about SEO in one guide.\" data-seojuice=\"meta-description\">\n<meta name=\"keywords\" content=\"seo, audit, guide\" data-seojuice=\"meta-keywords\">\n<meta property=\"og:title\" content=\"Complete SEO Guide\" data-seojuice=\"og-title\">\n<meta property=\"og:description\" content=\"Everything about SEO.\" data-seojuice=\"og-description\">\n</head><body><h1 data-seojuice=\"h1\">The Complete SEO Guide</h1><p>Body content long enough to survive the fail-open length-ratio check here.</p><!-- seojuice: meta=[title,meta-description,meta-keywords,og-title,og-description] h1=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "Real server payload (ssr-payloads/meta_tags_and_h1): title, meta description, meta keywords, OG title/description and h1 replacement in one page."
+}

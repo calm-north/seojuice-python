@@ -1,0 +1,21 @@
+{
+  "operation": "get_report_pdf",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/reports/{report_id}/pdf/",
+    "path_params": {
+      "report_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/pdf",
+    "body": null,
+    "body_base64": "JVBERi0xLjQgc2RrLWZpeHR1cmU="
+  }
+}

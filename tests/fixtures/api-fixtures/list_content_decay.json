@@ -1,0 +1,47 @@
+{
+  "operation": "list_content_decay",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/content-decay/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 1,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "id": 1,
+          "page_url": "https://fixtures.example/guide/",
+          "signal_type": "traffic_decay",
+          "severity": "warning",
+          "is_active": true,
+          "detected_at": "2026-11-01T12:00:00+00:00",
+          "resolved_at": null,
+          "metrics": {},
+          "decay_type": "traffic_decay",
+          "clicks_baseline": null,
+          "clicks_current": null,
+          "clicks_change_pct": null,
+          "impressions_baseline": null,
+          "impressions_current": null,
+          "impressions_change_pct": null,
+          "position_baseline": null,
+          "position_current": null,
+          "position_change": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "operation": "get_pagespeed",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/pagespeed/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": {
+      "url": "https://fixtures.example/guide/"
+    },
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "url": "https://fixtures.example/guide/",
+      "loading_time": 1.8,
+      "core_web_vitals": {
+        "lcp": 2100,
+        "cls": 0.05,
+        "fid": null,
+        "inp": 180,
+        "fcp": null,
+        "ttfb": null,
+        "tbt": null,
+        "speed_index": null
+      },
+      "scores": {
+        "performance": null,
+        "accessibility": null,
+        "best_practices": null,
+        "seo": null
+      },
+      "resource_sizes": {
+        "total_kb": null,
+        "js_kb": null,
+        "css_kb": null,
+        "image_kb": null
+      },
+      "measured_at": "2026-11-01T12:00:00+00:00"
+    }
+  }
+}

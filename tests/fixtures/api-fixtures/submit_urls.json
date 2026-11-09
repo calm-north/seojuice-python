@@ -1,0 +1,70 @@
+{
+  "operation": "submit_urls",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/urls/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "urls": [
+        "https://fixtures.example/queued/",
+        {
+          "url": "https://fixtures.example/pushed/",
+          "content": "Pushed body text",
+          "title": "Pushed page"
+        }
+      ]
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 202,
+    "content_type": "application/json",
+    "body": {
+      "pages": [
+        {
+          "id": 1,
+          "url": "https://fixtures.example/queued/",
+          "title": "https://fixtures.example/queued/",
+          "page_type": null,
+          "is_content": false,
+          "seo_score": null,
+          "content_quality_score": null,
+          "geo_readiness_score": null,
+          "accessibility_score": null,
+          "meta_description": null,
+          "language_code": null,
+          "indexed_at": null,
+          "processed_at": null,
+          "vectorized_at": null,
+          "links_generated_at": null,
+          "scores_generated_at": null,
+          "seo_score_generated_at": null,
+          "created_at": "2026-11-01T12:00:00+00:00"
+        },
+        {
+          "id": 2,
+          "url": "https://fixtures.example/pushed/",
+          "title": "Pushed page",
+          "page_type": "other",
+          "is_content": false,
+          "seo_score": null,
+          "content_quality_score": null,
+          "geo_readiness_score": null,
+          "accessibility_score": null,
+          "meta_description": null,
+          "language_code": null,
+          "indexed_at": "2026-11-01T12:00:00+00:00",
+          "processed_at": null,
+          "vectorized_at": null,
+          "links_generated_at": null,
+          "scores_generated_at": null,
+          "seo_score_generated_at": null,
+          "created_at": "2026-11-01T12:00:00+00:00"
+        }
+      ]
+    }
+  }
+}

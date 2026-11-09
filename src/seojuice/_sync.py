@@ -82,7 +82,12 @@ class SEOJuice(_BaseClient):
         *,
         params: Optional[Dict[str, Any]] = None,
     ) -> bytes:
-        response = self._client.request(method, path, params=params)
+        try:
+            response = self._client.request(method, path, params=params)
+        except httpx.TimeoutException as exc:
+            raise APITimeoutError(str(exc)) from exc
+        except httpx.TransportError as exc:
+            raise APIConnectionError(str(exc)) from exc
         if response.status_code >= 400:
             try:
                 body = response.json()

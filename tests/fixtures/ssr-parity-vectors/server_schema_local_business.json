@@ -1,0 +1,35 @@
+{
+  "name": "server_schema_local_business",
+  "origin": "generated: real server payload from ssr-payloads, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": null,
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "og_title": "",
+    "og_description": "",
+    "og_image": "",
+    "structured_data": "{\"name\": \"Fixture Co\", \"@type\": \"LocalBusiness\", \"address\": {\"@type\": \"PostalAddress\", \"streetAddress\": \"1 Main St\", \"addressLocality\": \"Springfield\"}, \"@context\": \"https://schema.org\", \"telephone\": \"+1-555-0100\"}",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://schema-local-business.example/guide/",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {
+      "enabled": true,
+      "language": "en"
+    },
+    "h1": ""
+  },
+  "expected_html": "<html><head><script type=\"application/ld+json\" data-seojuice=\"schema\">[{\"name\":\"Fixture Co\",\"@type\":\"LocalBusiness\",\"address\":{\"@type\":\"PostalAddress\",\"streetAddress\":\"1 Main St\",\"addressLocality\":\"Springfield\"},\"@context\":\"https://schema.org\",\"telephone\":\"+1-555-0100\"}]</script>\n</head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p><!-- seojuice: schema=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "Real server payload (ssr-payloads/schema_local_business)."
+}

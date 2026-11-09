@@ -1,0 +1,21 @@
+{
+  "operation": "error_400_invalid_json",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/analyze/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": "{not json",
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "invalid_request",
+      "message": "Invalid JSON in request body"
+    }
+  }
+}

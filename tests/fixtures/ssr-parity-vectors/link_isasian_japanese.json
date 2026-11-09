@@ -1,5 +1,6 @@
 {
   "name": "link_isasian_japanese",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>私は投資信託について詳しく学びたい。</p></body></html>",
   "payload": {
     "suggestions": [

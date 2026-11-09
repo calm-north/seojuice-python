@@ -1,0 +1,43 @@
+{
+  "operation": "list_content_gaps",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/content-gaps/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 1,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "id": 1,
+          "page_name": "How to audit a site",
+          "category": "core",
+          "intent": "informational",
+          "seo_potential": 60,
+          "relevance": 75,
+          "total_search_volume": 1200,
+          "estimated_traffic_potential": 500,
+          "keywords": [],
+          "aiso_driven": false,
+          "is_dismissed": false,
+          "is_generated": false,
+          "has_potential_candidate": false,
+          "created_at": "2026-11-01T12:00:00+00:00"
+        }
+      ]
+    }
+  }
+}

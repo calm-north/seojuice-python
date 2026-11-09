@@ -1,0 +1,51 @@
+{
+  "name": "server_alt_text_images",
+  "origin": "generated: real server payload from ssr-payloads, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>text</p><img src=\"https://alt-text-images.example/media/img-0.jpg\"><img src=\"/media/img-1.jpg\" alt=\"x\"><img src=\"https://alt-text-images.example/_next/image?url=%2Fhero.jpg&amp;w=640&amp;q=75\"></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [
+      {
+        "url": "https://alt-text-images.example/media/img-0.jpg",
+        "alt_text": "A chart of organic traffic",
+        "reason": ""
+      },
+      {
+        "url": "https://alt-text-images.example/media/img-1.jpg",
+        "alt_text": "Team photo at the office",
+        "reason": ""
+      },
+      {
+        "url": "https://alt-text-images.example/_next/image?url=%2Fhero.jpg",
+        "alt_text": "Hero banner",
+        "reason": ""
+      }
+    ],
+    "custom_link_class": null,
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "og_title": "",
+    "og_description": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://alt-text-images.example/guide/",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {
+      "enabled": true,
+      "language": "en"
+    },
+    "h1": ""
+  },
+  "expected_html": "<html><head></head><body><p>text</p><img alt=\"A chart of organic traffic\" data-seojuice=\"alt\" src=\"https://alt-text-images.example/media/img-0.jpg\"><img data-seojuice=\"alt\" src=\"/media/img-1.jpg\" alt=\"Team photo at the office\"><img alt=\"Hero banner\" data-seojuice=\"alt\" src=\"https://alt-text-images.example/_next/image?url=%2Fhero.jpg&amp;w=640&amp;q=75\"><!-- seojuice: img=3 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "Real server payload (ssr-payloads/alt_text_images): absolute, root-relative and Next.js optimizer image URLs."
+}

@@ -1,5 +1,6 @@
 {
   "name": "brokenlink_unlink_whole_anchor",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>before <a href=\"/dead-page3\">bad link text</a> after</p></body></html>",
   "payload": {
     "suggestions": [],
