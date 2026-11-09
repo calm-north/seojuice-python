@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.5.0
+
+### Breaking
+- **`reject_change` requires a `reason`.** The server rejects a change without one.
+- **Response types match the server.** Cluster, content-decay, action-item and change types use the field names the server sends; fields the server never sends, such as `snoozed` and the cluster `total_clicks` and `top_keywords`, are gone.
+- **Injected JSON-LD is a bare array of only the missing `@type`s.** Types already on the page are not added twice.
+
+### Added
+- **`approve_change(..., confirm_heading=True)`** for H1 changes, and **`batch_id`** on change listing and bulk actions.
+- **`PaymentRequiredError`** for 402 responses, with `checkout_url` and `lock_state`.
+
+### Fixed
+- **Every `AsyncSEOJuice` method now works.**
+- **`list_changes(status=...)` accepts `proposed`, `live` and `rolled_back`.**
+- **Links keep the page's text casing, and pages with an `errors` payload stay untouched.**
+- **Images match on relative URLs and `srcset`.**
+
 ## 1.4.1
 
 ### Fixed
