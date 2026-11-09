@@ -1,5 +1,6 @@
 {
   "name": "diff_idempotent_already_applied",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p data-seojuice-cs=\"9\">new copy</p></body></html>",
   "payload": {
     "suggestions": [],

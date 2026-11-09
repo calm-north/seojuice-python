@@ -1,0 +1,23 @@
+{
+  "operation": "create_website_plan_limit",
+  "case": "the main fixture org is already at its website limit",
+  "request": {
+    "method": "POST",
+    "path": "/websites/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "domain": "third-client.com"
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 403,
+    "content_type": "application/json",
+    "body": {
+      "error": "plan_limit",
+      "message": "Website limit reached for your plan"
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "operation": "list_action_items",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/action-items/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 2,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "id": 1,
+          "title": "Compress hero image",
+          "description": "Field weight well enjoy other threat institution give.",
+          "guidance": "Seat rest serious think note fire protect purpose. Religious film use off. Firm yet try people industry.",
+          "category": "seo",
+          "priority": "high",
+          "item_type": "test_type_1",
+          "status": "open",
+          "source_type": "seo_check",
+          "source_id": null,
+          "auto_fixable": false,
+          "auto_fixed": false,
+          "auto_fixed_at": null,
+          "estimated_effort": "easy",
+          "page_url": null,
+          "page_id": null,
+          "group_id": null,
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "updated_at": "2026-11-01T12:00:00+00:00",
+          "completed_at": null
+        },
+        {
+          "id": 2,
+          "title": "Add a meta description to /pricing/",
+          "description": "Discussion study artist interview mind language check. Candidate authority least in. Month yes stand partner deal assume low blood. Glass respond region letter region.",
+          "guidance": "Expect world eat recently discuss you. Speak recently can worry direction set able.",
+          "category": "seo",
+          "priority": "medium",
+          "item_type": "test_type_0",
+          "status": "open",
+          "source_type": "seo_check",
+          "source_id": null,
+          "auto_fixable": false,
+          "auto_fixed": false,
+          "auto_fixed_at": null,
+          "estimated_effort": "easy",
+          "page_url": null,
+          "page_id": null,
+          "group_id": null,
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "updated_at": "2026-11-01T12:00:00+00:00",
+          "completed_at": null
+        }
+      ]
+    }
+  }
+}

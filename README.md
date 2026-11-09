@@ -208,8 +208,8 @@ with SEOJuice("your-api-key") as client:
 
     # Configure automation settings
     site.update_change_settings(
-        auto_approve_internal_links=True,
-        auto_approve_meta_descriptions=False,
+        internal_links_mode="auto_deploy",
+        meta_tags_mode="suggest",
     )
 ```
 
@@ -233,7 +233,7 @@ with SEOJuice("your-api-key") as client:
     # Get grouped by category
     groups = site.action_item_groups()
     for group in groups:
-        print(f"{group['category']}: {group['count']} items")
+        print(f"{group['category']}: {group['total_items']} items")
 
     # Create a new action item
     site.create_action_item(
@@ -243,7 +243,7 @@ with SEOJuice("your-api-key") as client:
     )
 
     # Update status
-    site.update_action_item(item_id=99, action="complete")
+    site.update_action_item(item_id=99, action="done")
 ```
 
 ## Webhook Verification
@@ -276,7 +276,7 @@ with SEOJuice("your-api-key") as client:
 
     # Domain health score
     health = site.domain_health()
-    print(f"Health score: {health['overall_score']}")
+    print(f"Health score: {health['domain_health_score']}")
 
     # SERP landscape analysis
     serp = site.serp_landscape()

@@ -1,0 +1,26 @@
+{
+  "operation": "list_backlink_domains",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/backlink-domains/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 0,
+        "total_pages": 0
+      },
+      "results": []
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "operation": "create_website_already_exists",
+  "case": "another org already owns the domain",
+  "request": {
+    "method": "POST",
+    "path": "/websites/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "domain": "taken-client.com"
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 409,
+    "content_type": "application/json",
+    "body": {
+      "error": "already_exists",
+      "message": "Website already exists"
+    }
+  }
+}

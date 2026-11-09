@@ -1,5 +1,6 @@
 {
   "name": "failopen_empty_payload_ssr_flag_only",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>Plain content, nothing actionable.</p></body></html>",
   "payload": {
     "suggestions": [],

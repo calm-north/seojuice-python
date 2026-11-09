@@ -1,5 +1,6 @@
 {
   "name": "real_fundsageai_links_and_og",
+  "origin": "generated: real captured payload (sdk-node real_fundsageai.json), expected_html from the Worker",
   "input_html": "<html><head></head><body><h1>SWP Calculator</h1><p>Learn how a Systematic Withdrawal Plan works and estimate your monthly income from mutual funds. Our SWP calculator lets you model different annual withdrawal rate assumptions before you commit.</p></body></html>",
   "payload": {
     "suggestions": [

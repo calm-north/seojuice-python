@@ -1,0 +1,23 @@
+{
+  "operation": "error_404_cluster_not_found",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/clusters/{cluster_id}/",
+    "path_params": {
+      "cluster_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 404,
+    "content_type": "application/json",
+    "body": {
+      "error": "cluster_not_found",
+      "message": "Cluster 987654 not found"
+    }
+  }
+}

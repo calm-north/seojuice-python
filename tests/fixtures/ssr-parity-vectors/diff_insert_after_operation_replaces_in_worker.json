@@ -1,0 +1,44 @@
+{
+  "name": "diff_insert_after_operation_replaces_in_worker",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>Anchor</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [
+      {
+        "id": 3,
+        "selector": "p",
+        "semantic": "",
+        "operation": "insert_after",
+        "original_text": "<p>Anchor</p>",
+        "replacement_html": "<p>Added</p>",
+        "order": 0,
+        "batch_id": ""
+      }
+    ],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p data-seojuice-cs=\"3\">Added</p><!-- seojuice: cs=[3] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — the Worker does not read `operation`: insert_after swaps the original for the replacement instead of appending after it."
+}

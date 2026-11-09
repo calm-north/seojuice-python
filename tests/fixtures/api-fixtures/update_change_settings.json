@@ -1,0 +1,39 @@
+{
+  "operation": "update_change_settings",
+  "case": "",
+  "request": {
+    "method": "PATCH",
+    "path": "/websites/{domain}/changes/settings/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "meta_tags_mode": "auto_deploy",
+      "max_changes_per_day": 25,
+      "exclude_paths": [
+        "/tag/",
+        "/cart/"
+      ]
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "internal_links_mode": "auto_deploy",
+      "meta_tags_mode": "auto_deploy",
+      "og_tags_mode": "auto_deploy",
+      "title_tags_mode": "auto_deploy",
+      "h1_tags_mode": "off",
+      "structured_data_mode": "auto_deploy",
+      "image_alt_mode": "auto_deploy",
+      "accessibility_mode": "auto_deploy",
+      "local_seo_mode": "off",
+      "gbp_review_reply_mode": "off",
+      "max_changes_per_page_per_day": 10,
+      "max_changes_per_day": 25,
+      "exclude_paths": "/tag/,/cart/"
+    }
+  }
+}

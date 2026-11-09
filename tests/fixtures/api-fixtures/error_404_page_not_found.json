@@ -1,0 +1,23 @@
+{
+  "operation": "error_404_page_not_found",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/pages/{page_id}/",
+    "path_params": {
+      "page_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 404,
+    "content_type": "application/json",
+    "body": {
+      "error": "not_found",
+      "message": "Page not found"
+    }
+  }
+}

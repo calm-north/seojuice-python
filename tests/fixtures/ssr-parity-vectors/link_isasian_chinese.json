@@ -1,5 +1,6 @@
 {
   "name": "link_isasian_chinese",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>我想了解投资基金的收益情况。</p></body></html>",
   "payload": {
     "suggestions": [

@@ -1,0 +1,26 @@
+{
+  "operation": "get_traffic_analytics",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/traffic-analytics/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "days": 30,
+      "human_views": 0,
+      "bot_views": 0,
+      "bot_percentage": 0,
+      "referrer_categories": {},
+      "top_pages": [],
+      "over_time": []
+    }
+  }
+}

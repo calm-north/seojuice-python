@@ -1,0 +1,23 @@
+{
+  "operation": "pull_change_without_integration",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/changes/{change_id}/pull/",
+    "path_params": {
+      "change_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {},
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 422,
+    "content_type": "application/json",
+    "body": {
+      "error": "missing_field",
+      "message": "integration is required"
+    }
+  }
+}

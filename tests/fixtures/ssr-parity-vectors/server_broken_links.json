@@ -1,0 +1,54 @@
+{
+  "name": "server_broken_links",
+  "origin": "generated: real server payload from ssr-payloads, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>See the <a href=\"https://example.com/old\">old guide</a> and the <a href=\"https://example.com/gone\">dead page</a> here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": null,
+    "accessibility": [],
+    "broken_link_fixes": [
+      {
+        "broken_url": "https://example.com/old",
+        "action": "replace",
+        "replacement_url": "https://example.com/new",
+        "anchor_text": "old guide",
+        "attr": "href",
+        "tag": "a",
+        "new_url": "https://example.com/new"
+      },
+      {
+        "broken_url": "https://example.com/gone",
+        "action": "unlink",
+        "replacement_url": "",
+        "anchor_text": "dead page",
+        "attr": "href",
+        "tag": "a",
+        "new_url": ""
+      }
+    ],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "og_title": "",
+    "og_description": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://broken-links.example/guide/",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {
+      "enabled": true,
+      "language": "en"
+    },
+    "h1": ""
+  },
+  "expected_html": "<html><head></head><body><p>See the <a href=\"https://example.com/new\">old guide</a> and the  here.</p><script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "Real server payload (ssr-payloads/broken_links): one replace and one unlink fix with the edge-delivery fields."
+}

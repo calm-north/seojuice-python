@@ -1,0 +1,35 @@
+{
+  "operation": "get_action_item_summary",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/action-items/summary/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "total": 2,
+      "open": 2,
+      "done": 0,
+      "dismissed": 0,
+      "resolved": 0,
+      "retired": 0,
+      "auto_fixed": 0,
+      "done_this_month": 0,
+      "completion_rate": 0.0,
+      "by_category": {
+        "seo": 2
+      },
+      "by_priority": {
+        "high": 1,
+        "medium": 1
+      }
+    }
+  }
+}

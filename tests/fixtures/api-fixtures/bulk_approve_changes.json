@@ -1,0 +1,39 @@
+{
+  "operation": "bulk_approve_changes",
+  "case": "one id does not exist, so failed[] has an entry",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/changes/bulk/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "action": "approve",
+      "ids": [
+        1,
+        2,
+        3
+      ]
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "action": "approve",
+      "succeeded": [
+        1,
+        2
+      ],
+      "failed": [
+        {
+          "id": 3,
+          "error": "not_found"
+        }
+      ],
+      "total_succeeded": 2,
+      "total_failed": 1
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "operation": "list_websites",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "results": [
+        {
+          "domain": "fixtures.example",
+          "created_at": "2026-11-01T12:00:00Z"
+        }
+      ]
+    }
+  }
+}

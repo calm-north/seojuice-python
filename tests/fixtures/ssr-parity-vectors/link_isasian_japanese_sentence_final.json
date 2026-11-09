@@ -34,5 +34,6 @@
     "accessibility_config": {}
   },
   "expected_html": "<html><head></head><body><p>私は<a href=\"/toushin\" data-seojuice-cs=\"777\">投資信託</a>。詳しく学びます。</p><!-- seojuice: cs=[777] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
-  "notes": "sentence-final CJK — keyword followed by full-width 。 must still link (bug B)."
+  "notes": "sentence-final CJK — keyword followed by full-width 。 must still link (bug B).",
+  "origin": "hand-added: kept as committed"
 }

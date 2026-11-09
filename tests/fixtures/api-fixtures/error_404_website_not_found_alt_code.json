@@ -1,0 +1,21 @@
+{
+  "operation": "error_404_website_not_found_alt_code",
+  "case": "error code website_not_found",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/intelligence/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 404,
+    "content_type": "application/json",
+    "body": {
+      "error": "website_not_found",
+      "message": "Website nope.example not found"
+    }
+  }
+}

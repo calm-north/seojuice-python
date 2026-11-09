@@ -1,0 +1,33 @@
+{
+  "name": "h1_replacement_escapes_html",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
+  "input_html": "<html><head></head><body><h1 class=\"hero\">Old</h1><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "Fish & <Chips>",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><h1 class=\"hero\" data-seojuice=\"h1\">Fish &amp; &lt;Chips&gt;</h1><p>Body content long enough to survive the fail-open length-ratio check here.</p><!-- seojuice: h1=1 -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — h1 text is HTML-escaped; the opening tag keeps its attributes and gains data-seojuice=\"h1\"."
+}

@@ -1,0 +1,21 @@
+{
+  "operation": "error_401_empty_token",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 401,
+    "content_type": "application/json",
+    "body": {
+      "error": "invalid_token",
+      "message": "Token is empty"
+    }
+  }
+}

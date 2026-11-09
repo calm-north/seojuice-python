@@ -1,0 +1,57 @@
+{
+  "operation": "list_gbp_reviews",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/gbp/reviews/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "results": [
+        {
+          "id": 1,
+          "review_id": "rv-1",
+          "location_name": "Main Street Clinic",
+          "author_name": "Katherine Moore",
+          "rating": 1,
+          "comment": "Food address rule past production. Father drug investment body. Hour hospital have eight girl score.",
+          "reply": "",
+          "reply_suggestion": "",
+          "sentiment": "negative",
+          "needs_attention": true,
+          "auto_replied": false,
+          "published_at": "2026-11-01T08:20:58.604715+00:00",
+          "reply_posted_at": null
+        },
+        {
+          "id": 2,
+          "review_id": "rv-2",
+          "location_name": "Main Street Clinic",
+          "author_name": "Sandra Todd",
+          "rating": 5,
+          "comment": "Rise bill candidate poor smile home and. Exist continue debate little education rise imagine foreign. Similar society every two.",
+          "reply": "",
+          "reply_suggestion": "",
+          "sentiment": "positive",
+          "needs_attention": false,
+          "auto_replied": false,
+          "published_at": "2026-11-01T02:43:02.961136+00:00",
+          "reply_posted_at": null
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 2,
+        "total_pages": 1
+      }
+    }
+  }
+}

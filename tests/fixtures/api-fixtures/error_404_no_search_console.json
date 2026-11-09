@@ -1,0 +1,21 @@
+{
+  "operation": "error_404_no_search_console",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/search-performance/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 404,
+    "content_type": "application/json",
+    "body": {
+      "error": "no_search_console",
+      "message": "This website's Google Search Console connection is not currently verified. It may need reconnecting."
+    }
+  }
+}

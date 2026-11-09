@@ -1,5 +1,6 @@
 {
   "name": "brokenlink_legacy_replacement_url_worker_noop",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>See our <a href=\"/dead-page2\">guide</a> for more.</p></body></html>",
   "payload": {
     "suggestions": [],

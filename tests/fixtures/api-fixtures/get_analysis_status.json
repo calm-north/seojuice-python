@@ -1,0 +1,30 @@
+{
+  "operation": "get_analysis_status",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/analyze/{analysis_id}/",
+    "path_params": {
+      "analysis_id": "analysis-done"
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "analysis_id": "analysis-done",
+      "status": "completed",
+      "url": "https://fixtures.example/guide/",
+      "cluster": "Roof repair",
+      "page_id": 1,
+      "is_orphan": false,
+      "seo_score": 72,
+      "depth_from_homepage": 1,
+      "completed_at": "2026-11-01T12:00:00+00:00"
+    }
+  }
+}

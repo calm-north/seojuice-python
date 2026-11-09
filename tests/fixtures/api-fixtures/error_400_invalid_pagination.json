@@ -1,0 +1,23 @@
+{
+  "operation": "error_400_invalid_pagination",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/pages/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": {
+      "page": 0
+    },
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "invalid_pagination",
+      "message": "Page must be >= 1"
+    }
+  }
+}

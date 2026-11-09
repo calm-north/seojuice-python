@@ -1,0 +1,26 @@
+{
+  "operation": "bulk_changes_invalid_action",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/changes/bulk/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "action": "explode",
+      "ids": [
+        1
+      ]
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 422,
+    "content_type": "application/json",
+    "body": {
+      "error": "invalid_action",
+      "message": "action must be one of: approve, pull, reject, revert, verify"
+    }
+  }
+}

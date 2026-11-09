@@ -1,0 +1,23 @@
+{
+  "operation": "create_action_item_missing_title",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/action-items/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "category": "seo"
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "validation_error",
+      "message": "title is required"
+    }
+  }
+}

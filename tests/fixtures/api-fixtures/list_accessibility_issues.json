@@ -1,0 +1,40 @@
+{
+  "operation": "list_accessibility_issues",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/accessibility-issues/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 1,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "id": 1,
+          "page_url": "https://fixtures.example/guide/",
+          "category": "alt_text",
+          "severity": "major",
+          "wcag_criterion": "1.1.1",
+          "description": "Image missing alt text",
+          "fix_guidance": "Add descriptive alt text",
+          "element_snippet": "<img src=\"/a.png\">",
+          "auto_fixable": true,
+          "auto_fixed": false,
+          "created_at": "2026-11-01T12:00:00+00:00"
+        }
+      ]
+    }
+  }
+}

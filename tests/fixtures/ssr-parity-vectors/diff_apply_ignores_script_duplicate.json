@@ -39,5 +39,6 @@
     "accessibility_config": {}
   },
   "expected_html": "<html><head></head><body><p><strong data-seojuice-cs=\"21\">New paragraph text.</strong></p><script>window.__d=\"Old paragraph text.\";</script><!-- seojuice: cs=[21] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
-  "notes": "script/style duplicate must not block the visible-body diff (bug C)."
+  "notes": "script/style duplicate must not block the visible-body diff (bug C).",
+  "origin": "hand-added: kept as committed"
 }

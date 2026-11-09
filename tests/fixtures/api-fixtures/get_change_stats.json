@@ -1,0 +1,36 @@
+{
+  "operation": "get_change_stats",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/changes/stats/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "total": 7,
+      "by_status": {
+        "pending": 5,
+        "approved": 0,
+        "applied": 2,
+        "reverted": 0,
+        "rejected": 0,
+        "expired": 0,
+        "pulled": 0,
+        "verified": 0
+      },
+      "by_type": {
+        "content_patch": 1,
+        "meta_description": 4,
+        "h1_tag": 1,
+        "title_tag": 1
+      }
+    }
+  }
+}

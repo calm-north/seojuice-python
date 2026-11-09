@@ -1,0 +1,74 @@
+{
+  "operation": "get_content_piece",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/content-pieces/{piece_id}/",
+    "path_params": {
+      "piece_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "id": 1,
+      "title": "Ten audit mistakes",
+      "status": "approved",
+      "page_url": null,
+      "created_at": "2026-11-01T12:00:00+00:00",
+      "published_at": null,
+      "publish_platform": "",
+      "external_url": "",
+      "content": "<p>body</p>",
+      "meta_description": "",
+      "changes": [
+        {
+          "id": 2,
+          "change_type": "content_patch",
+          "status": "live",
+          "risk_level": "safe",
+          "page_url": null,
+          "proposed_value": "<p>new</p>",
+          "previous_value": "old",
+          "reason": "",
+          "confidence_score": null,
+          "anchor_text": "",
+          "alternatives": [],
+          "original_issues": [],
+          "optimization_techniques": [],
+          "seo_signals_improved": [],
+          "potential_risks": [],
+          "related_changes": [],
+          "llm_metadata": {},
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "reviewed_at": null,
+          "applied_at": null,
+          "pulled_at": null,
+          "pulled_by_integration": null,
+          "verified_at": null,
+          "reverted_at": null,
+          "revert_reason": "",
+          "batch_id": null,
+          "batch_label": "",
+          "edited_manually": false,
+          "mutation_type": "content_patch",
+          "verification_state": "none",
+          "outcome_state": "none",
+          "apply": {
+            "selector": "p",
+            "semantic": "",
+            "operation": "replace",
+            "original_text": "old",
+            "replacement_html": "<p>new</p>",
+            "order": 0
+          }
+        }
+      ]
+    }
+  }
+}

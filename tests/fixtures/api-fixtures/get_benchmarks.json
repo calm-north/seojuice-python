@@ -1,0 +1,88 @@
+{
+  "operation": "get_benchmarks",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/benchmarks/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "domain": "fixtures.example",
+      "industry": null,
+      "benchmarks": {
+        "gsc_ctr": {
+          "title": "Click-Through Rate",
+          "description": "Your average CTR compared to other sites in your industry.",
+          "your_score": 10.0,
+          "your_score_display": "10.0%",
+          "percentile": 50,
+          "quantile": "data unavailable",
+          "p25": "-",
+          "median": "-",
+          "p75": "-",
+          "sample_size": 0,
+          "data_available": false
+        },
+        "gsc_traffic": {
+          "title": "Organic Traffic",
+          "description": "Your organic click volume compared to similar sites.",
+          "your_score": 1550,
+          "your_score_display": "1.6k",
+          "percentile": 50,
+          "quantile": "data unavailable",
+          "p25": "-",
+          "median": "-",
+          "p75": "-",
+          "sample_size": 0,
+          "data_available": false
+        },
+        "gsc_branded_ratio": {
+          "title": "Branded Traffic Ratio",
+          "description": "Proportion of branded vs non-branded search traffic.",
+          "your_score": 20.0,
+          "your_score_display": "20.0%",
+          "percentile": 50,
+          "quantile": "data unavailable",
+          "p25": "-",
+          "median": "-",
+          "p75": "-",
+          "sample_size": 0,
+          "data_available": false
+        },
+        "gsc_keyword_distribution": {
+          "title": "Top-10 share of tracked keywords",
+          "description": "Share of your top-50 tracked keywords that rank in the top 10.",
+          "your_score": 0.0,
+          "your_score_display": "0.0%",
+          "percentile": 50,
+          "quantile": "data unavailable",
+          "p25": "-",
+          "median": "-",
+          "p75": "-",
+          "sample_size": 0,
+          "data_available": false
+        },
+        "gsc_indexation_rate": {
+          "title": "Indexation Rate",
+          "description": "Percentage of your pages indexed by Google.",
+          "your_score": 0.0,
+          "your_score_display": "0.0%",
+          "percentile": 50,
+          "quantile": "data unavailable",
+          "p25": "-",
+          "median": "-",
+          "p75": "-",
+          "sample_size": 0,
+          "data_available": false
+        }
+      }
+    }
+  }
+}

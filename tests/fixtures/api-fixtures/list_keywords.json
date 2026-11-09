@@ -1,0 +1,51 @@
+{
+  "operation": "list_keywords",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/keywords/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 2,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "id": 1,
+          "name": "keyword-0",
+          "page_url": "https://fixtures.example/guide/",
+          "category": "informative",
+          "search_volume": 900,
+          "keyword_difficulty": 45.0,
+          "cpc": 1.5,
+          "competition": 0.5,
+          "ai_search_volume": null,
+          "last_updated": "2026-11-01T12:00:00+00:00"
+        },
+        {
+          "id": 2,
+          "name": "keyword-1",
+          "page_url": "https://fixtures.example/guide/",
+          "category": "informative",
+          "search_volume": 400,
+          "keyword_difficulty": 45.0,
+          "cpc": 1.5,
+          "competition": 0.5,
+          "ai_search_volume": null,
+          "last_updated": "2026-11-01T12:00:00+00:00"
+        }
+      ]
+    }
+  }
+}

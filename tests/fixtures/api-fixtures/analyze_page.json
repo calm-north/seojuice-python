@@ -1,0 +1,26 @@
+{
+  "operation": "analyze_page",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/analyze/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "url": "https://fixtures.example/new-page/"
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 202,
+    "content_type": "application/json",
+    "body": {
+      "analysis_id": "analysis-fixture",
+      "url": "https://fixtures.example/new-page/",
+      "status": "queued",
+      "status_url": "/api/v2/websites/fixtures.example/analyze/analysis-fixture/",
+      "estimated_time_seconds": 30
+    }
+  }
+}

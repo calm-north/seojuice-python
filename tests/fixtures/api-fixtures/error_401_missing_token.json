@@ -1,0 +1,21 @@
+{
+  "operation": "error_401_missing_token",
+  "case": "no Authorization header",
+  "request": {
+    "method": "GET",
+    "path": "/websites/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": null
+  },
+  "response": {
+    "status": 401,
+    "content_type": "application/json",
+    "body": {
+      "error": "invalid_or_missing_token",
+      "message": "Authorization header must be provided with format: Bearer <token>"
+    }
+  }
+}

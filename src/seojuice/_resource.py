@@ -2,6 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from seojuice._client import (
+    _action_item_body,
+    _approve_body,
+    _bulk_body,
+    _changes_params,
+    _reject_body,
+)
 from seojuice._pagination import PagedResult
 from seojuice._types import (
     ActionItem,
@@ -27,12 +34,14 @@ from seojuice._types import (
     IntelligenceSummary,
     PageContentResponse,
     PageDetail,
+    PageStatus,
     PageSpeedResponse,
     ReportCreated,
     ReportDetail,
     ReportSummary,
     SERPLandscapeResponse,
     SimilarPagesResponse,
+    SubmitUrlsResponse,
     TopologyResponse,
     WebsiteDetail,
 )
@@ -163,12 +172,14 @@ class WebsiteResource:
     def update_change_settings(self, **settings: Any) -> ChangeSettings:
         return self._client.update_change_settings(self._domain, **settings)
 
-    def approve_change(self, change_id: int) -> ChangeRecord:
-        return self._client.approve_change(self._domain, change_id)
-
-    def reject_change(
-        self, change_id: int, *, reason: Optional[str] = None
+    def approve_change(
+        self, change_id: int, *, confirm_heading: bool = False
     ) -> ChangeRecord:
+        return self._client.approve_change(
+            self._domain, change_id, confirm_heading=confirm_heading
+        )
+
+    def reject_change(self, change_id: int, *, reason: str) -> ChangeRecord:
         return self._client.reject_change(self._domain, change_id, reason=reason)
 
     def revert_change(
@@ -190,7 +201,8 @@ class WebsiteResource:
         self,
         *,
         action: str,
-        ids: List[int],
+        ids: Optional[List[int]] = None,
+        batch_id: Optional[str] = None,
         reason: Optional[str] = None,
         integration: Optional[str] = None,
     ) -> BulkActionResult:
@@ -198,6 +210,7 @@ class WebsiteResource:
             self._domain,
             action=action,
             ids=ids,
+            batch_id=batch_id,
             reason=reason,
             integration=integration,
         )
@@ -234,13 +247,9 @@ class WebsiteResource:
         item_id: int,
         *,
         action: str,
-        snooze_days: Optional[int] = None,
     ) -> ActionItem:
         return self._client.update_action_item(
-            self._domain,
-            item_id,
-            action=action,
-            snooze_days=snooze_days,
+            self._domain, item_id, action=action
         )
 
     def action_item_groups(self, **kwargs: Any) -> PagedResult[ActionItemGroup]:
@@ -268,10 +277,12 @@ class WebsiteResource:
     def page_content(self, page_id: int) -> PageContentResponse:
         return self._client.get_page_content(self._domain, page_id)
 
-    def submit_urls(self, *, urls: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def submit_urls(
+        self, *, urls: List[Union[str, Dict[str, Any]]]
+    ) -> SubmitUrlsResponse:
         return self._client.submit_urls(self._domain, urls=urls)
 
-    def url_status(self, *, url: str) -> Dict[str, Any]:
+    def url_status(self, *, url: str) -> PageStatus:
         return self._client.get_url_status(self._domain, url=url)
 
 
@@ -292,12 +303,13 @@ class AsyncWebsiteResource:
     async def pages(
         self,
         *,
+        url: Optional[str] = None,
         page: int = 1,
         page_size: int = 10,
     ) -> PagedResult[PageDetail]:
         return await self._client._apaginate(
             f"/websites/{self._domain}/pages/",
-            {"page": page, "page_size": page_size},
+            {"url": url, "page": page, "page_size": page_size},
         )
 
     async def page(self, page_id: int) -> PageDetail:
@@ -457,12 +469,18 @@ class AsyncWebsiteResource:
         self,
         *,
         category: Optional[str] = None,
+        include_serp: Optional[bool] = None,
         page: int = 1,
         page_size: int = 20,
     ) -> PagedResult[Any]:
         return await self._client._apaginate(
             f"/websites/{self._domain}/keywords/",
-            {"category": category, "page": page, "page_size": page_size},
+            {
+                "category": category,
+                "include_serp": include_serp,
+                "page": page,
+                "page_size": page_size,
+            },
         )
 
     async def page_keywords(
@@ -558,18 +576,16 @@ class AsyncWebsiteResource:
         status: Optional[str] = None,
         change_type: Optional[str] = None,
         risk_level: Optional[str] = None,
+        url: Optional[str] = None,
+        batch_id: Optional[str] = None,
         page: int = 1,
         page_size: int = 20,
     ) -> PagedResult[Any]:
         return await self._client._apaginate(
             f"/websites/{self._domain}/changes/",
-            {
-                "status": status,
-                "change_type": change_type,
-                "risk_level": risk_level,
-                "page": page,
-                "page_size": page_size,
-            },
+            _changes_params(
+                status, change_type, risk_level, url, batch_id, page, page_size
+            ),
         )
 
     async def content_decay(
@@ -644,17 +660,18 @@ class AsyncWebsiteResource:
             f"/websites/{self._domain}/changes/settings/", settings
         )
 
-    async def approve_change(self, change_id: int) -> ChangeRecord:
+    async def approve_change(
+        self, change_id: int, *, confirm_heading: bool = False
+    ) -> ChangeRecord:
         return await self._client._apost(
-            f"/websites/{self._domain}/changes/{change_id}/approve/"
+            f"/websites/{self._domain}/changes/{change_id}/approve/",
+            _approve_body(confirm_heading),
         )
 
-    async def reject_change(
-        self, change_id: int, *, reason: Optional[str] = None
-    ) -> ChangeRecord:
-        body = {"reason": reason} if reason else None
+    async def reject_change(self, change_id: int, *, reason: str) -> ChangeRecord:
         return await self._client._apost(
-            f"/websites/{self._domain}/changes/{change_id}/reject/", body
+            f"/websites/{self._domain}/changes/{change_id}/reject/",
+            _reject_body(reason),
         )
 
     async def revert_change(
@@ -681,17 +698,14 @@ class AsyncWebsiteResource:
         self,
         *,
         action: str,
-        ids: List[int],
+        ids: Optional[List[int]] = None,
+        batch_id: Optional[str] = None,
         reason: Optional[str] = None,
         integration: Optional[str] = None,
     ) -> BulkActionResult:
-        body: Dict[str, Any] = {"action": action, "ids": ids}
-        if reason:
-            body["reason"] = reason
-        if integration:
-            body["integration"] = integration
         return await self._client._apost(
-            f"/websites/{self._domain}/changes/bulk/", body
+            f"/websites/{self._domain}/changes/bulk/",
+            _bulk_body(action, ids, batch_id, reason, integration),
         )
 
     # Action Items
@@ -752,13 +766,10 @@ class AsyncWebsiteResource:
         item_id: int,
         *,
         action: str,
-        snooze_days: Optional[int] = None,
     ) -> ActionItem:
-        body: Dict[str, Any] = {"action": action}
-        if snooze_days is not None:
-            body["snooze_days"] = snooze_days
         return await self._client._apatch(
-            f"/websites/{self._domain}/action-items/{item_id}/", body
+            f"/websites/{self._domain}/action-items/{item_id}/",
+            _action_item_body(action),
         )
 
     async def action_item_groups(
@@ -827,12 +838,14 @@ class AsyncWebsiteResource:
             f"/websites/{self._domain}/pages/{page_id}/content/"
         )
 
-    async def submit_urls(self, *, urls: List[Dict[str, Any]]) -> Dict[str, Any]:
+    async def submit_urls(
+        self, *, urls: List[Union[str, Dict[str, Any]]]
+    ) -> SubmitUrlsResponse:
         return await self._client._apost(
             f"/websites/{self._domain}/urls/", {"urls": urls}
         )
 
-    async def url_status(self, *, url: str) -> Dict[str, Any]:
+    async def url_status(self, *, url: str) -> PageStatus:
         return await self._client._aget(
             f"/websites/{self._domain}/urls/status/", {"url": url}
         )

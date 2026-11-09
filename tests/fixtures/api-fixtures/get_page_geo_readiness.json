@@ -1,0 +1,37 @@
+{
+  "operation": "get_page_geo_readiness",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/pages/{page_id}/geo-readiness/",
+    "path_params": {
+      "page_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "page_id": 1,
+      "page_url": "https://fixtures.example/guide/",
+      "page_type": "article",
+      "geo_readiness_score": 58.0,
+      "breakdown": {
+        "geo_targeting": 55,
+        "local_signals": 60
+      },
+      "recommendations": [
+        "Add local schema markup"
+      ],
+      "quotable_patterns_found": true,
+      "ai_engine_tips": [
+        "Include location in title"
+      ],
+      "content_quality_score": 65.0
+    }
+  }
+}

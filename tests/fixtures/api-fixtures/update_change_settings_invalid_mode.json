@@ -1,0 +1,23 @@
+{
+  "operation": "update_change_settings_invalid_mode",
+  "case": "",
+  "request": {
+    "method": "PATCH",
+    "path": "/websites/{domain}/changes/settings/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "meta_tags_mode": "sometimes"
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 422,
+    "content_type": "application/json",
+    "body": {
+      "error": "invalid_value",
+      "message": "meta_tags_mode must be one of: auto_deploy, manual_deploy, off, suggest"
+    }
+  }
+}

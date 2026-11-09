@@ -1,5 +1,6 @@
 {
   "name": "diff_apply_unique_single_root",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><div><p>old widget copy here</p></div></body></html>",
   "payload": {
     "suggestions": [],

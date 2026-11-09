@@ -1,5 +1,6 @@
 {
   "name": "images_keep_good_alt",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>text</p><img src=\"https://cdn.x/a.png\" alt=\"already meaningful alt text\"></body></html>",
   "payload": {
     "suggestions": [],

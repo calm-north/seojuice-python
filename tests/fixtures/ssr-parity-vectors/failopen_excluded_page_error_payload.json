@@ -1,0 +1,14 @@
+{
+  "name": "failopen_excluded_page_error_payload",
+  "origin": "generated: real server payload from ssr-payloads, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "payload": {
+    "suggestions": [],
+    "errors": [
+      "Page is excluded from rendering"
+    ],
+    "base": null
+  },
+  "expected_html": "<html><head></head><body><p>Body content long enough to survive the fail-open length-ratio check here.</p></body></html>",
+  "notes": "Real server payload (ssr-payloads/page_excluded): {suggestions:[], errors:['Page is excluded from rendering'], base:null}. Nothing is applied: the Worker handler returns the origin untouched (no SSR flag). Route through the SDK full inject path."
+}

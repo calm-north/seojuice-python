@@ -1,0 +1,39 @@
+{
+  "name": "link_keyword_case_differs_from_page_text",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
+  "input_html": "<html><head></head><body><p>Compare the best SEO Tools for agencies.</p></body></html>",
+  "payload": {
+    "suggestions": [
+      {
+        "keyword": "seo tools",
+        "url": "/tools",
+        "id": 31
+      }
+    ],
+    "images": [],
+    "custom_link_class": "",
+    "accessibility": [],
+    "broken_link_fixes": [],
+    "diffs": [],
+    "errors": [],
+    "title": "",
+    "h1": "",
+    "og_title": "",
+    "og_description": "",
+    "og_url": "",
+    "og_image": "",
+    "structured_data": "",
+    "meta_description": "",
+    "meta_keywords": "",
+    "isAsian": false,
+    "insert_into_content_only": false,
+    "base": "https://example.com/page",
+    "is_active": true,
+    "track_page_views": true,
+    "track_link_clicks": true,
+    "overwrite_existing_alt_text": false,
+    "accessibility_config": {}
+  },
+  "expected_html": "<html><head></head><body><p>Compare the best <a href=\"/tools\" data-seojuice-cs=\"31\">SEO Tools</a> for agencies.</p><!-- seojuice: cs=[31] -->\n<script>window.seojuiceSSR = true;</script>\n</body></html>",
+  "notes": "synthetic — keyword matching is case-insensitive and the anchor keeps the PAGE's casing (SEO Tools), not the keyword's (seojuice-ssr.js escapeHtml(match))."
+}

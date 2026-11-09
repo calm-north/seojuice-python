@@ -1,5 +1,6 @@
 {
   "name": "images_next_optimizer_distinct_alts",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>text</p><img src=\"https://example.com/_next/image?url=%2Fa.jpg&amp;w=640&amp;q=75\"><img src=\"https://example.com/_next/image?url=%2Fb.jpg&amp;w=640&amp;q=75\"><img src=\"https://example.com/_next/image?url=%2Fa.jpg&amp;w=1080&amp;q=75\"></body></html>",
   "payload": {
     "suggestions": [],

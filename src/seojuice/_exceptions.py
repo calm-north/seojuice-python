@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Type
+from typing import Dict, Optional, Type
 
 
 class SEOJuiceError(Exception):
@@ -21,6 +21,22 @@ class AuthError(APIError):
 
 class ForbiddenError(APIError):
     """403 Forbidden."""
+
+
+class PaymentRequiredError(APIError):
+    """402: the organization is gated. Send the user to ``checkout_url``."""
+
+    def __init__(
+        self,
+        status_code: int,
+        error_code: str,
+        message: str,
+        checkout_url: Optional[str] = None,
+        lock_state: Optional[str] = None,
+    ) -> None:
+        self.checkout_url = checkout_url
+        self.lock_state = lock_state
+        super().__init__(status_code, error_code, message)
 
 
 class NotFoundError(APIError):
@@ -56,6 +72,14 @@ def raise_for_response(status_code: int, body: dict) -> None:  # type: ignore[ty
         return
     error_code = body.get("error", "unknown_error")
     message = body.get("message", "An unexpected error occurred")
+    if status_code == 402:
+        raise PaymentRequiredError(
+            status_code,
+            error_code,
+            message,
+            checkout_url=body.get("checkout_url"),
+            lock_state=body.get("lock_state"),
+        )
     exc_class = _STATUS_TO_EXCEPTION.get(status_code)
     if exc_class:
         raise exc_class(status_code, error_code, message)

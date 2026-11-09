@@ -1,0 +1,21 @@
+{
+  "operation": "error_400_missing_parameter",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/pagespeed/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "missing_parameter",
+      "message": "URL parameter is required"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "operation": "get_page_metrics_history",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/pages/{page_id}/metrics-history/",
+    "path_params": {
+      "page_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 30,
+        "total_count": 1,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "seo_score": 70.0,
+          "onpage_score": 75.0,
+          "accessibility_score": null,
+          "word_count": 500,
+          "gsc_clicks": 0,
+          "gsc_impressions": 0,
+          "gsc_avg_position": null,
+          "gsc_ctr": 0.0,
+          "is_orphan": false,
+          "total_incoming_links": 5,
+          "total_outgoing_links": 3,
+          "cwv_lcp": null,
+          "cwv_cls": null,
+          "cwv_fid": null,
+          "cwv_inp": null,
+          "cwv_fcp": null,
+          "cwv_ttfb": null,
+          "cwv_performance_score": null,
+          "content_quality_score": null,
+          "geo_readiness_score": null
+        }
+      ]
+    }
+  }
+}

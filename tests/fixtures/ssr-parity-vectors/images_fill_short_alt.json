@@ -1,5 +1,6 @@
 {
   "name": "images_fill_short_alt",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>text</p><img src=\"https://cdn.x/a.png?v=2\" alt=\"x\"></body></html>",
   "payload": {
     "suggestions": [],

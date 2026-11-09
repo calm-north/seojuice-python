@@ -1,0 +1,25 @@
+{
+  "operation": "create_report",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/reports/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "type": "last_week"
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 202,
+    "content_type": "application/json",
+    "body": {
+      "report_id": 1,
+      "status": "in_progress",
+      "status_url": "/api/v2/websites/fixtures.example/reports/1/",
+      "task_id": "task-1"
+    }
+  }
+}

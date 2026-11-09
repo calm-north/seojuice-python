@@ -1,0 +1,44 @@
+{
+  "operation": "find_page",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/pages/find/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": {
+      "url": "https://fixtures.example/guide/"
+    },
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "matches": [
+        {
+          "id": 1,
+          "url": "https://fixtures.example/guide/",
+          "title": "Complete SEO Guide",
+          "page_type": "article",
+          "seo_score": 72.0,
+          "accessibility_score": 80.0,
+          "content_quality_score": 65.0,
+          "geo_readiness_score": 58.0,
+          "meta_description": "A comprehensive guide to SEO best practices",
+          "language_code": null,
+          "created_at": "2026-11-01T12:00:00+00:00",
+          "last_processed_at": null,
+          "readability": {
+            "flesch_kincaid": null,
+            "automated_readability": null,
+            "dale_chall": null,
+            "coleman_liau": null
+          }
+        }
+      ],
+      "exact": true
+    }
+  }
+}

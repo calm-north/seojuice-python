@@ -1,0 +1,23 @@
+{
+  "operation": "error_402_trial_required",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 402,
+    "content_type": "application/json",
+    "body": {
+      "error": "trial_required",
+      "message": "Start your 7-day trial to use SEOJuice on trial.example: https://seojuice.com/dashboard/trial.example/unlock",
+      "checkout_url": "https://seojuice.com/dashboard/trial.example/unlock",
+      "lock_state": "no_card"
+    }
+  }
+}

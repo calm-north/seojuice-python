@@ -1,0 +1,50 @@
+{
+  "operation": "get_page_search_stats",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/pages/{page_id}/search-stats/",
+    "path_params": {
+      "page_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 30,
+        "total_count": 3,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "date": "2026-11-01",
+          "clicks": 10,
+          "impressions": 100,
+          "ctr": 10.0,
+          "rank": 5.0
+        },
+        {
+          "date": "2026-10-31",
+          "clicks": 10,
+          "impressions": 100,
+          "ctr": 10.0,
+          "rank": 5.0
+        },
+        {
+          "date": "2026-10-30",
+          "clicks": 10,
+          "impressions": 100,
+          "ctr": 10.0,
+          "rank": 5.0
+        }
+      ]
+    }
+  }
+}

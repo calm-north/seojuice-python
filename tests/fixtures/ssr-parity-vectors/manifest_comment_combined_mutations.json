@@ -1,5 +1,6 @@
 {
   "name": "manifest_comment_combined_mutations",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>Our SWP calculator explained here.</p><img src=\"https://cdn.x/chart.png\" alt=\"x\"></body></html>",
   "payload": {
     "suggestions": [

@@ -1,0 +1,21 @@
+{
+  "operation": "error_403_reports_not_in_plan",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/reports/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 403,
+    "content_type": "application/json",
+    "body": {
+      "error": "forbidden",
+      "message": "White-label reporting is part of paid plans. Upgrade to turn it on."
+    }
+  }
+}

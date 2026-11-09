@@ -1,0 +1,35 @@
+{
+  "operation": "get_serp_landscape",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/serp-landscape/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "feature_counts": {
+        "ai_overview": 0,
+        "featured_snippet": 0,
+        "people_also_ask": 0,
+        "knowledge_graph": 0,
+        "local_pack": 0
+      },
+      "total_with_snapshots": 0,
+      "keywords_data": [],
+      "user_position_distribution": {
+        "top_3": 0,
+        "top_10": 0,
+        "top_20": 0,
+        "not_found": 0
+      },
+      "snippet_opportunities": []
+    }
+  }
+}

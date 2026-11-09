@@ -1,0 +1,42 @@
+{
+  "operation": "get_report_summary",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/reports/{report_id}/summary/",
+    "path_params": {
+      "report_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "id": 1,
+      "type": "last_month",
+      "type_display": "Last Month",
+      "status": "finished",
+      "date": "2026-10-01",
+      "end_date": "2026-10-31",
+      "created_at": "2026-11-01T12:00:00+00:00",
+      "has_pdf": true,
+      "period": {
+        "from": "2026-10-01",
+        "to": "2026-10-31"
+      },
+      "scores": {
+        "seo": 72
+      },
+      "score_deltas": {},
+      "executive_briefing": null,
+      "todo_total": 0,
+      "top_issues": [],
+      "section_index": [],
+      "pdf_url": "/api/v2/websites/fixtures.example/reports/1/pdf/"
+    }
+  }
+}

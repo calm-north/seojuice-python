@@ -1,0 +1,41 @@
+{
+  "operation": "list_page_keywords",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/pages/{page_id}/keywords/",
+    "path_params": {
+      "page_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 1,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "id": 2,
+          "keyword": "search query 0",
+          "processed_at": "2026-11-01T12:00:00+00:00",
+          "stats": {
+            "clicks": 3,
+            "impressions": 200,
+            "ctr": 5.0,
+            "rank": 8,
+            "created_at": "2026-11-01T12:00:00+00:00"
+          }
+        }
+      ]
+    }
+  }
+}

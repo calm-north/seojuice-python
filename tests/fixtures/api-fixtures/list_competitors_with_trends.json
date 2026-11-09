@@ -1,0 +1,51 @@
+{
+  "operation": "list_competitors_with_trends",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/competitors/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": {
+      "include_trends": "true"
+    },
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "pagination": {
+        "page": 1,
+        "page_size": 20,
+        "total_count": 1,
+        "total_pages": 1
+      },
+      "results": [
+        {
+          "id": 1,
+          "domain": "rival.example",
+          "score": 0,
+          "intersections": null,
+          "estimated_traffic": null,
+          "content_gaps_count": 0,
+          "avg_position": null,
+          "top_keywords": [
+            {
+              "keyword": "seo guide",
+              "your_position": 0,
+              "their_position": 0,
+              "volume": 1000
+            }
+          ],
+          "trends": {
+            "intersections_change": 0,
+            "traffic_change_pct": 0,
+            "keywords_change": 0
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "operation": "reject_change_without_reason",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/changes/{change_id}/reject/",
+    "path_params": {
+      "change_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {},
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 422,
+    "content_type": "application/json",
+    "body": {
+      "error": "missing_field",
+      "message": "reason is required when rejecting a change"
+    }
+  }
+}

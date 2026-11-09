@@ -1,0 +1,23 @@
+{
+  "operation": "submit_urls_empty",
+  "case": "",
+  "request": {
+    "method": "POST",
+    "path": "/websites/{domain}/urls/",
+    "path_params": {},
+    "domain": "fixtures.example",
+    "query": null,
+    "body": {
+      "urls": []
+    },
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 400,
+    "content_type": "application/json",
+    "body": {
+      "error": "missing_field",
+      "message": "urls list cannot be empty"
+    }
+  }
+}

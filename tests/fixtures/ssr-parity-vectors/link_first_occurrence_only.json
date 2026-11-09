@@ -1,5 +1,6 @@
 {
   "name": "link_first_occurrence_only",
+  "origin": "generated: hand-built payload, expected_html from the Worker",
   "input_html": "<html><head></head><body><p>Our SWP calculator is great. Try the SWP calculator again.</p></body></html>",
   "payload": {
     "suggestions": [

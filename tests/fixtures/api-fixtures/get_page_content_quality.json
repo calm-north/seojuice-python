@@ -1,0 +1,45 @@
+{
+  "operation": "get_page_content_quality",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/pages/{page_id}/content-quality/",
+    "path_params": {
+      "page_id": 1
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/json",
+    "body": {
+      "page_id": 1,
+      "page_url": "https://fixtures.example/guide/",
+      "page_type": "article",
+      "content_quality_score": 65.0,
+      "breakdown": {
+        "organization": 60,
+        "depth_expertise": 75,
+        "referenceability": 55,
+        "contextual_clarity": 70
+      },
+      "issues": [],
+      "veto_applied": null,
+      "top_improvements": [
+        {
+          "item": "R01",
+          "impact": 5,
+          "recommendation": "Add citations"
+        }
+      ],
+      "geo_readiness_score": 58.0,
+      "geo_readiness_breakdown": {
+        "geo_targeting": 55,
+        "local_signals": 60
+      }
+    }
+  }
+}

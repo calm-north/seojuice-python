@@ -1,0 +1,23 @@
+{
+  "operation": "get_analysis_status_not_found",
+  "case": "",
+  "request": {
+    "method": "GET",
+    "path": "/websites/{domain}/analyze/{analysis_id}/",
+    "path_params": {
+      "analysis_id": "nope"
+    },
+    "domain": "fixtures.example",
+    "query": null,
+    "body": null,
+    "authorization": "Bearer <token>"
+  },
+  "response": {
+    "status": 404,
+    "content_type": "application/json",
+    "body": {
+      "error": "analysis_not_found",
+      "message": "Analysis nope not found"
+    }
+  }
+}
